@@ -72,8 +72,10 @@
         .table-wrapper{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
         .table-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--border);}
         .table-header h2{font-size:1.05rem;font-weight:700;color:var(--green-dark);}
-        .search-input{padding:8px 14px;border-radius:20px;border:1px solid var(--border);font-size:.85rem;width:220px;outline:none;}
+        .search-input{padding:8px 14px;border-radius:20px;border:1px solid var(--border);font-size:.85rem;width:150px;outline:none;}
         .search-input:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(45,90,63,.1);}
+        .filter-select{padding:8px 14px;border-radius:20px;border:1px solid var(--border);font-size:.85rem;outline:none;background:#fff;cursor:pointer;}
+        .filter-select:focus{border-color:var(--green-mid);}
         table{width:100%;border-collapse:collapse;font-size:.88rem;}
         table th,table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);}
         table th{background:#f4f7f2;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-light);}
@@ -101,7 +103,8 @@
         .bottom-nav a.active{color:var(--green-mid);}
         .bottom-nav a i{font-size:1.2rem;}
         .hamburger{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
-        @media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.charts-grid{grid-template-columns:1fr;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.stats-grid{grid-template-columns:repeat(2,1fr);gap:8px;}.stat-card{padding:12px 14px;gap:8px;}.stat-icon{width:36px;height:36px;font-size:1rem;}.stat-info h3{font-size:1.2rem;}table th,table td{padding:8px 6px;font-size:.75rem;}.search-input{width:140px;}}
+        .filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+        @media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.charts-grid{grid-template-columns:1fr;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.stats-grid{grid-template-columns:repeat(2,1fr);gap:8px;}.stat-card{padding:12px 14px;gap:8px;}.stat-icon{width:36px;height:36px;font-size:1rem;}.stat-info h3{font-size:1.2rem;}table th,table td{padding:8px 6px;font-size:.75rem;}.search-input{width:120px;}.filter-row{flex-direction:column;align-items:stretch;}}
     </style>
 </head>
 <body>
@@ -134,7 +137,31 @@
             </header>
             <div class="page-content">
                 <div class="page active" id="page-dashboard"><div class="stats-grid" id="statsGrid"></div><div class="charts-grid"><div class="chart-card"><h3><i class="fas fa-chart-bar"></i> Alunos por Faixa</h3><canvas id="chartFaixas"></canvas></div><div class="chart-card"><h3><i class="fas fa-chart-pie"></i> Medalhas</h3><canvas id="chartMedalhas"></canvas></div><div class="chart-card chart-full"><h3><i class="fas fa-medal"></i> Top Alunos</h3><canvas id="chartTopAlunos"></canvas></div></div></div>
-                <div class="page" id="page-alunos"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-users"></i> Todos os Alunos</h2><div style="display:flex;gap:8px;"><input type="text" class="search-input" id="searchAlunos" placeholder="🔍 Buscar..."><button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button></div></div><div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Medalhas</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div><div class="empty-state" id="emptyAlunos" style="display:none;"><i class="fas fa-user-slash"></i><p>Nenhum aluno cadastrado</p></div></div></div>
+                <div class="page" id="page-alunos">
+                    <div class="table-wrapper">
+                        <div class="table-header">
+                            <h2><i class="fas fa-users"></i> Todos os Alunos</h2>
+                            <div class="filter-row">
+                                <input type="text" class="search-input" id="searchAlunos" placeholder="🔍 Buscar...">
+                                <select class="filter-select" id="filterFaixa">
+                                    <option value="todas">Todas as Faixas</option>
+                                    <option value="Branca">Branca</option>
+                                    <option value="Cinza">Cinza</option>
+                                    <option value="Amarela">Amarela</option>
+                                    <option value="Laranja">Laranja</option>
+                                    <option value="Verde">Verde</option>
+                                    <option value="Azul">Azul</option>
+                                    <option value="Roxa">Roxa</option>
+                                    <option value="Marrom">Marrom</option>
+                                    <option value="Preta">Preta</option>
+                                </select>
+                                <button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button>
+                            </div>
+                        </div>
+                        <div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Medalhas</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div>
+                        <div class="empty-state" id="emptyAlunos" style="display:none;"><i class="fas fa-user-slash"></i><p>Nenhum aluno encontrado</p></div>
+                    </div>
+                </div>
                 <div class="page" id="page-graduacoes"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-graduation-cap"></i> Histórico de Graduações</h2><button class="btn btn-primary btn-sm" id="btnAddGraduacao"><i class="fas fa-plus"></i> Registrar</button></div><div style="overflow-x:auto;"><table><thead><tr><th>Aluno</th><th>Data</th><th>De (Faixa·Grau)</th><th>Para (Faixa·Grau)</th></tr></thead><tbody id="tbodyGraduacoes"></tbody></table></div><div class="empty-state" id="emptyGraduacoes" style="display:none;"><i class="fas fa-scroll"></i><p>Nenhuma graduação registrada</p></div></div></div>
                 <div class="page" id="page-campeonatos"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-trophy"></i> Campeonatos</h2><button class="btn btn-primary btn-sm" id="btnAddCampeonato"><i class="fas fa-plus"></i> Registrar</button></div><div style="overflow-x:auto;"><table><thead><tr><th>Aluno</th><th>Campeonato</th><th>Data</th><th>Medalha</th><th>Ações</th></tr></thead><tbody id="tbodyCampeonatos"></tbody></table></div><div class="empty-state" id="emptyCampeonatos" style="display:none;"><i class="fas fa-sad-tear"></i><p>Nenhum campeonato</p></div></div></div>
             </div>
@@ -156,7 +183,8 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        const CREDENCIAIS = { login: 'admin', senha: 'fullacess' };
+        // ========== LOGIN ATUALIZADO ==========
+        const CREDENCIAIS = { login: 'admin', senha: '34382098' };
         const loginOverlay = document.getElementById('loginOverlay');
         const appContainer = document.getElementById('appContainer');
         const loginInput = document.getElementById('loginInput');
@@ -236,13 +264,45 @@
             document.querySelectorAll('.sidebar-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.querySelectorAll('.bottom-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.getElementById('hamburgerBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
-            function renderAlunos(filtro='') {
-                const tbody=document.getElementById('tbodyAlunos');
-                const empty=document.getElementById('emptyAlunos');
-                const lista=db.alunos.filter(a=>a.nome.toLowerCase().includes(filtro.toLowerCase()));
-                if(lista.length===0){tbody.innerHTML='';empty.style.display='block';}
-                else{empty.style.display='none';tbody.innerHTML=lista.map(a=>`<tr><td>#${a.id}</td><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa,a.grau)}</td><td>${grauTexto(a.faixa,a.grau)||'-'}</td><td>${formatData(a.dataIngresso)}</td><td>${medalhasCont(a.id)} 🏅</td><td style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');tbody.querySelectorAll('.editar').forEach(b=>b.addEventListener('click',()=>abrirEditarAluno(parseInt(b.dataset.id))));tbody.querySelectorAll('.excluir').forEach(b=>b.addEventListener('click',()=>excluirAluno(parseInt(b.dataset.id))));}
+
+            // ========== RENDER ALUNOS COM FILTRO DE FAIXA ==========
+            function renderAlunos() {
+                const tbody = document.getElementById('tbodyAlunos');
+                const empty = document.getElementById('emptyAlunos');
+                const termo = (document.getElementById('searchAlunos')?.value || '').toLowerCase();
+                const faixaFiltro = document.getElementById('filterFaixa')?.value || 'todas';
+
+                let lista = db.alunos;
+                // Filtro por nome
+                if (termo) lista = lista.filter(a => a.nome.toLowerCase().includes(termo));
+                // Filtro por faixa
+                if (faixaFiltro !== 'todas') lista = lista.filter(a => a.faixa === faixaFiltro);
+
+                if (lista.length === 0) {
+                    tbody.innerHTML = '';
+                    empty.style.display = 'block';
+                } else {
+                    empty.style.display = 'none';
+                    tbody.innerHTML = lista.map(a => {
+                        const meds = medalhasCont(a.id);
+                        return `<tr>
+                            <td>#${a.id}</td>
+                            <td><strong>${a.nome}</strong></td>
+                            <td>${badgeHTML(a.faixa, a.grau)}</td>
+                            <td>${grauTexto(a.faixa, a.grau) || '-'}</td>
+                            <td>${formatData(a.dataIngresso)}</td>
+                            <td>${meds} 🏅</td>
+                            <td style="display:flex;gap:4px;">
+                                <button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    }).join('');
+                    tbody.querySelectorAll('.editar').forEach(b => b.addEventListener('click', () => abrirEditarAluno(parseInt(b.dataset.id))));
+                    tbody.querySelectorAll('.excluir').forEach(b => b.addEventListener('click', () => excluirAluno(parseInt(b.dataset.id))));
+                }
             }
+
             function renderGrad() { const tbody=document.getElementById('tbodyGraduacoes'); const empty=document.getElementById('emptyGraduacoes'); if(db.graduacoes.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.graduacoes.slice().reverse().map(g=>`<tr><td><strong>${nomeAluno(g.idAluno)}</strong></td><td>${formatData(g.data)}</td><td>${badgeHTML(g.faixaAnterior,g.grauAnterior)}</td><td>${badgeHTML(g.faixaNova,g.grauNovo)}</td></tr>`).join('');} }
             function renderCamp() { const tbody=document.getElementById('tbodyCampeonatos'); const empty=document.getElementById('emptyCampeonatos'); if(db.campeonatos.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td><button class="btn btn-danger btn-sm excluir-camp" data-key="${c.firebaseKey||c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>excluirCampeonato(b.dataset.key)));} }
             function abrirNovoAluno() { openModal('Novo Aluno','fas fa-user-plus',`<div class="form-group"><label>Nome</label><input type="text" id="fNome"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}refAlunos.child(gerarId()).set({id:db.nextId-1,nome:n,faixa:f,grau:g,dataIngresso:new Date().toISOString().split('T')[0]});showToast(`Aluno ${n} cadastrado!`);return true;}); }
@@ -262,7 +322,9 @@
             document.getElementById('btnAddAlunoTop').onclick=abrirNovoAluno;
             document.getElementById('btnAddGraduacao').onclick=abrirModalGraduacao;
             document.getElementById('btnAddCampeonato').onclick=abrirModalCampeonato;
-            document.getElementById('searchAlunos').addEventListener('input',e=>renderAlunos(e.target.value));
+            // Eventos de filtro
+            document.getElementById('searchAlunos').addEventListener('input', renderAlunos);
+            document.getElementById('filterFaixa').addEventListener('change', renderAlunos);
             document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
             navigateTo('dashboard');
         }
