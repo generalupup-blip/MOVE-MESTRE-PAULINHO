@@ -64,7 +64,6 @@
         .localidade-tab.camanducaia{color:#1e40af;}
         .localidade-tab.active.monte-verde{background:var(--mv-color);color:#fff;}
         .localidade-tab.active.camanducaia{background:var(--cam-color);color:#fff;}
-        .localidade-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:15px;font-size:.7rem;font-weight:700;}
         .presenca-container{max-width:1000px;margin:0 auto;}
         .presenca-header{background:var(--card);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border:1px solid var(--border);}
         .presenca-header h2{font-size:1.2rem;font-weight:800;color:var(--green-dark);}
@@ -128,6 +127,13 @@
         .treino-row input{flex:1;min-width:60px;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:.78rem;}
         .btn-add-treino{background:var(--green-light);color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:.7rem;cursor:pointer;}
         .btn-remove-treino{background:#fee2e2;color:#c0392b;border:none;padding:2px 6px;border-radius:4px;font-size:.65rem;cursor:pointer;}
+        .usuario-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+        .usuario-card .usuario-info{display:flex;align-items:center;gap:10px;}
+        .usuario-card .usuario-icone{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;}
+        .usuario-card .usuario-icone.admin{background:#f59e0b;}
+        .usuario-card .usuario-icone.padrao{background:var(--green-mid);}
+        .usuario-nome{font-weight:700;}
+        .usuario-nivel{font-size:.75rem;color:var(--text-light);}
         @media(max-width:768px){.sidebar{transform:translateX(-100%);width:270px;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.calendario-grid,.presenca-grid{grid-template-columns:1fr;}.presenca-header{flex-direction:column;align-items:flex-start;}.historico-filtros{flex-direction:column;align-items:stretch;}}
     </style>
 </head>
@@ -154,6 +160,7 @@
                 <a data-page="alunos"><i class="fas fa-users"></i> Alunos</a>
                 <a data-page="graduacoes"><i class="fas fa-graduation-cap"></i> Graduações</a>
                 <a data-page="campeonatos"><i class="fas fa-trophy"></i> Campeonatos</a>
+                <a data-page="usuarios" style="color:var(--gold);"><i class="fas fa-user-cog"></i> Usuários</a>
             </nav>
             <div class="sidebar-footer">© 2026 · Green Mountain</div>
         </aside>
@@ -176,8 +183,7 @@
                 <!-- PRESENÇA -->
                 <div class="page" id="page-presenca">
                     <div class="presenca-container">
-                        <div class="presenca-header">
-                            <h2><i class="fas fa-clipboard-check"></i> Marcar Presença</h2>
+                        <div class="presenca-header"><h2><i class="fas fa-clipboard-check"></i> Marcar Presença</h2>
                             <div class="localidade-tabs" id="localidadeTabsPresenca"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ MV</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ CAM</button></div>
                             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><label>Data:</label><input type="date" id="dataPresenca" style="padding:10px;border:2px solid var(--border);border-radius:8px;"><label>Horário:</label><input type="text" id="horarioPresenca" placeholder="19:00" value="19:00" style="padding:10px;border:2px solid var(--border);border-radius:8px;width:100px;"></div>
                             <input type="text" id="buscaPresenca" placeholder="🔍 Buscar aluno..." style="padding:10px;border:2px solid var(--border);border-radius:25px;width:200px;">
@@ -189,26 +195,23 @@
                 </div>
                 <!-- HISTÓRICO -->
                 <div class="page" id="page-historico">
-                    <div class="presenca-container">
-                        <div class="presenca-header"><h2><i class="fas fa-history"></i> Histórico de Presenças</h2></div>
-                        <div class="historico-filtros">
-                            <label>De:</label><input type="date" id="histDataInicio" value="2026-01-01">
-                            <label>Até:</label><input type="date" id="histDataFim">
-                            <label>Aluno:</label><input type="text" id="histBuscaAluno" placeholder="🔍 Nome..." style="min-width:150px;">
-                            <button class="btn btn-primary btn-sm" id="btnFiltrarHistorico"><i class="fas fa-filter"></i> Filtrar</button>
-                            <button class="btn btn-ghost btn-sm" id="btnLimparHistorico"><i class="fas fa-times"></i> Limpar</button>
-                        </div>
-                        <div class="table-wrapper">
-                            <table><thead><tr><th>Aluno</th><th>Faixa</th><th>🏔️ MV</th><th>🏙️ CAM</th><th>Total</th><th>Horários</th><th>Ações</th></tr></thead><tbody id="tbodyHistorico"></tbody></table>
-                            <div class="empty-state" id="emptyHistorico" style="display:none;"><i class="fas fa-search"></i><p>Nenhum dado no período</p></div>
-                        </div>
+                    <div class="presenca-container"><div class="presenca-header"><h2><i class="fas fa-history"></i> Histórico</h2></div>
+                        <div class="historico-filtros"><label>De:</label><input type="date" id="histDataInicio" value="2026-01-01"><label>Até:</label><input type="date" id="histDataFim"><label>Aluno:</label><input type="text" id="histBuscaAluno" placeholder="🔍 Nome..." style="min-width:150px;"><button class="btn btn-primary btn-sm" id="btnFiltrarHistorico"><i class="fas fa-filter"></i></button><button class="btn btn-ghost btn-sm" id="btnLimparHistorico"><i class="fas fa-times"></i></button></div>
+                        <div class="table-wrapper"><table><thead><tr><th>Aluno</th><th>Faixa</th><th>🏔️MV</th><th>🏙️CAM</th><th>Total</th><th>Horários</th><th>Ações</th></tr></thead><tbody id="tbodyHistorico"></tbody></table><div class="empty-state" id="emptyHistorico" style="display:none;"><i class="fas fa-search"></i></div></div>
                     </div>
                 </div>
                 <!-- CRONOGRAMA -->
                 <div class="page" id="page-aulas">
-                    <div class="presenca-header"><h2><i class="fas fa-calendar-alt"></i> Cronograma Semanal</h2><button class="btn-editar-aulas" id="btnEditarAulas"><i class="fas fa-edit"></i> Editar</button></div>
+                    <div class="presenca-header"><h2><i class="fas fa-calendar-alt"></i> Cronograma</h2><button class="btn-editar-aulas" id="btnEditarAulas"><i class="fas fa-edit"></i> Editar</button></div>
                     <div class="localidade-tabs" id="localidadeTabsAulas"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ MV</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ CAM</button></div>
                     <div class="calendario-grid" id="calendarioGrid"></div>
+                </div>
+                <!-- USUÁRIOS (NOVO) -->
+                <div class="page" id="page-usuarios">
+                    <div class="presenca-container">
+                        <div class="presenca-header"><h2><i class="fas fa-user-cog"></i> Gerenciar Usuários</h2><button class="btn btn-primary btn-sm" id="btnAddUsuario"><i class="fas fa-plus"></i> Novo Usuário</button></div>
+                        <div id="usuariosLista"></div>
+                    </div>
                 </div>
                 <!-- ALUNOS / GRAD / CAMP -->
                 <div class="page" id="page-alunos"><div class="table-wrapper"><div class="presenca-header"><h2><i class="fas fa-users"></i> Alunos</h2><div style="display:flex;gap:8px;"><input type="text" id="searchAlunos" placeholder="🔍 Buscar..." style="padding:8px;border-radius:20px;border:1px solid var(--border);"><select id="filterFaixa" style="padding:8px;border-radius:20px;border:1px solid var(--border);"><option value="todas">Todas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option></select><button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i></button></div></div><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Med.</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div></div>
@@ -224,7 +227,25 @@
         const firebaseConfig = { apiKey: "AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q", authDomain: "academia-move.firebaseapp.com", databaseURL: "https://academia-move-default-rtdb.firebaseio.com", projectId: "academia-move", storageBucket: "academia-move.firebasestorage.app", messagingSenderId: "329888597951", appId: "1:329888597951:web:ac19b928a92123d76f430a" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const USUARIOS = { 'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' }, 'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' }, 'lucas': { senha: '34382098', nivel: 'padrao', nome: 'Lucas' }, 'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' } };
+
+        // Usuários padrão + salvos no Firebase
+        const USUARIOS_PADRAO = {
+            'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' },
+            'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' },
+            'lucas': { senha: '34382098', nivel: 'padrao', nome: 'Lucas' },
+            'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' },
+            'professores': { senha: '34382098', nivel: 'padrao', nome: 'Professores' }
+        };
+
+        let USUARIOS = { ...USUARIOS_PADRAO };
+        const refUsuarios = database.ref('usuarios');
+        
+        // Carrega usuários do Firebase e mescla com padrão
+        refUsuarios.on('value', snap => {
+            const fbUsers = snap.val() || {};
+            USUARIOS = { ...USUARIOS_PADRAO, ...fbUsers };
+        });
+
         const LOCALIDADES = ['monteVerde', 'camanducaia'];
         const LOCALIDADE_LABELS = { monteVerde: 'Monte Verde', camanducaia: 'Camanducaia' };
         const LOCALIDADE_ICONS = { monteVerde: '🏔️', camanducaia: '🏙️' };
@@ -264,7 +285,14 @@
             document.getElementById('userName').textContent = usuarioAtual.nome;
             document.getElementById('userNivel').textContent = ehAdmin() ? 'Admin' : 'Visualização';
             if (ehAdmin()) document.getElementById('userBadge').classList.add('admin');
-            if (!ehAdmin()) { document.getElementById('btnAddAlunoTop').style.display = 'none'; document.getElementById('btnAddAluno').style.display = 'none'; document.getElementById('btnAddGraduacao').style.display = 'none'; document.getElementById('btnAddCampeonato').style.display = 'none'; document.getElementById('btnEditarAulas').style.display = 'none'; }
+            if (!ehAdmin()) { 
+                document.getElementById('btnAddAlunoTop').style.display = 'none'; 
+                document.getElementById('btnAddAluno').style.display = 'none'; 
+                document.getElementById('btnAddGraduacao').style.display = 'none'; 
+                document.getElementById('btnAddCampeonato').style.display = 'none'; 
+                document.getElementById('btnEditarAulas').style.display = 'none'; 
+                document.querySelector('.sidebar-nav a[data-page="usuarios"]').style.display = 'none';
+            }
 
             const refAlunos = database.ref('alunos');
             const refGraduacoes = database.ref('graduacoes');
@@ -306,6 +334,7 @@
                 if(page==='presenca') renderPresenca();
                 if(page==='historico') renderHistorico();
                 if(page==='aulas') renderAulas();
+                if(page==='usuarios') renderUsuarios();
                 if(page==='alunos')renderAlunos();
                 if(page==='graduacoes')renderGrad();
                 if(page==='campeonatos')renderCamp();
@@ -350,106 +379,71 @@
             document.getElementById('buscaPresenca')?.addEventListener('input', renderPresenca);
             document.getElementById('btnSalvarPresenca')?.addEventListener('click', salvarPresenca);
 
-            // ========== HISTÓRICO DE PRESENÇAS (CORRIGIDO) ==========
+            // ========== HISTÓRICO ==========
             function renderHistorico(dataInicio, dataFim, buscaAluno) {
-                const tbody = document.getElementById('tbodyHistorico');
-                const empty = document.getElementById('emptyHistorico');
-                if (!tbody) return;
-                if (!dataInicio) dataInicio = '2026-01-01';
-                if (!dataFim) dataFim = new Date().toISOString().split('T')[0];
-                
-                let alunosFiltrados = db.alunos;
-                if (buscaAluno) { const t = buscaAluno.toLowerCase(); alunosFiltrados = alunosFiltrados.filter(a => a.nome.toLowerCase().includes(t)); }
-
-                const resultado = alunosFiltrados.map(a => {
-                    let mv = 0, cam = 0;
-                    const detalhes = [];
-                    const hMV = new Set(), hCAM = new Set();
-                    LOCALIDADES.forEach(loc => {
-                        const locData = db.presencas[loc] || {};
-                        Object.keys(locData).forEach(data => {
-                            if (data >= dataInicio && data <= dataFim) {
-                                const horarios = locData[data] || {};
-                                Object.keys(horarios).forEach(horario => {
-                                    if (horarios[horario][a.id] === true) {
-                                        if (loc === 'monteVerde') { mv++; hMV.add(horario); }
-                                        else { cam++; hCAM.add(horario); }
-                                        detalhes.push({ loc, data, horario });
-                                    }
-                                });
-                            }
-                        });
-                    });
+                const tbody = document.getElementById('tbodyHistorico'); const empty = document.getElementById('emptyHistorico'); if (!tbody) return;
+                if (!dataInicio) dataInicio = '2026-01-01'; if (!dataFim) dataFim = new Date().toISOString().split('T')[0];
+                let alunosFiltrados = db.alunos; if (buscaAluno) { const t = buscaAluno.toLowerCase(); alunosFiltrados = alunosFiltrados.filter(a => a.nome.toLowerCase().includes(t)); }
+                const resultado = alunosFiltrados.map(a => { let mv = 0, cam = 0; const detalhes = []; const hMV = new Set(), hCAM = new Set();
+                    LOCALIDADES.forEach(loc => { const locData = db.presencas[loc] || {}; Object.keys(locData).forEach(data => { if (data >= dataInicio && data <= dataFim) { const horarios = locData[data] || {}; Object.keys(horarios).forEach(horario => { if (horarios[horario][a.id] === true) { if (loc === 'monteVerde') { mv++; hMV.add(horario); } else { cam++; hCAM.add(horario); } detalhes.push({ loc, data, horario, alunoId: a.id }); } }); } }); });
                     return { ...a, mv, cam, total: mv + cam, detalhes, hMV: [...hMV].sort(), hCAM: [...hCAM].sort() };
                 }).filter(a => a.total > 0).sort((a, b) => b.total - a.total);
-
-                if (resultado.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; }
-                else {
-                    empty.style.display = 'none';
-                    tbody.innerHTML = resultado.map(a => `
-                        <tr>
-                            <td><strong>${a.nome}</strong></td>
-                            <td>${badgeHTML(a.faixa, a.grau)}</td>
-                            <td><strong style="color:#2d5a3f;">${a.mv}d</strong></td>
-                            <td><strong style="color:#1e40af;">${a.cam}d</strong></td>
-                            <td><strong>${a.total}d</strong></td>
-                            <td>${a.hMV.map(h=>`<span class="horario-badge">🏔️${h}</span>`).join('')}${a.hCAM.map(h=>`<span class="horario-badge">🏙️${h}</span>`).join('')}</td>
-                            <td>${ehAdmin() ? `<button class="btn-excluir-presenca" data-detalhes='${JSON.stringify(a.detalhes).replace(/'/g,"&#39;")}'>🗑️</button>` : '-'}</td>
-                        </tr>
-                    `).join('');
-                    if (ehAdmin()) {
-                        tbody.querySelectorAll('.btn-excluir-presenca').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const detalhes = JSON.parse(this.dataset.detalhes);
-                                if (confirm(`Remover ${detalhes.length} presenças?`)) {
-                                    const updates = {};
-                                    detalhes.forEach(d => { updates[`presencas/${d.loc}/${d.data}/${d.horario}/${d.aluno?.id || Object.keys(db.presencas[d.loc][d.data][d.horario]).find(k=>db.presencas[d.loc][d.data][d.horario][k]===true)}`] = null; });
-                                    database.ref().update(updates).then(() => { showToast('Presenças removidas!'); renderHistorico(dataInicio, dataFim, buscaAluno); });
-                                }
-                            });
-                        });
-                    }
+                if (resultado.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; } else { empty.style.display = 'none';
+                    tbody.innerHTML = resultado.map(a => `<tr><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa, a.grau)}</td><td><strong style="color:#2d5a3f;">${a.mv}d</strong></td><td><strong style="color:#1e40af;">${a.cam}d</strong></td><td><strong>${a.total}d</strong></td><td>${a.hMV.map(h=>`<span class="horario-badge">🏔️${h}</span>`).join('')}${a.hCAM.map(h=>`<span class="horario-badge">🏙️${h}</span>`).join('')}</td><td>${ehAdmin() ? `<button class="btn-excluir-presenca" data-detalhes='${JSON.stringify(a.detalhes).replace(/'/g,"&#39;")}'>🗑️</button>` : '-'}</td></tr>`).join('');
+                    if (ehAdmin()) { tbody.querySelectorAll('.btn-excluir-presenca').forEach(btn => { btn.addEventListener('click', function() { const detalhes = JSON.parse(this.dataset.detalhes); if (confirm(`Remover ${detalhes.length} presenças?`)) { const updates = {}; detalhes.forEach(d => { updates[`presencas/${d.loc}/${d.data}/${d.horario}/${d.alunoId}`] = null; }); database.ref().update(updates).then(() => { showToast('Presenças removidas!'); renderHistorico(dataInicio, dataFim, buscaAluno); }); } }); }); }
                 }
             }
-            document.getElementById('btnFiltrarHistorico')?.addEventListener('click', () => {
-                renderHistorico(document.getElementById('histDataInicio').value, document.getElementById('histDataFim').value, document.getElementById('histBuscaAluno').value.trim());
-            });
-            document.getElementById('btnLimparHistorico')?.addEventListener('click', () => {
-                document.getElementById('histDataInicio').value='2026-01-01';
-                document.getElementById('histDataFim').value=new Date().toISOString().split('T')[0];
-                document.getElementById('histBuscaAluno').value='';
-                renderHistorico('2026-01-01', new Date().toISOString().split('T')[0], '');
-            });
+            document.getElementById('btnFiltrarHistorico')?.addEventListener('click', () => { renderHistorico(document.getElementById('histDataInicio').value, document.getElementById('histDataFim').value, document.getElementById('histBuscaAluno').value.trim()); });
+            document.getElementById('btnLimparHistorico')?.addEventListener('click', () => { document.getElementById('histDataInicio').value='2026-01-01'; document.getElementById('histDataFim').value=new Date().toISOString().split('T')[0]; document.getElementById('histBuscaAluno').value=''; renderHistorico('2026-01-01', new Date().toISOString().split('T')[0], ''); });
             document.getElementById('histDataFim').value = new Date().toISOString().split('T')[0];
 
             // ========== AULAS ==========
-            function renderAulas() {
-                const grid = document.getElementById('calendarioGrid'); if (!grid) return;
-                const loc = localidadeAtivaAulas; const aulasLoc = db.aulas[loc] || {};
-                const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase().replace('-feira','');
-                grid.innerHTML = DIAS.map(dia => {
-                    const treinos = aulasLoc[dia] || [];
-                    const ehHoje = dia === hoje || (hoje==='terça'&&dia==='terca')||(hoje==='quarta'&&dia==='quarta')||(hoje==='quinta'&&dia==='quinta')||(hoje==='sexta'&&dia==='sexta')||(hoje==='sábado'&&dia==='sabado');
-                    if (treinos.length === 0) return `<div class="dia-card-aula ${ehHoje?'hoje':''}"><div class="dia-header">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]} ${ehHoje?'<span style="background:var(--gold);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:8px;">HOJE</span>':''}</div><div class="sem-treino">Nenhum treino</div></div>`;
-                    return `<div class="dia-card-aula ${ehHoje?'hoje':''}"><div class="dia-header">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]} ${ehHoje?'<span style="background:var(--gold);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:8px;">HOJE</span>':''}</div>${treinos.map(t => `<div class="treino-item"><div class="treino-horario">🕐 ${t.inicio || '?'} - ${t.fim || '?'}</div><div class="treino-professor"><i class="fas fa-user-tie"></i> ${t.professor || 'Sem professor'}</div><div class="treino-tema"><i class="fas fa-bullseye"></i> ${t.tema || 'Tema a definir'}</div></div>`).join('')}</div>`;
-                }).join('');
+            function renderAulas() { const grid = document.getElementById('calendarioGrid'); if (!grid) return; const loc = localidadeAtivaAulas; const aulasLoc = db.aulas[loc] || {}; const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase().replace('-feira',''); grid.innerHTML = DIAS.map(dia => { const treinos = aulasLoc[dia] || []; const ehHoje = dia === hoje || (hoje==='terça'&&dia==='terca')||(hoje==='quarta'&&dia==='quarta')||(hoje==='quinta'&&dia==='quinta')||(hoje==='sexta'&&dia==='sexta')||(hoje==='sábado'&&dia==='sabado'); if (treinos.length === 0) return `<div class="dia-card-aula ${ehHoje?'hoje':''}"><div class="dia-header">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</div><div class="sem-treino">Nenhum treino</div></div>`; return `<div class="dia-card-aula ${ehHoje?'hoje':''}"><div class="dia-header">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</div>${treinos.map(t => `<div class="treino-item"><div class="treino-horario">🕐 ${t.inicio || '?'} - ${t.fim || '?'}</div><div class="treino-professor">${t.professor || 'Sem professor'}</div><div class="treino-tema">${t.tema || 'Tema a definir'}</div></div>`).join('')}</div>`; }).join(''); }
+            function abrirModalAulas() { if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; } let body = '<div style="display:flex;gap:8px;margin-bottom:16px;">'; LOCALIDADES.forEach(loc => { body += `<button class="localidade-tab ${loc==='monteVerde'?'monte-verde':'camanducaia'} ${loc===localidadeAtivaAulas?'active':''}" id="tabAula_${loc}">${LOCALIDADE_ICONS[loc]} ${LOCALIDADE_LABELS[loc]}</button>`; }); body += '</div><div id="aulasModalContent"></div>'; function rm(loc) { const al = db.aulas[loc] || {}; let h = ''; DIAS.forEach(dia => { const treinos = al[dia] || []; h += `<div class="dia-section"><h4>${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</h4><div id="treinos_${loc}_${dia}">`; treinos.forEach(t => { h += `<div class="treino-row"><input placeholder="Início" value="${t.inicio||''}" class="inicio_${loc}_${dia}"><input placeholder="Fim" value="${t.fim||''}" class="fim_${loc}_${dia}"><input placeholder="Professor" value="${t.professor||''}" class="prof_${loc}_${dia}"><input placeholder="Tema" value="${t.tema||''}" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button></div>`; }); h += `</div><button class="btn-add-treino" onclick="window.addTreino('${loc}','${dia}')">+ Adicionar</button></div>`; }); document.getElementById('aulasModalContent').innerHTML = h; } window.addTreino = function(loc, dia) { const c = document.getElementById(`treinos_${loc}_${dia}`); const d = document.createElement('div'); d.className = 'treino-row'; d.innerHTML = `<input placeholder="Início" class="inicio_${loc}_${dia}"><input placeholder="Fim" class="fim_${loc}_${dia}"><input placeholder="Professor" class="prof_${loc}_${dia}"><input placeholder="Tema" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button>`; c.appendChild(d); }; openModal('Editar Cronograma', 'fas fa-calendar-alt', body, content => { const na = {}; LOCALIDADES.forEach(loc => { na[loc] = {}; DIAS.forEach(dia => { const rows = content.querySelectorAll(`#treinos_${loc}_${dia} .treino-row`); const treinos = []; rows.forEach(row => { const ini = row.querySelector(`.inicio_${loc}_${dia}`)?.value?.trim()||''; const fim = row.querySelector(`.fim_${loc}_${dia}`)?.value?.trim()||''; const prof = row.querySelector(`.prof_${loc}_${dia}`)?.value?.trim()||''; const tema = row.querySelector(`.tema_${loc}_${dia}`)?.value?.trim()||''; if (ini||fim||prof||tema) treinos.push({inicio:ini,fim:fim,professor:prof,tema:tema}); }); na[loc][dia] = treinos; }); }); refAulas.set(na).then(() => { showToast('Cronograma atualizado!'); }).catch(() => { showToast('Erro ao salvar!','❌'); }); return true; }); rm(localidadeAtivaAulas); LOCALIDADES.forEach(loc => { document.getElementById(`tabAula_${loc}`).addEventListener('click', function() { document.querySelectorAll('#tabAula_monteVerde,#tabAula_camanducaia').forEach(t=>t.classList.remove('active')); this.classList.add('active'); localidadeAtivaAulas = loc; rm(loc); }); }); }
+            document.getElementById('btnEditarAulas')?.addEventListener('click', abrirModalAulas);
+
+            // ========== GERENCIAR USUÁRIOS ==========
+            function renderUsuarios() {
+                if (!ehAdmin()) { document.getElementById('usuariosLista').innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>Acesso restrito ao admin</p></div>'; return; }
+                const container = document.getElementById('usuariosLista');
+                const lista = Object.entries(USUARIOS).filter(([login]) => login !== 'admin'); // admin não pode ser removido
+                container.innerHTML = lista.map(([login, user]) => `
+                    <div class="usuario-card">
+                        <div class="usuario-info">
+                            <div class="usuario-icone ${user.nivel==='admin'?'admin':'padrao'}"><i class="fas fa-user"></i></div>
+                            <div><div class="usuario-nome">${user.nome}</div><div class="usuario-nivel">Login: ${login} · ${user.nivel==='admin'?'Administrador':'Visualização'}</div></div>
+                        </div>
+                        <button class="btn btn-danger btn-sm btn-remover-usuario" data-login="${login}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `).join('');
+                container.querySelectorAll('.btn-remover-usuario').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const login = this.dataset.login;
+                        if (confirm(`Remover usuário "${login}"?`)) {
+                            refUsuarios.child(login).remove().then(() => { showToast('Usuário removido!'); refUsuarios.once('value', snap => { const fbUsers = snap.val() || {}; USUARIOS = { ...USUARIOS_PADRAO, ...fbUsers }; renderUsuarios(); }); });
+                        }
+                    });
+                });
             }
-            function abrirModalAulas() {
-                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
-                let body = '<div style="display:flex;gap:8px;margin-bottom:16px;">';
-                LOCALIDADES.forEach(loc => { body += `<button class="localidade-tab ${loc==='monteVerde'?'monte-verde':'camanducaia'} ${loc===localidadeAtivaAulas?'active':''}" id="tabAula_${loc}">${LOCALIDADE_ICONS[loc]} ${LOCALIDADE_LABELS[loc]}</button>`; });
-                body += '</div><div id="aulasModalContent"></div>';
-                function rm(loc) { const al = db.aulas[loc] || {}; let h = ''; DIAS.forEach(dia => { const treinos = al[dia] || []; h += `<div class="dia-section"><h4>${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</h4><div id="treinos_${loc}_${dia}">`; treinos.forEach(t => { h += `<div class="treino-row"><input type="text" placeholder="Início (07:00)" value="${t.inicio||''}" class="inicio_${loc}_${dia}"><input type="text" placeholder="Fim (08:30)" value="${t.fim||''}" class="fim_${loc}_${dia}"><input type="text" placeholder="Professor" value="${t.professor||''}" class="prof_${loc}_${dia}"><input type="text" placeholder="Tema" value="${t.tema||''}" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button></div>`; }); h += `</div><button class="btn-add-treino" onclick="window.addTreino('${loc}','${dia}')">+ Adicionar</button></div>`; }); document.getElementById('aulasModalContent').innerHTML = h; }
-                window.addTreino = function(loc, dia) { const c = document.getElementById(`treinos_${loc}_${dia}`); const d = document.createElement('div'); d.className = 'treino-row'; d.innerHTML = `<input type="text" placeholder="Início (07:00)" class="inicio_${loc}_${dia}"><input type="text" placeholder="Fim (08:30)" class="fim_${loc}_${dia}"><input type="text" placeholder="Professor" class="prof_${loc}_${dia}"><input type="text" placeholder="Tema" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button>`; c.appendChild(d); };
-                openModal('Editar Cronograma', 'fas fa-calendar-alt', body, content => {
-                    const na = {}; LOCALIDADES.forEach(loc => { na[loc] = {}; DIAS.forEach(dia => { const rows = content.querySelectorAll(`#treinos_${loc}_${dia} .treino-row`); const treinos = []; rows.forEach(row => { const ini = row.querySelector(`.inicio_${loc}_${dia}`)?.value?.trim()||''; const fim = row.querySelector(`.fim_${loc}_${dia}`)?.value?.trim()||''; const prof = row.querySelector(`.prof_${loc}_${dia}`)?.value?.trim()||''; const tema = row.querySelector(`.tema_${loc}_${dia}`)?.value?.trim()||''; if (ini||fim||prof||tema) treinos.push({inicio:ini,fim:fim,professor:prof,tema:tema}); }); na[loc][dia] = treinos; }); });
-                    refAulas.set(na).then(() => { showToast('Cronograma atualizado!'); }).catch(() => { showToast('Erro ao salvar!','❌'); });
+            function abrirModalNovoUsuario() {
+                if (!ehAdmin()) return;
+                openModal('Novo Usuário', 'fas fa-user-plus', `
+                    <div class="form-group"><label>Login</label><input type="text" id="fLogin" placeholder="Ex: joao"></div>
+                    <div class="form-group"><label>Nome</label><input type="text" id="fNome" placeholder="Nome completo"></div>
+                    <div class="form-group"><label>Senha</label><input type="text" id="fSenha" value="34382098"></div>
+                    <div class="form-group"><label>Nível</label><select id="fNivel"><option value="padrao">Visualização (padrão)</option><option value="admin">Administrador</option></select></div>
+                `, content => {
+                    const login = content.querySelector('#fLogin').value.trim().toLowerCase();
+                    const nome = content.querySelector('#fNome').value.trim();
+                    const senha = content.querySelector('#fSenha').value.trim();
+                    const nivel = content.querySelector('#fNivel').value;
+                    if (!login || !nome) { showToast('Preencha login e nome!','⚠️'); return false; }
+                    if (USUARIOS[login] && USUARIOS_PADRAO[login]) { showToast('Login já existe!','⚠️'); return false; }
+                    refUsuarios.child(login).set({ senha, nivel, nome }).then(() => { showToast(`Usuário ${nome} criado!`); renderUsuarios(); });
                     return true;
                 });
-                rm(localidadeAtivaAulas);
-                LOCALIDADES.forEach(loc => { document.getElementById(`tabAula_${loc}`).addEventListener('click', function() { document.querySelectorAll('#tabAula_monteVerde,#tabAula_camanducaia').forEach(t=>t.classList.remove('active')); this.classList.add('active'); localidadeAtivaAulas = loc; rm(loc); }); });
             }
-            document.getElementById('btnEditarAulas')?.addEventListener('click', abrirModalAulas);
+            document.getElementById('btnAddUsuario')?.addEventListener('click', abrirModalNovoUsuario);
 
             // ========== AVISOS ==========
             function abrirModalAviso(){const u=db.avisos.length>0?db.avisos[db.avisos.length-1]:{titulo:'',texto:''};openModal('Editar Aviso','fas fa-bullhorn',`<div class="form-group"><label>Título</label><input type="text" id="fTitulo" value="${u.titulo}"></div><div class="form-group"><label>Mensagem</label><textarea id="fTexto">${u.texto}</textarea></div>`,content=>{const t=content.querySelector('#fTitulo').value.trim(),tx=content.querySelector('#fTexto').value.trim();if(!t){showToast('Digite um título!','⚠️');return false;}refAvisos.remove();refAvisos.push({titulo:t,texto:tx,data:new Date().toISOString().split('T')[0],hora:new Date().toTimeString().split(' ')[0].substring(0,5),autor:usuarioAtual.nome});showToast('Aviso atualizado!');return true;});}
@@ -481,14 +475,6 @@
             document.getElementById('searchAlunos')?.addEventListener('input', renderAlunos);
             document.getElementById('filterFaixa')?.addEventListener('change', renderAlunos);
             document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-            // Inicializa histórico com data padrão
-            setTimeout(() => {
-                if (document.getElementById('page-historico')?.classList.contains('active')) {
-                    renderHistorico('2026-01-01', new Date().toISOString().split('T')[0], '');
-                }
-            }, 500);
-
             navigateTo('dashboard');
         }
     </script>
