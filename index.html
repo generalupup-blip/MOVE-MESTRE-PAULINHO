@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
     <style>
-        :root { --green-dark:#1a3a2a;--green-mid:#2d5a3f;--green-leaf:#4a7c59;--green-light:#7ca982;--gold:#c9a96e;--gold-light:#e0d3b8;--bg:#f4f7f2;--card:#ffffff;--text:#1f2937;--text-light:#6b7280;--border:#dde4d9;--shadow:0 1px 3px rgba(0,0,0,.06);--shadow-lg:0 10px 25px rgba(0,0,0,.08);--radius:12px;--radius-sm:8px;--transition:0.2s ease;--font:'Segoe UI',system-ui,-apple-system,sans-serif;--sidebar-bg:#0f1f15;--sidebar-hover:#1a3322; }
+        :root { --green-dark:#1a3a2a;--green-mid:#2d5a3f;--green-leaf:#4a7c59;--green-light:#7ca982;--gold:#c9a96e;--gold-light:#e0d3b8;--bg:#f4f7f2;--card:#ffffff;--text:#1f2937;--text-light:#6b7280;--border:#dde4d9;--shadow:0 1px 3px rgba(0,0,0,.06);--shadow-lg:0 10px 25px rgba(0,0,0,.08);--radius:12px;--radius-sm:8px;--transition:0.2s ease;--font:'Segoe UI',system-ui,-apple-system,sans-serif;--sidebar-bg:#0f1f15;--sidebar-hover:#1a3322;--mv-color:#2d5a3f;--cam-color:#1e40af; }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
         .login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#0a1a0f 0%,#1a3a2a 100%);display:flex;align-items:center;justify-content:center;z-index:9999;}
@@ -28,17 +28,17 @@
         .login-error{color:#c0392b;font-size:.85rem;margin-top:10px;display:none;font-weight:600;}
         .app-container{display:none;min-height:100vh;}
         .app-container.visible{display:flex;}
-        .sidebar{width:250px;background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform var(--transition);box-shadow:2px 0 15px rgba(0,0,0,.3);}
+        .sidebar{width:270px;background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform var(--transition);box-shadow:2px 0 15px rgba(0,0,0,.3);overflow-y:auto;}
         .sidebar-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;color:#fff;}
         .sidebar-brand .brand-icon{width:36px;height:36px;background:var(--green-mid);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:var(--gold);}
         .sidebar-brand .brand-text{font-weight:800;font-size:.95rem;letter-spacing:.5px;line-height:1.2;}
         .sidebar-brand .brand-text span{display:block;font-size:.65rem;color:var(--green-light);font-weight:400;}
-        .sidebar-nav{flex:1;padding:12px 0;}
-        .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:13px 20px;color:#a3b8a8;text-decoration:none;transition:all var(--transition);font-weight:500;font-size:.95rem;border-left:3px solid transparent;cursor:pointer;}
+        .sidebar-nav{flex:1;padding:8px 0;}
+        .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:11px 20px;color:#a3b8a8;text-decoration:none;transition:all var(--transition);font-weight:500;font-size:.88rem;border-left:3px solid transparent;cursor:pointer;}
         .sidebar-nav a:hover,.sidebar-nav a.active{background:var(--sidebar-hover);color:#fff;border-left-color:var(--gold);}
         .sidebar-nav a i{width:20px;text-align:center;font-size:1.1rem;}
         .sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:.7rem;color:#6b7a70;text-align:center;}
-        .main-content{flex:1;margin-left:250px;display:flex;flex-direction:column;min-height:100vh;transition:margin var(--transition);}
+        .main-content{flex:1;margin-left:270px;display:flex;flex-direction:column;min-height:100vh;transition:margin var(--transition);}
         .topbar{background:var(--card);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);position:sticky;top:0;z-index:50;gap:12px;flex-wrap:wrap;}
         .topbar h1{font-size:1.2rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--green-dark);}
         .topbar h1 i{color:var(--gold);}
@@ -48,85 +48,74 @@
         .btn-primary{background:var(--green-mid);color:#fff;}
         .btn-primary:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.3);}
         .btn-sm{padding:6px 12px;font-size:.78rem;border-radius:6px;}
+        .btn-xs{padding:4px 8px;font-size:.68rem;border-radius:4px;}
         .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
-        .btn-ghost:hover{background:#f9fafb;}
         .btn-danger{background:#fff;color:#c0392b;border:1px solid #fecaca;}
         .btn-danger:hover{background:#fef2f2;}
         .btn-logout{background:#fff;color:#374151;border:1px solid #d1d5db;gap:6px;font-size:.85rem;padding:8px 14px;}
-        .btn-logout:hover{background:#f3f4f6;}
+        .btn-success{background:#10b981;color:#fff;}
+        .btn-success:hover{background:#059669;}
         .btn-aviso{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);color:#92400e;border:2px solid #f59e0b;font-weight:700;width:100%;justify-content:center;margin-bottom:16px;}
-        .btn-aviso:hover{background:linear-gradient(135deg,#fde68a 0%,#fcd34d 100%);transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,.3);}
         .page-content{padding:20px 24px;flex:1;padding-bottom:90px;}
         .page{display:none;animation:fadeIn .3s ease;}
         .page.active{display:block;}
         @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
         .aviso-card{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:2px solid #f59e0b;border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow);}
-        .aviso-card i{color:#d97706;font-size:1.4rem;margin-top:2px;}
-        .aviso-card .aviso-content{flex:1;}
-        .aviso-card .aviso-content h3{color:#92400e;font-size:.95rem;margin-bottom:4px;}
-        .aviso-card .aviso-content p{color:#78350f;font-size:.88rem;line-height:1.4;}
-        .aviso-card .aviso-data{font-size:.7rem;color:#a16207;margin-top:4px;}
-
-        /* ========== CALENDÁRIO DE AULAS ========== */
-        .calendario-section{margin-bottom:24px;}
-        .calendario-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
-        .calendario-header h2{font-size:1.4rem;font-weight:800;color:var(--green-dark);display:flex;align-items:center;gap:10px;}
-        .calendario-header h2 i{color:var(--gold);font-size:1.6rem;}
-        .calendario-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
-        .dia-card{background:var(--card);border-radius:var(--radius);padding:20px 16px;text-align:center;box-shadow:var(--shadow);border:2px solid var(--border);transition:all var(--transition);position:relative;overflow:hidden;cursor:default;}
-        .dia-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
-        .dia-card.hoje{border-color:var(--gold);background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);}
-        .dia-card.hoje::before{content:'HOJE';position:absolute;top:10px;right:10px;background:var(--gold);color:#fff;font-size:.6rem;font-weight:900;padding:3px 8px;border-radius:10px;letter-spacing:1px;}
-        .dia-nome{font-size:.9rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--green-dark);margin-bottom:12px;}
-        .dia-icone{font-size:2.5rem;margin-bottom:8px;}
-        .dia-professor{font-size:.85rem;font-weight:700;color:var(--green-mid);margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:6px;}
-        .dia-tema{font-size:.78rem;color:var(--text-light);line-height:1.3;margin-top:6px;font-style:italic;}
-        .dia-vazio{color:var(--text-light);font-size:.8rem;opacity:0.6;}
-        .btn-editar-aulas{background:var(--gold);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-weight:700;font-size:.8rem;cursor:pointer;transition:all var(--transition);}
-        .btn-editar-aulas:hover{background:#b8860b;transform:scale(1.05);}
-
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
-        .stat-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;transition:all var(--transition);border:1px solid var(--border);}
-        .stat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
-        .stat-icon{width:48px;height:48px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
-        .stat-icon.green{background:#e5f2e9;color:#2d5a3f;}
-        .stat-icon.gold{background:#f9f4e8;color:#c9a96e;}
-        .stat-info h3{font-size:1.6rem;font-weight:700;line-height:1;color:var(--green-dark);}
-        .stat-info p{font-size:.8rem;color:var(--text-light);margin-top:4px;}
-        .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
-        .chart-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
-        .chart-card h3{font-size:1rem;margin-bottom:16px;color:var(--text);font-weight:700;}
-        .chart-full{grid-column:1/-1;}
-        canvas{max-height:300px;}
+        .localidade-tabs{display:flex;gap:4px;background:#e5e7eb;border-radius:25px;padding:4px;margin-bottom:16px;width:fit-content;}
+        .localidade-tab{padding:8px 20px;border-radius:21px;font-weight:700;font-size:.85rem;cursor:pointer;border:none;transition:all var(--transition);}
+        .localidade-tab.monte-verde{color:var(--green-dark);}
+        .localidade-tab.camanducaia{color:#1e40af;}
+        .localidade-tab.active.monte-verde{background:var(--mv-color);color:#fff;box-shadow:0 2px 8px rgba(45,90,63,.3);}
+        .localidade-tab.active.camanducaia{background:var(--cam-color);color:#fff;box-shadow:0 2px 8px rgba(30,64,175,.3);}
+        .localidade-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:15px;font-size:.7rem;font-weight:700;}
+        .localidade-badge.mv{background:#e5f2e9;color:#2d5a3f;}
+        .localidade-badge.cam{background:#eff6ff;color:#1e40af;}
+        .presenca-container{max-width:1000px;margin:0 auto;}
+        .presenca-header{background:var(--card);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border:1px solid var(--border);}
+        .presenca-header h2{font-size:1.2rem;font-weight:800;color:var(--green-dark);}
+        .presenca-stats{display:flex;gap:10px;flex-wrap:wrap;}
+        .presenca-stat{padding:8px 14px;border-radius:20px;font-weight:700;font-size:.82rem;}
+        .presenca-stat.presentes{background:#e5f2e9;color:#2d5a3f;}
+        .presenca-stat.ausentes{background:#fef2f2;color:#c0392b;}
+        .presenca-stat.total{background:#f0f6f2;color:var(--green-dark);}
+        .horario-select{padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:.9rem;font-weight:600;background:#f9fafb;cursor:pointer;outline:none;min-width:140px;}
+        .horario-select:focus{border-color:var(--gold);}
+        .presenca-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+        .presenca-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:2px solid var(--border);transition:all var(--transition);cursor:pointer;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
+        .presenca-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+        .presenca-card.presente{border-color:#10b981;background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);}
+        .presenca-card.presente::after{content:'✓';position:absolute;top:8px;right:12px;font-size:1.2rem;font-weight:900;color:#10b981;}
+        .presenca-card .aluno-foto{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0;}
+        .presenca-card .aluno-info{flex:1;}
+        .presenca-card .aluno-nome{font-weight:700;font-size:.95rem;}
+        .presenca-card .aluno-faixa{font-size:.75rem;color:var(--text-light);}
+        .presenca-check{width:28px;height:28px;border-radius:50%;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .presenca-card.presente .presenca-check{background:#10b981;border-color:#10b981;color:#fff;}
+        .btn-salvar-presenca{width:100%;padding:14px;font-size:1rem;margin-top:20px;}
+        .historico-filtros{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;}
+        .historico-filtros input[type="date"],.historico-filtros input[type="text"]{padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:.85rem;}
+        .presenca-count{font-weight:900;font-size:1.1rem;}
+        .presenca-count.mv{color:var(--mv-color);}
+        .presenca-count.cam{color:var(--cam-color);}
         .table-wrapper{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
         .table-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--border);}
         .table-header h2{font-size:1.05rem;font-weight:700;color:var(--green-dark);}
-        .search-input{padding:8px 14px;border-radius:20px;border:1px solid var(--border);font-size:.85rem;width:150px;outline:none;}
-        .search-input:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(45,90,63,.1);}
-        .filter-select{padding:8px 14px;border-radius:20px;border:1px solid var(--border);font-size:.85rem;outline:none;background:#fff;cursor:pointer;}
-        .filter-select:focus{border-color:var(--green-mid);}
         table{width:100%;border-collapse:collapse;font-size:.88rem;}
         table th,table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);}
         table th{background:#f4f7f2;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-light);}
         table tbody tr:hover{background:#f9fafb;}
         .faixa-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-weight:700;font-size:.78rem;letter-spacing:.3px;}
-        .faixa-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.15);}
         .empty-state{text-align:center;padding:40px;color:var(--text-light);}
         .empty-state i{font-size:3rem;display:block;margin-bottom:12px;opacity:.5;}
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);animation:fadeIn .2s;}
-        .modal{background:#fff;border-radius:var(--radius);padding:24px 28px;width:90%;max-width:550px;box-shadow:var(--shadow-lg);animation:slideUp .25s;max-height:85vh;overflow-y:auto;}
+        .modal{background:#fff;border-radius:var(--radius);padding:24px 28px;width:90%;max-width:600px;box-shadow:var(--shadow-lg);animation:slideUp .25s;max-height:85vh;overflow-y:auto;}
         @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
         .modal h2{font-size:1.2rem;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--green-dark);}
-        .modal h2 i{color:var(--gold);}
         .form-group{margin-bottom:14px;}
         .form-group label{display:block;font-weight:600;font-size:.82rem;margin-bottom:5px;}
         .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.9rem;font-family:var(--font);background:#fafbfc;}
-        .form-group textarea{resize:vertical;min-height:50px;}
         .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(45,90,63,.08);background:#fff;}
         .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
-        .aulas-grid-modal{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-        .aula-mini-card{background:#f4f7f2;border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);}
-        .aula-mini-card .dia-label{font-weight:800;font-size:.75rem;color:var(--green-dark);margin-bottom:6px;text-transform:uppercase;}
         .toast{position:fixed;bottom:90px;right:20px;background:#1f2937;color:#fff;padding:12px 20px;border-radius:25px;font-weight:600;font-size:.85rem;z-index:300;box-shadow:var(--shadow-lg);animation:slideUpToast .3s,fadeOutToast .3s 2.5s forwards;display:flex;align-items:center;gap:8px;}
         @keyframes slideUpToast{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
         @keyframes fadeOutToast{to{opacity:0;transform:translateY(20px);}}
@@ -136,11 +125,10 @@
         .bottom-nav a.active{color:var(--green-mid);}
         .bottom-nav a i{font-size:1.2rem;}
         .hamburger{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
-        .filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-
-        .icone-dia{font-size:2rem;}
+        .btn-excluir-presenca{background:#fee2e2;color:#c0392b;border:none;padding:4px 10px;border-radius:6px;font-size:.7rem;cursor:pointer;font-weight:700;}
+        .btn-excluir-presenca:hover{background:#fecaca;}
         @media(max-width:768px){
-            .sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.charts-grid{grid-template-columns:1fr;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.calendario-grid{grid-template-columns:repeat(2,1fr);gap:8px;}.dia-card{padding:14px 10px;}.dia-icone{font-size:1.8rem;}.dia-nome{font-size:.75rem;}.dia-professor{font-size:.72rem;}.dia-tema{font-size:.7rem;}.stats-grid{grid-template-columns:repeat(2,1fr);gap:8px;}.stat-card{padding:12px 14px;gap:8px;}.stat-icon{width:36px;height:36px;font-size:1rem;}.stat-info h3{font-size:1.2rem;}table th,table td{padding:8px 6px;font-size:.75rem;}.search-input{width:120px;}.filter-row{flex-direction:column;align-items:stretch;}.aulas-grid-modal{grid-template-columns:1fr;}
+            .sidebar{transform:translateX(-100%);width:270px;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.presenca-grid{grid-template-columns:1fr;}.presenca-header{flex-direction:column;align-items:flex-start;}.historico-filtros{flex-direction:column;align-items:stretch;}table th,table td{padding:8px 6px;font-size:.75rem;}
         }
     </style>
 </head>
@@ -161,6 +149,8 @@
             <div class="sidebar-brand"><div class="brand-icon">GM</div><div class="brand-text">GREEN MOUNTAIN<span>Jiu‑Jitsu</span></div></div>
             <nav class="sidebar-nav">
                 <a data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
+                <a data-page="presenca"><i class="fas fa-clipboard-check"></i> Marcar Presença</a>
+                <a data-page="historico"><i class="fas fa-history"></i> Histórico de Presenças</a>
                 <a data-page="aulas"><i class="fas fa-calendar-alt"></i> Aulas</a>
                 <a data-page="alunos"><i class="fas fa-users"></i> Alunos</a>
                 <a data-page="graduacoes"><i class="fas fa-graduation-cap"></i> Graduações</a>
@@ -182,70 +172,88 @@
                 <div class="page active" id="page-dashboard">
                     <div id="avisoContainer"></div>
                     <div class="stats-grid" id="statsGrid"></div>
-                    <div class="charts-grid">
-                        <div class="chart-card"><h3><i class="fas fa-chart-bar"></i> Alunos por Faixa</h3><canvas id="chartFaixas"></canvas></div>
-                        <div class="chart-card"><h3><i class="fas fa-chart-pie"></i> Medalhas</h3><canvas id="chartMedalhas"></canvas></div>
-                        <div class="chart-card chart-full"><h3><i class="fas fa-medal"></i> Top Alunos</h3><canvas id="chartTopAlunos"></canvas></div>
-                    </div>
+                    <div class="charts-grid"><div class="chart-card"><h3><i class="fas fa-chart-bar"></i> Alunos por Faixa</h3><canvas id="chartFaixas"></canvas></div><div class="chart-card"><h3><i class="fas fa-chart-pie"></i> Medalhas</h3><canvas id="chartMedalhas"></canvas></div><div class="chart-card chart-full"><h3><i class="fas fa-medal"></i> Top Alunos</h3><canvas id="chartTopAlunos"></canvas></div></div>
                 </div>
-                <!-- AULAS (NOVO) -->
-                <div class="page" id="page-aulas">
-                    <div class="calendario-section">
-                        <div class="calendario-header">
-                            <h2><i class="fas fa-calendar-alt"></i> Cronograma Semanal</h2>
-                            <button class="btn-editar-aulas" id="btnEditarAulas"><i class="fas fa-edit"></i> Editar Aulas</button>
-                        </div>
-                        <div class="calendario-grid" id="calendarioGrid"></div>
-                    </div>
-                </div>
-                <!-- ALUNOS -->
-                <div class="page" id="page-alunos">
-                    <div class="table-wrapper">
-                        <div class="table-header">
-                            <h2><i class="fas fa-users"></i> Todos os Alunos</h2>
-                            <div class="filter-row">
-                                <input type="text" class="search-input" id="searchAlunos" placeholder="🔍 Buscar...">
-                                <select class="filter-select" id="filterFaixa">
-                                    <option value="todas">Todas as Faixas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option>
-                                </select>
-                                <button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button>
+                <!-- MARCAR PRESENÇA -->
+                <div class="page" id="page-presenca">
+                    <div class="presenca-container">
+                        <div class="presenca-header">
+                            <h2><i class="fas fa-clipboard-check"></i> Marcar Presença</h2>
+                            <div class="localidade-tabs" id="localidadeTabsPresenca">
+                                <button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ Monte Verde</button>
+                                <button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ Camanducaia</button>
                             </div>
+                            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                                <label style="font-weight:600;font-size:.85rem;">Data:</label>
+                                <input type="date" id="dataPresenca" style="padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);">
+                                <label style="font-weight:600;font-size:.85rem;">Horário:</label>
+                                <select class="horario-select" id="horarioPresenca">
+                                    <option value="manha">🌅 Manhã (07:00)</option>
+                                    <option value="tarde">☀️ Tarde (14:00)</option>
+                                    <option value="noite">🌙 Noite (19:00)</option>
+                                </select>
+                            </div>
+                            <div class="presenca-stats" id="presencaStats"><span class="presenca-stat presentes">✅ 0 presentes</span><span class="presenca-stat ausentes">❌ 0 ausentes</span><span class="presenca-stat total">👥 0 total</span></div>
                         </div>
-                        <div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Medalhas</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div>
-                        <div class="empty-state" id="emptyAlunos" style="display:none;"><i class="fas fa-user-slash"></i><p>Nenhum aluno encontrado</p></div>
+                        <div class="presenca-grid" id="presencaGrid"></div>
+                        <button class="btn btn-success btn-salvar-presenca" id="btnSalvarPresenca"><i class="fas fa-save"></i> Salvar Lista de Presença</button>
                     </div>
                 </div>
-                <!-- GRADUAÇÕES -->
-                <div class="page" id="page-graduacoes"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-graduation-cap"></i> Histórico de Graduações</h2><button class="btn btn-primary btn-sm" id="btnAddGraduacao"><i class="fas fa-plus"></i> Registrar</button></div><div style="overflow-x:auto;"><table><thead><tr><th>Aluno</th><th>Data</th><th>De (Faixa·Grau)</th><th>Para (Faixa·Grau)</th></tr></thead><tbody id="tbodyGraduacoes"></tbody></table></div><div class="empty-state" id="emptyGraduacoes" style="display:none;"><i class="fas fa-scroll"></i><p>Nenhuma graduação registrada</p></div></div></div>
-                <!-- CAMPEONATOS -->
+                <!-- HISTÓRICO DE PRESENÇAS -->
+                <div class="page" id="page-historico">
+                    <div class="presenca-container">
+                        <div class="presenca-header"><h2><i class="fas fa-history"></i> Histórico de Presenças</h2></div>
+                        <div class="historico-filtros">
+                            <label style="font-weight:600;">De:</label><input type="date" id="histDataInicio">
+                            <label style="font-weight:600;">Até:</label><input type="date" id="histDataFim">
+                            <label style="font-weight:600;">Aluno:</label><input type="text" id="histBuscaAluno" placeholder="🔍 Nome do aluno..." style="min-width:180px;">
+                            <button class="btn btn-primary btn-sm" id="btnFiltrarHistorico"><i class="fas fa-filter"></i> Filtrar</button>
+                            <button class="btn btn-ghost btn-sm" id="btnLimparHistorico"><i class="fas fa-times"></i> Limpar</button>
+                        </div>
+                        <div class="table-wrapper">
+                            <div style="overflow-x:auto;">
+                                <table>
+                                    <thead><tr><th>Aluno</th><th>Faixa</th><th>🏔️ Monte Verde</th><th>🏙️ Camanducaia</th><th>Total</th><th>Ações</th></tr></thead>
+                                    <tbody id="tbodyHistorico"></tbody>
+                                </table>
+                            </div>
+                            <div class="empty-state" id="emptyHistorico" style="display:none;"><i class="fas fa-search"></i><p>Nenhum dado no período selecionado</p></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- AULAS / ALUNOS / GRADUAÇÕES / CAMPEONATOS (compactados) -->
+                <div class="page" id="page-aulas"><div class="calendario-section"><div class="presenca-header"><h2><i class="fas fa-calendar-alt"></i> Cronograma Semanal</h2><button class="btn btn-primary btn-sm" id="btnEditarAulas"><i class="fas fa-edit"></i> Editar Aulas</button></div><div class="localidade-tabs" id="localidadeTabsAulas"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ Monte Verde</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ Camanducaia</button></div><div class="calendario-grid" id="calendarioGrid"></div></div></div>
+                <div class="page" id="page-alunos"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-users"></i> Todos os Alunos</h2><div style="display:flex;gap:8px;"><input type="text" class="search-input" id="searchAlunos" placeholder="🔍 Buscar..." style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);"><select class="filter-select" id="filterFaixa" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);"><option value="todas">Todas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option></select><button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button></div></div><div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Medalhas</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div><div class="empty-state" id="emptyAlunos" style="display:none;"><i class="fas fa-user-slash"></i><p>Nenhum aluno</p></div></div></div>
+                <div class="page" id="page-graduacoes"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-graduation-cap"></i> Histórico de Graduações</h2><button class="btn btn-primary btn-sm" id="btnAddGraduacao"><i class="fas fa-plus"></i> Registrar</button></div><div style="overflow-x:auto;"><table><thead><tr><th>Aluno</th><th>Data</th><th>De</th><th>Para</th></tr></thead><tbody id="tbodyGraduacoes"></tbody></table></div><div class="empty-state" id="emptyGraduacoes" style="display:none;"><i class="fas fa-scroll"></i><p>Nenhuma graduação</p></div></div></div>
                 <div class="page" id="page-campeonatos"><div class="table-wrapper"><div class="table-header"><h2><i class="fas fa-trophy"></i> Campeonatos</h2><button class="btn btn-primary btn-sm" id="btnAddCampeonato"><i class="fas fa-plus"></i> Registrar</button></div><div style="overflow-x:auto;"><table><thead><tr><th>Aluno</th><th>Campeonato</th><th>Data</th><th>Medalha</th><th>Ações</th></tr></thead><tbody id="tbodyCampeonatos"></tbody></table></div><div class="empty-state" id="emptyCampeonatos" style="display:none;"><i class="fas fa-sad-tear"></i><p>Nenhum campeonato</p></div></div></div>
             </div>
         </div>
     </div>
-    <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-inner"><a data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i> Dash</a><a data-page="aulas"><i class="fas fa-calendar-alt"></i> Aulas</a><a data-page="alunos"><i class="fas fa-users"></i> Alunos</a><a data-page="graduacoes"><i class="fas fa-graduation-cap"></i> Grad</a><a data-page="campeonatos"><i class="fas fa-trophy"></i> Camp</a></div></nav>
+    <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-inner"><a data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i> Dash</a><a data-page="presenca"><i class="fas fa-clipboard-check"></i> Presença</a><a data-page="historico"><i class="fas fa-history"></i> Hist</a><a data-page="aulas"><i class="fas fa-calendar-alt"></i> Aulas</a><a data-page="alunos"><i class="fas fa-users"></i> Alunos</a><a data-page="campeonatos"><i class="fas fa-trophy"></i> Camp</a></div></nav>
     <div class="modal-overlay" id="modalOverlay" style="display:none;"><div class="modal" id="modalContent"></div></div>
     <div id="toastContainer"></div>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q",
-            authDomain: "academia-move.firebaseapp.com",
-            databaseURL: "https://academia-move-default-rtdb.firebaseio.com",
-            projectId: "academia-move",
-            storageBucket: "academia-move.firebasestorage.app",
-            messagingSenderId: "329888597951",
-            appId: "1:329888597951:web:ac19b928a92123d76f430a"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q", authDomain: "academia-move.firebaseapp.com", databaseURL: "https://academia-move-default-rtdb.firebaseio.com", projectId: "academia-move", storageBucket: "academia-move.firebasestorage.app", messagingSenderId: "329888597951", appId: "1:329888597951:web:ac19b928a92123d76f430a" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        const USUARIOS = {
-            'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' },
-            'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' },
-            'lucas': { senha: '34382098', nivel: 'padrao', nome: 'Lucas' },
-            'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' }
-        };
+        const USUARIOS = { 'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' }, 'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' }, 'lucas': { senha: '34382098', nivel: 'padrao', nome: 'Lucas' }, 'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' } };
+        const LOCALIDADES = ['monteVerde', 'camanducaia'];
+        const LOCALIDADE_LABELS = { monteVerde: 'Monte Verde', camanducaia: 'Camanducaia' };
+        const LOCALIDADE_ICONS = { monteVerde: '🏔️', camanducaia: '🏙️' };
+        const HORARIOS = { manha: '🌅 Manhã (07:00)', tarde: '☀️ Tarde (14:00)', noite: '🌙 Noite (19:00)' };
+        const FAIXAS = ['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Preta'];
+        const FAIXA_CORES = {'Branca':'#e0e0e0','Cinza':'#9e9e9e','Amarela':'#fdd835','Laranja':'#fb8c00','Verde':'#2e7d32','Azul':'#1e88e5','Roxa':'#7b1fa2','Marrom':'#6d4c41','Preta':'#212121'};
+        const MEDALHAS = ['Ouro','Prata','Bronze','Participação'];
+        const MEDALHA_ICONS = {Ouro:'🥇',Prata:'🥈',Bronze:'🥉',Participação:'🏅'};
+        const DIAS = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+        const DIAS_NOMES = {segunda:'Segunda-feira',terca:'Terça-feira',quarta:'Quarta-feira',quinta:'Quinta-feira',sexta:'Sexta-feira',sabado:'Sábado',domingo:'Domingo'};
+        const DIAS_ICONES = {segunda:'🥋',terca:'💪',quarta:'🥋',quinta:'💪',sexta:'🥋',sabado:'🏆',domingo:'🧘'};
+        const ICONES_TEMA = {raspagem:'🔴',guarda:'🟢',passagem:'🔵',finalizacao:'⚡',competicao:'🏆',defesa:'🛡️',drill:'🔄',alongamento:'🧘',livre:'🤼'};
 
         let usuarioAtual = null;
+        let localidadeAtivaPresenca = 'monteVerde';
+        let localidadeAtivaAulas = 'monteVerde';
         const loginOverlay = document.getElementById('loginOverlay');
         const appContainer = document.getElementById('appContainer');
         const loginInput = document.getElementById('loginInput');
@@ -254,18 +262,8 @@
         const btnEntrar = document.getElementById('btnEntrar');
         const btnLogout = document.getElementById('btnLogout');
 
-        function verificarLogin() {
-            const saved = sessionStorage.getItem('gm_user');
-            if (saved) { usuarioAtual = JSON.parse(saved); loginOverlay.style.display = 'none'; appContainer.classList.add('visible'); return true; }
-            return false;
-        }
-        function realizarLogin() {
-            const login = loginInput.value.trim().toLowerCase();
-            const senha = senhaInput.value.trim();
-            const user = USUARIOS[login];
-            if (user && user.senha === senha) { usuarioAtual = { login, ...user }; sessionStorage.setItem('gm_user', JSON.stringify(usuarioAtual)); loginOverlay.style.display = 'none'; appContainer.classList.add('visible'); loginError.style.display = 'none'; initApp(); }
-            else { loginError.style.display = 'block'; }
-        }
+        function verificarLogin() { const saved = sessionStorage.getItem('gm_user'); if (saved) { usuarioAtual = JSON.parse(saved); loginOverlay.style.display = 'none'; appContainer.classList.add('visible'); return true; } return false; }
+        function realizarLogin() { const login = loginInput.value.trim().toLowerCase(); const senha = senhaInput.value.trim(); const user = USUARIOS[login]; if (user && user.senha === senha) { usuarioAtual = { login, ...user }; sessionStorage.setItem('gm_user', JSON.stringify(usuarioAtual)); loginOverlay.style.display = 'none'; appContainer.classList.add('visible'); loginError.style.display = 'none'; initApp(); } else { loginError.style.display = 'block'; } }
         function logout() { sessionStorage.removeItem('gm_user'); location.reload(); }
         btnEntrar.addEventListener('click', realizarLogin);
         senhaInput.addEventListener('keypress', e => { if (e.key === 'Enter') realizarLogin(); });
@@ -281,22 +279,7 @@
             document.getElementById('userName').textContent = usuarioAtual.nome;
             document.getElementById('userNivel').textContent = ehAdmin() ? 'Admin' : 'Visualização';
             if (ehAdmin()) document.getElementById('userBadge').classList.add('admin');
-            if (!ehAdmin()) {
-                document.getElementById('btnAddAlunoTop').style.display = 'none';
-                document.getElementById('btnAddAluno').style.display = 'none';
-                document.getElementById('btnAddGraduacao').style.display = 'none';
-                document.getElementById('btnAddCampeonato').style.display = 'none';
-                document.getElementById('btnEditarAulas').style.display = 'none';
-            }
-
-            const FAIXAS = ['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Preta'];
-            const FAIXA_CORES = {'Branca':'#f5f5f5','Cinza':'#9e9e9e','Amarela':'#fdd835','Laranja':'#fb8c00','Verde':'#2e7d32','Azul':'#1e88e5','Roxa':'#7b1fa2','Marrom':'#6d4c41','Preta':'#212121'};
-            const MEDALHAS = ['Ouro','Prata','Bronze','Participação'];
-            const MEDALHA_ICONS = {Ouro:'🥇',Prata:'🥈',Bronze:'🥉',Participação:'🏅'};
-            const DIAS = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
-            const DIAS_NOMES = {segunda:'Segunda-feira',terca:'Terça-feira',quarta:'Quarta-feira',quinta:'Quinta-feira',sexta:'Sexta-feira',sabado:'Sábado',domingo:'Domingo'};
-            const DIAS_ICONES = {segunda:'🥋',terca:'💪',quarta:'🥋',quinta:'💪',sexta:'🥋',sabado:'🏆',domingo:'🧘'};
-            const ICONES_TEMA = {raspagem:'🔴',guarda:'🟢',passagem:'🔵',finalizacao:'⚡',competicao:'🏆',defesa:'🛡️',drill:'🔄',alongamento:'🧘',livre:'🤼'};
+            if (!ehAdmin()) { document.getElementById('btnAddAlunoTop').style.display = 'none'; document.getElementById('btnAddAluno').style.display = 'none'; document.getElementById('btnAddGraduacao').style.display = 'none'; document.getElementById('btnAddCampeonato').style.display = 'none'; document.getElementById('btnEditarAulas').style.display = 'none'; }
 
             const refAlunos = database.ref('alunos');
             const refGraduacoes = database.ref('graduacoes');
@@ -304,7 +287,8 @@
             const refNextId = database.ref('nextId');
             const refAvisos = database.ref('avisos');
             const refAulas = database.ref('aulas');
-            let db = {alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisos:[],aulas:{}};
+            const refPresencas = database.ref('presencas');
+            let db = {alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisos:[],aulas:{},presencas:{}};
 
             refAlunos.on('value', snap => { db.alunos = snap.val() ? Object.values(snap.val()) : []; renderAlunos(); atualizarDashboard(); });
             refGraduacoes.on('value', snap => { db.graduacoes = snap.val() ? Object.values(snap.val()) : []; renderGrad(); });
@@ -312,6 +296,7 @@
             refNextId.on('value', snap => { db.nextId = snap.val() || 1; });
             refAvisos.on('value', snap => { db.avisos = snap.val() ? Object.values(snap.val()) : []; renderAvisos(); });
             refAulas.on('value', snap => { db.aulas = snap.val() || {}; renderAulas(); });
+            refPresencas.on('value', snap => { db.presencas = snap.val() || {}; renderPresenca(); });
 
             function gerarId() { const id = db.nextId; refNextId.set(id + 1); return id; }
             function getAluno(id) { return db.alunos.find(a => a.id == id); }
@@ -333,6 +318,8 @@
                 document.querySelector(`.sidebar-nav a[data-page="${page}"]`)?.classList.add('active');
                 document.querySelector(`.bottom-nav a[data-page="${page}"]`)?.classList.add('active');
                 if(page==='dashboard') { renderAvisos(); atualizarDashboard(); }
+                if(page==='presenca') renderPresenca();
+                if(page==='historico') renderHistorico();
                 if(page==='aulas') renderAulas();
                 if(page==='alunos')renderAlunos();
                 if(page==='graduacoes')renderGrad();
@@ -343,108 +330,232 @@
             document.querySelectorAll('.bottom-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.getElementById('hamburgerBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
 
-            // ========== RENDER AULAS ==========
+            // ========== LOCALIDADE TABS ==========
+            function setupLocalidadeTabs(containerId, onChange, activeLocal) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                container.querySelectorAll('.localidade-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.local === activeLocal);
+                    tab.addEventListener('click', function() {
+                        container.querySelectorAll('.localidade-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        onChange(this.dataset.local);
+                    });
+                });
+            }
+            setupLocalidadeTabs('localidadeTabsPresenca', (loc) => { localidadeAtivaPresenca = loc; renderPresenca(); }, localidadeAtivaPresenca);
+            setupLocalidadeTabs('localidadeTabsAulas', (loc) => { localidadeAtivaAulas = loc; renderAulas(); }, localidadeAtivaAulas);
+
+            // ========== PRESENÇA (MARCAR) COM HORÁRIO ==========
+            function getDataSelecionada() { const input = document.getElementById('dataPresenca'); return input ? input.value : new Date().toISOString().split('T')[0]; }
+            function getHorarioSelecionado() { const sel = document.getElementById('horarioPresenca'); return sel ? sel.value : 'noite'; }
+            function setDataHoje() { const input = document.getElementById('dataPresenca'); if (input && !input.value) input.value = new Date().toISOString().split('T')[0]; }
+            function renderPresenca() {
+                setDataHoje();
+                const data = getDataSelecionada();
+                const horario = getHorarioSelecionado();
+                const loc = localidadeAtivaPresenca;
+                // Estrutura: presencas/localidade/data/horario/alunoId = true
+                const presencasLoc = (db.presencas[loc] || {})[data] || {};
+                const presencasHorario = presencasLoc[horario] || {};
+                const grid = document.getElementById('presencaGrid');
+                const statsDiv = document.getElementById('presencaStats');
+                if (!grid) return;
+                if (db.alunos.length === 0) { grid.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>Cadastre alunos primeiro</p></div>'; return; }
+                let presentes = 0;
+                grid.innerHTML = db.alunos.map(a => {
+                    const presente = presencasHorario[a.id] === true;
+                    if (presente) presentes++;
+                    const iniciais = a.nome.split(' ').map(p=>p[0]).join('').substring(0,2).toUpperCase();
+                    const corBg = corFaixa(a.faixa);
+                    return `<div class="presenca-card ${presente ? 'presente' : ''}" data-id="${a.id}"><div class="aluno-foto" style="background:${corBg};color:${a.faixa=='Branca'||a.faixa=='Amarela'?'#333':'#fff'}">${iniciais}</div><div class="aluno-info"><div class="aluno-nome">${a.nome}</div><div class="aluno-faixa">${badgeHTML(a.faixa, a.grau)}</div></div><div class="presenca-check"></div></div>`;
+                }).join('');
+                const ausentes = db.alunos.length - presentes;
+                statsDiv.innerHTML = `<span class="presenca-stat presentes">✅ ${presentes} presentes</span><span class="presenca-stat ausentes">❌ ${ausentes} ausentes</span><span class="presenca-stat total">👥 ${db.alunos.length} total · ${LOCALIDADE_ICONS[loc]} ${HORARIOS[horario]}</span>`;
+                grid.querySelectorAll('.presenca-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        this.classList.toggle('presente');
+                        const id = this.dataset.id;
+                        const data = getDataSelecionada();
+                        const horario = getHorarioSelecionado();
+                        const loc = localidadeAtivaPresenca;
+                        if (!db.presencas[loc]) db.presencas[loc] = {};
+                        if (!db.presencas[loc][data]) db.presencas[loc][data] = {};
+                        if (!db.presencas[loc][data][horario]) db.presencas[loc][data][horario] = {};
+                        db.presencas[loc][data][horario][id] = this.classList.contains('presente');
+                        const presentes = grid.querySelectorAll('.presenca-card.presente').length;
+                        const ausentes = db.alunos.length - presentes;
+                        statsDiv.innerHTML = `<span class="presenca-stat presentes">✅ ${presentes} presentes</span><span class="presenca-stat ausentes">❌ ${ausentes} ausentes</span><span class="presenca-stat total">👥 ${db.alunos.length} total · ${LOCALIDADE_ICONS[loc]} ${HORARIOS[horario]}</span>`;
+                    });
+                });
+            }
+            function salvarPresenca() {
+                const data = getDataSelecionada();
+                const horario = getHorarioSelecionado();
+                const loc = localidadeAtivaPresenca;
+                if (!data) { showToast('Selecione uma data!','⚠️'); return; }
+                if (!db.presencas[loc]) db.presencas[loc] = {};
+                if (!db.presencas[loc][data]) db.presencas[loc][data] = {};
+                refPresencas.child(loc).child(data).child(horario).set(db.presencas[loc][data][horario] || {});
+                showToast(`Presença de ${formatData(data)} (${HORARIOS[horario]}) em ${LOCALIDADE_LABELS[loc]} salva!`);
+            }
+            document.getElementById('dataPresenca')?.addEventListener('change', renderPresenca);
+            document.getElementById('horarioPresenca')?.addEventListener('change', renderPresenca);
+            document.getElementById('btnSalvarPresenca')?.addEventListener('click', salvarPresenca);
+
+            // ========== HISTÓRICO DE PRESENÇAS (COM EXCLUSÃO E FILTRO POR ALUNO) ==========
+            function renderHistorico(dataInicio, dataFim, buscaAluno) {
+                const tbody = document.getElementById('tbodyHistorico');
+                const empty = document.getElementById('emptyHistorico');
+                if (!tbody) return;
+                if (!dataInicio) dataInicio = '2026-01-01';
+                if (!dataFim) dataFim = new Date().toISOString().split('T')[0];
+                
+                let alunosFiltrados = db.alunos;
+                if (buscaAluno) {
+                    const termo = buscaAluno.toLowerCase();
+                    alunosFiltrados = alunosFiltrados.filter(a => a.nome.toLowerCase().includes(termo));
+                }
+
+                const resultado = alunosFiltrados.map(a => {
+                    let mv = 0, cam = 0;
+                    const detalhes = []; // Para exclusão: { loc, data, horario }
+                    LOCALIDADES.forEach(loc => {
+                        const locData = db.presencas[loc] || {};
+                        Object.keys(locData).forEach(data => {
+                            if (data >= dataInicio && data <= dataFim) {
+                                const horarios = locData[data] || {};
+                                Object.keys(horarios).forEach(horario => {
+                                    if (horarios[horario][a.id] === true) {
+                                        if (loc === 'monteVerde') mv++;
+                                        else cam++;
+                                        detalhes.push({ loc, data, horario });
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    return { ...a, mv, cam, total: mv + cam, detalhes };
+                }).filter(a => a.total > 0).sort((a, b) => b.total - a.total);
+
+                if (resultado.length === 0) {
+                    tbody.innerHTML = '';
+                    empty.style.display = 'block';
+                } else {
+                    empty.style.display = 'none';
+                    tbody.innerHTML = resultado.map(a => `
+                        <tr>
+                            <td><strong>${a.nome}</strong></td>
+                            <td>${badgeHTML(a.faixa, a.grau)}</td>
+                            <td><span class="presenca-count mv">${a.mv} dias</span></td>
+                            <td><span class="presenca-count cam">${a.cam} dias</span></td>
+                            <td><strong>${a.total} dias</strong></td>
+                            <td>
+                                ${ehAdmin() ? `<button class="btn-excluir-presenca" data-alunoid="${a.id}" data-detalhes='${JSON.stringify(a.detalhes).replace(/'/g,"&#39;")}'>🗑️ Limpar presenças</button>` : '<span style="font-size:.7rem;color:var(--text-light);">-</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                    if (ehAdmin()) {
+                        tbody.querySelectorAll('.btn-excluir-presenca').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const alunoId = parseInt(this.dataset.alunoid);
+                                const detalhes = JSON.parse(this.dataset.detalhes);
+                                if (confirm(`Remover TODAS as presenças deste aluno no período? (${detalhes.length} registros)`)) {
+                                    const updates = {};
+                                    detalhes.forEach(d => {
+                                        const path = `presencas/${d.loc}/${d.data}/${d.horario}/${alunoId}`;
+                                        updates[path] = null;
+                                    });
+                                    database.ref().update(updates).then(() => {
+                                        showToast('Presenças removidas!');
+                                        renderHistorico(dataInicio, dataFim, buscaAluno);
+                                    });
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+            document.getElementById('btnFiltrarHistorico')?.addEventListener('click', () => {
+                const ini = document.getElementById('histDataInicio').value || '2026-01-01';
+                const fim = document.getElementById('histDataFim').value || new Date().toISOString().split('T')[0];
+                const busca = document.getElementById('histBuscaAluno').value.trim();
+                renderHistorico(ini, fim, busca);
+            });
+            document.getElementById('btnLimparHistorico')?.addEventListener('click', () => {
+                document.getElementById('histDataInicio').value = '2026-01-01';
+                document.getElementById('histDataFim').value = new Date().toISOString().split('T')[0];
+                document.getElementById('histBuscaAluno').value = '';
+                renderHistorico('2026-01-01', new Date().toISOString().split('T')[0], '');
+            });
+            document.getElementById('histDataInicio').value = '2026-01-01';
+            document.getElementById('histDataFim').value = new Date().toISOString().split('T')[0];
+
+            // ========== AULAS ==========
             function renderAulas() {
                 const grid = document.getElementById('calendarioGrid');
                 if (!grid) return;
+                const loc = localidadeAtivaAulas;
+                const aulasLoc = db.aulas[loc] || {};
                 const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase().replace('-feira','');
                 grid.innerHTML = DIAS.map(dia => {
-                    const aula = db.aulas[dia] || { professor: '', tema: '' };
+                    const aula = aulasLoc[dia] || { professor: '', tema: '' };
                     const ehHoje = dia === hoje || (hoje === 'terça' && dia === 'terca') || (hoje === 'quarta' && dia === 'quarta') || (hoje === 'quinta' && dia === 'quinta') || (hoje === 'sexta' && dia === 'sexta') || (hoje === 'sábado' && dia === 'sabado');
                     const iconeTema = Object.keys(ICONES_TEMA).find(k => aula.tema && aula.tema.toLowerCase().includes(k));
-                    return `
-                        <div class="dia-card ${ehHoje ? 'hoje' : ''}">
-                            <div class="dia-nome">${DIAS_NOMES[dia]}</div>
-                            <div class="dia-icone">${iconeTema ? ICONES_TEMA[iconeTema] : DIAS_ICONES[dia]}</div>
-                            <div class="dia-professor">
-                                <i class="fas fa-user-tie"></i>
-                                ${aula.professor || '<span class="dia-vazio">Sem professor</span>'}
-                            </div>
-                            <div class="dia-tema">
-                                <i class="fas fa-bullseye"></i>
-                                ${aula.tema || '<span class="dia-vazio">Tema a definir</span>'}
-                            </div>
-                        </div>
-                    `;
+                    return `<div class="dia-card ${ehHoje ? 'hoje' : ''}"><div class="dia-nome">${DIAS_NOMES[dia]}</div><div class="dia-icone">${iconeTema ? ICONES_TEMA[iconeTema] : DIAS_ICONES[dia]}</div><div class="dia-professor"><i class="fas fa-user-tie"></i>${aula.professor || 'Sem professor'}</div><div class="dia-tema"><i class="fas fa-bullseye"></i>${aula.tema || 'Tema a definir'}</div></div>`;
                 }).join('');
             }
-
             function abrirModalAulas() {
                 if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
-                let body = '<div class="aulas-grid-modal">';
-                DIAS.forEach(dia => {
-                    const a = db.aulas[dia] || { professor: '', tema: '' };
-                    body += `
-                        <div class="aula-mini-card">
-                            <div class="dia-label">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</div>
-                            <div class="form-group"><label>Professor</label><input type="text" id="prof_${dia}" value="${a.professor}" placeholder="Nome do professor"></div>
-                            <div class="form-group"><label>Tema da aula</label><input type="text" id="tema_${dia}" value="${a.tema}" placeholder="Ex: Raspagem, Guarda, etc."></div>
-                        </div>
-                    `;
-                });
-                body += '</div>';
-                openModal('Editar Cronograma de Aulas', 'fas fa-calendar-alt', body, content => {
-                    const novasAulas = {};
+                let body = '<div style="display:flex;gap:8px;margin-bottom:16px;">';
+                LOCALIDADES.forEach(loc => { body += `<button class="localidade-tab ${loc==='monteVerde'?'monte-verde':'camanducaia'} ${loc===localidadeAtivaAulas?'active':''}" id="tabAula_${loc}">${LOCALIDADE_ICONS[loc]} ${LOCALIDADE_LABELS[loc]}</button>`; });
+                body += '</div><div id="aulasModalContent"></div>';
+                function renderModalAulas(loc) {
+                    const aulasLoc = db.aulas[loc] || {};
+                    let html = '<div class="aulas-grid-modal">';
                     DIAS.forEach(dia => {
-                        novasAulas[dia] = {
-                            professor: content.querySelector(`#prof_${dia}`).value.trim(),
-                            tema: content.querySelector(`#tema_${dia}`).value.trim()
-                        };
+                        const a = aulasLoc[dia] || { professor: '', tema: '' };
+                        html += `<div class="aula-mini-card"><div class="dia-label">${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</div><div class="form-group"><label>Professor</label><input type="text" id="prof_${loc}_${dia}" value="${a.professor}"></div><div class="form-group"><label>Tema</label><input type="text" id="tema_${loc}_${dia}" value="${a.tema}"></div></div>`;
                     });
-                    refAulas.set(novasAulas);
-                    showToast('Cronograma atualizado!');
-                    return true;
+                    html += '</div>';
+                    document.getElementById('aulasModalContent').innerHTML = html;
+                }
+                openModal('Editar Cronograma', 'fas fa-calendar-alt', body, content => {
+                    const novasAulas = {};
+                    LOCALIDADES.forEach(loc => { novasAulas[loc] = {}; DIAS.forEach(dia => { novasAulas[loc][dia] = { professor: content.querySelector(`#prof_${loc}_${dia}`).value.trim(), tema: content.querySelector(`#tema_${loc}_${dia}`).value.trim() }; }); });
+                    refAulas.set(novasAulas); showToast('Cronograma atualizado!'); return true;
                 });
+                renderModalAulas(localidadeAtivaAulas);
+                LOCALIDADES.forEach(loc => { document.getElementById(`tabAula_${loc}`).addEventListener('click', function() { document.querySelectorAll('#tabAula_monteVerde, #tabAula_camanducaia').forEach(t => t.classList.remove('active')); this.classList.add('active'); localidadeAtivaAulas = loc; renderModalAulas(loc); }); });
             }
 
             // ========== AVISOS ==========
             function abrirModalAviso() {
                 const ultimo = db.avisos.length > 0 ? db.avisos[db.avisos.length - 1] : { titulo: '', texto: '' };
-                const body = `<div class="form-group"><label>Título</label><input type="text" id="fTitulo" value="${ultimo.titulo}"></div><div class="form-group"><label>Mensagem</label><textarea id="fTexto">${ultimo.texto}</textarea></div>`;
-                openModal('Editar Aviso', 'fas fa-bullhorn', body, content => {
-                    const titulo = content.querySelector('#fTitulo').value.trim();
-                    const texto = content.querySelector('#fTexto').value.trim();
-                    if (!titulo) { showToast('Digite um título!', '⚠️'); return false; }
-                    const agora = new Date();
-                    refAvisos.remove();
-                    refAvisos.push({ titulo, texto, data: agora.toISOString().split('T')[0], hora: agora.toTimeString().split(' ')[0].substring(0,5), autor: usuarioAtual.nome });
-                    showToast('Aviso atualizado!');
-                    return true;
+                openModal('Editar Aviso', 'fas fa-bullhorn', `<div class="form-group"><label>Título</label><input type="text" id="fTitulo" value="${ultimo.titulo}"></div><div class="form-group"><label>Mensagem</label><textarea id="fTexto">${ultimo.texto}</textarea></div>`, content => {
+                    const t=content.querySelector('#fTitulo').value.trim(), tx=content.querySelector('#fTexto').value.trim();
+                    if(!t){showToast('Digite um título!','⚠️');return false;}
+                    refAvisos.remove(); refAvisos.push({titulo:t,texto:tx,data:new Date().toISOString().split('T')[0],hora:new Date().toTimeString().split(' ')[0].substring(0,5),autor:usuarioAtual.nome});
+                    showToast('Aviso atualizado!'); return true;
                 });
             }
             function renderAvisos() {
-                const container = document.getElementById('avisoContainer');
-                if (!container) return;
-                if (db.avisos.length === 0) {
-                    if (ehAdmin()) { container.innerHTML = `<button class="btn btn-aviso" id="btnCriarAviso"><i class="fas fa-bullhorn"></i> Criar Primeiro Aviso</button>`; document.getElementById('btnCriarAviso').addEventListener('click', abrirModalAviso); }
-                    else container.innerHTML = '';
-                    return;
-                }
+                const container = document.getElementById('avisoContainer'); if (!container) return;
+                if (db.avisos.length === 0) { if (ehAdmin()) { container.innerHTML = `<button class="btn btn-aviso" id="btnCriarAviso"><i class="fas fa-bullhorn"></i> Criar Primeiro Aviso</button>`; document.getElementById('btnCriarAviso').addEventListener('click', abrirModalAviso); } else container.innerHTML = ''; return; }
                 const aviso = db.avisos[db.avisos.length - 1];
-                container.innerHTML = `<div class="aviso-card"><i class="fas fa-bullhorn"></i><div class="aviso-content"><h3>📢 ${aviso.titulo}</h3><p>${aviso.texto.replace(/\n/g,'<br>')}</p><div class="aviso-data">${formatData(aviso.data)} às ${aviso.hora||''} por ${aviso.autor||'Admin'}</div></div>${ehAdmin()?`<button class="btn btn-ghost btn-sm" id="btnEditarAviso"><i class="fas fa-edit"></i></button>`:''}</div>`;
-                if (ehAdmin()) document.getElementById('btnEditarAviso').addEventListener('click', abrirModalAviso);
+                container.innerHTML = `<div class="aviso-card"><i class="fas fa-bullhorn"></i><div class="aviso-content"><h3>📢 ${aviso.titulo}</h3><p>${aviso.texto.replace(/\n/g,'<br>')}</p><div class="aviso-data">${formatData(aviso.data)} às ${aviso.hora||''}</div></div>${ehAdmin()?`<button class="btn btn-ghost btn-sm" id="btnEditarAviso"><i class="fas fa-edit"></i></button>`:''}</div>`;
+                if(ehAdmin()) document.getElementById('btnEditarAviso').addEventListener('click', abrirModalAviso);
             }
 
-            // ========== TABELAS (mantidas) ==========
-            function renderAlunos() {
-                const tbody=document.getElementById('tbodyAlunos');const empty=document.getElementById('emptyAlunos');
-                const termo=(document.getElementById('searchAlunos')?.value||'').toLowerCase();
-                const faixaFiltro=document.getElementById('filterFaixa')?.value||'todas';
-                let lista=db.alunos;
-                if(termo)lista=lista.filter(a=>a.nome.toLowerCase().includes(termo));
-                if(faixaFiltro!=='todas')lista=lista.filter(a=>a.faixa===faixaFiltro);
-                if(lista.length===0){tbody.innerHTML='';empty.style.display='block';}
-                else{empty.style.display='none';tbody.innerHTML=lista.map(a=>`<tr><td>#${a.id}</td><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa,a.grau)}</td><td>${grauTexto(a.faixa,a.grau)||'-'}</td><td>${formatData(a.dataIngresso)}</td><td>${medalhasCont(a.id)} 🏅</td><td style="display:flex;gap:4px;">${ehAdmin()?`<button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>`:'<span style="color:var(--text-light);font-size:.75rem;">Visualização</span>'}</td></tr>`).join('');if(ehAdmin()){tbody.querySelectorAll('.editar').forEach(b=>b.addEventListener('click',()=>abrirEditarAluno(parseInt(b.dataset.id))));tbody.querySelectorAll('.excluir').forEach(b=>b.addEventListener('click',()=>excluirAluno(parseInt(b.dataset.id))));}}
-            }
+            // ========== TABELAS E CRUD ==========
+            function renderAlunos(){const tbody=document.getElementById('tbodyAlunos');const empty=document.getElementById('emptyAlunos');const termo=(document.getElementById('searchAlunos')?.value||'').toLowerCase();const faixaFiltro=document.getElementById('filterFaixa')?.value||'todas';let lista=db.alunos;if(termo)lista=lista.filter(a=>a.nome.toLowerCase().includes(termo));if(faixaFiltro!=='todas')lista=lista.filter(a=>a.faixa===faixaFiltro);if(lista.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=lista.map(a=>`<tr><td>#${a.id}</td><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa,a.grau)}</td><td>${grauTexto(a.faixa,a.grau)||'-'}</td><td>${formatData(a.dataIngresso)}</td><td>${medalhasCont(a.id)} 🏅</td><td style="display:flex;gap:4px;">${ehAdmin()?`<button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>`:'<span style="color:var(--text-light);font-size:.75rem;">Visualização</span>'}</td></tr>`).join('');if(ehAdmin()){tbody.querySelectorAll('.editar').forEach(b=>b.addEventListener('click',()=>abrirEditarAluno(parseInt(b.dataset.id))));tbody.querySelectorAll('.excluir').forEach(b=>b.addEventListener('click',()=>excluirAluno(parseInt(b.dataset.id))));}}}
             function renderGrad(){const tbody=document.getElementById('tbodyGraduacoes');const empty=document.getElementById('emptyGraduacoes');if(db.graduacoes.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.graduacoes.slice().reverse().map(g=>`<tr><td><strong>${nomeAluno(g.idAluno)}</strong></td><td>${formatData(g.data)}</td><td>${badgeHTML(g.faixaAnterior,g.grauAnterior)}</td><td>${badgeHTML(g.faixaNova,g.grauNovo)}</td></tr>`).join('');}}
             function renderCamp(){const tbody=document.getElementById('tbodyCampeonatos');const empty=document.getElementById('emptyCampeonatos');if(db.campeonatos.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td>${ehAdmin()?`<button class="btn btn-danger btn-sm excluir-camp" data-key="${c.firebaseKey||c.id}"><i class="fas fa-trash"></i></button>`:'<span style="color:var(--text-light);font-size:.75rem;">-</span>'}</td></tr>`).join('');if(ehAdmin())tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>excluirCampeonato(b.dataset.key)));}}
-
-            // ========== CRUD (mantido) ==========
             function abrirNovoAluno(){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}openModal('Novo Aluno','fas fa-user-plus',`<div class="form-group"><label>Nome</label><input type="text" id="fNome"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}refAlunos.child(gerarId()).set({id:db.nextId-1,nome:n,faixa:f,grau:g,dataIngresso:new Date().toISOString().split('T')[0]});showToast(`Aluno ${n} cadastrado!`);return true;});}
             function abrirEditarAluno(id){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}const a=getAluno(id);if(!a)return;openModal('Editar Aluno','fas fa-edit',`<div class="form-group"><label>Nome</label><input type="text" id="fNome" value="${a.nome}"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option value="${f}" ${a.faixa===f?'selected':''}>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}" ${a.grau===v?'selected':''}>${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}if(f!==a.faixa||g!==a.grau){refGraduacoes.push({idAluno:a.id,data:new Date().toISOString().split('T')[0],faixaAnterior:a.faixa,grauAnterior:a.grau,faixaNova:f,grauNovo:g});}refAlunos.child(a.id).update({nome:n,faixa:f,grau:g});showToast('Aluno atualizado!');return true;});}
             function excluirAluno(id){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}const a=getAluno(id);if(!a||!confirm(`Excluir "${a.nome}"?`))return;refAlunos.child(id).remove();database.ref('graduacoes').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());});database.ref('campeonatos').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());});showToast('Aluno excluído.','🗑️');}
-            function abrirModalGraduacao(){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;}openModal('Graduação','fas fa-graduation-cap',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome} (${a.faixa}·${grauTexto(a.faixa,a.grau)||'0'})</option>`).join('')}</select></div><div class="form-group"><label>Nova Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Novo Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div><div class="form-group"><label>Data</label><input type="date" id="fData" value="${new Date().toISOString().split('T')[0]}"></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nf=content.querySelector('#fFaixa').value;const ng=parseInt(content.querySelector('#fGrau').value);const data=content.querySelector('#fData').value;const al=getAluno(idAluno);if(!al||(nf===al.faixa&&ng===al.grau)){showToast('Sem alteração!','⚠️');return false;}refGraduacoes.push({idAluno,data,faixaAnterior:al.faixa,grauAnterior:al.grau,faixaNova:nf,grauNovo:ng});refAlunos.child(al.id).update({faixa:nf,grau:ng});showToast(`Graduação registrada para ${al.nome}!`);return true;});}
-            function abrirModalCampeonato(){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;}openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nc=content.querySelector('#fNomeCamp').value.trim();const d=content.querySelector('#fDataCamp').value;const med=content.querySelector('#fMedalha').value;if(!nc){showToast('Digite o nome do campeonato!','⚠️');return false;}const ref=refCampeonatos.push({idAluno,nomeCamp:nc,data:d,medalha:med});ref.child('firebaseKey').set(ref.key);showToast('Campeonato registrado!');return true;});}
+            function abrirModalGraduacao(){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;}openModal('Graduação','fas fa-graduation-cap',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome} (${a.faixa}·${grauTexto(a.faixa,a.grau)||'0'})</option>`).join('')}</select></div><div class="form-group"><label>Nova Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Novo Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div><div class="form-group"><label>Data</label><input type="date" id="fData" value="${new Date().toISOString().split('T')[0]}"></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nf=content.querySelector('#fFaixa').value;const ng=parseInt(content.querySelector('#fGrau').value);const data=content.querySelector('#fData').value;const al=getAluno(idAluno);if(!al||(nf===al.faixa&&ng===al.grau)){showToast('Sem alteração!','⚠️');return false;}refGraduacoes.push({idAluno,data,faixaAnterior:al.faixa,grauAnterior:al.grau,faixaNova:nf,grauNovo:ng});refAlunos.child(al.id).update({faixa:nf,grau:ng});showToast(`Graduação registrada!`);return true;});}
+            function abrirModalCampeonato(){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;}openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nc=content.querySelector('#fNomeCamp').value.trim();const d=content.querySelector('#fDataCamp').value;const med=content.querySelector('#fMedalha').value;if(!nc){showToast('Digite o nome!','⚠️');return false;}const ref=refCampeonatos.push({idAluno,nomeCamp:nc,data:d,medalha:med});ref.child('firebaseKey').set(ref.key);showToast('Campeonato registrado!');return true;});}
             function excluirCampeonato(key){if(!ehAdmin()){showToast('Acesso negado!','🔒');return;}if(!confirm('Excluir?'))return;refCampeonatos.child(key).remove();}
 
             // ========== GRÁFICOS ==========
@@ -460,9 +571,9 @@
             document.getElementById('btnAddAlunoTop').onclick=abrirNovoAluno;
             document.getElementById('btnAddGraduacao').onclick=abrirModalGraduacao;
             document.getElementById('btnAddCampeonato').onclick=abrirModalCampeonato;
-            document.getElementById('btnEditarAulas').addEventListener('click', abrirModalAulas);
-            document.getElementById('searchAlunos').addEventListener('input', renderAlunos);
-            document.getElementById('filterFaixa').addEventListener('change', renderAlunos);
+            document.getElementById('btnEditarAulas')?.addEventListener('click', abrirModalAulas);
+            document.getElementById('searchAlunos')?.addEventListener('input', renderAlunos);
+            document.getElementById('filterFaixa')?.addEventListener('change', renderAlunos);
             document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
             navigateTo('dashboard');
@@ -470,4 +581,3 @@
     </script>
 </body>
 </html>
-
