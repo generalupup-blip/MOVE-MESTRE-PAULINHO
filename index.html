@@ -42,6 +42,8 @@
         .topbar{background:var(--card);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);position:sticky;top:0;z-index:50;gap:12px;flex-wrap:wrap;}
         .topbar h1{font-size:1.2rem;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--green-dark);}
         .topbar h1 i{color:var(--gold);}
+        .topbar .user-badge{display:flex;align-items:center;gap:6px;background:#f0f6f2;padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600;}
+        .topbar .user-badge.admin{background:#fef3c7;color:#92400e;}
         .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:.9rem;cursor:pointer;border:none;transition:all var(--transition);text-decoration:none;white-space:nowrap;}
         .btn-primary{background:var(--green-mid);color:#fff;}
         .btn-primary:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.3);}
@@ -52,10 +54,18 @@
         .btn-danger:hover{background:#fef2f2;}
         .btn-logout{background:#fff;color:#374151;border:1px solid #d1d5db;gap:6px;font-size:.85rem;padding:8px 14px;}
         .btn-logout:hover{background:#f3f4f6;}
+        .btn-aviso{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);color:#92400e;border:2px solid #f59e0b;font-weight:700;width:100%;justify-content:center;margin-bottom:16px;}
+        .btn-aviso:hover{background:linear-gradient(135deg,#fde68a 0%,#fcd34d 100%);transform:translateY(-1px);box-shadow:0 4px 12px rgba(245,158,11,.3);}
         .page-content{padding:20px 24px;flex:1;padding-bottom:90px;}
         .page{display:none;animation:fadeIn .3s ease;}
         .page.active{display:block;}
         @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+        .aviso-card{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:2px solid #f59e0b;border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow);}
+        .aviso-card i{color:#d97706;font-size:1.4rem;margin-top:2px;}
+        .aviso-card .aviso-content{flex:1;}
+        .aviso-card .aviso-content h3{color:#92400e;font-size:.95rem;margin-bottom:4px;}
+        .aviso-card .aviso-content p{color:#78350f;font-size:.88rem;line-height:1.4;}
+        .aviso-card .aviso-data{font-size:.7rem;color:#a16207;margin-top:4px;}
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
         .stat-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;transition:all var(--transition);border:1px solid var(--border);}
         .stat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
@@ -91,8 +101,9 @@
         .modal h2 i{color:var(--gold);}
         .form-group{margin-bottom:14px;}
         .form-group label{display:block;font-weight:600;font-size:.82rem;margin-bottom:5px;}
-        .form-group input,.form-group select{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.9rem;font-family:var(--font);background:#fafbfc;}
-        .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(45,90,63,.08);background:#fff;}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.9rem;font-family:var(--font);background:#fafbfc;}
+        .form-group textarea{resize:vertical;min-height:80px;}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(45,90,63,.08);background:#fff;}
         .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
         .toast{position:fixed;bottom:90px;right:20px;background:#1f2937;color:#fff;padding:12px 20px;border-radius:25px;font-weight:600;font-size:.85rem;z-index:300;box-shadow:var(--shadow-lg);animation:slideUpToast .3s,fadeOutToast .3s 2.5s forwards;display:flex;align-items:center;gap:8px;}
         @keyframes slideUpToast{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -133,10 +144,22 @@
         <div class="main-content" id="mainContent">
             <header class="topbar">
                 <div style="display:flex;align-items:center;gap:10px;"><button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button><h1><i class="fas fa-mountain"></i> Gestão de Alunos</h1></div>
-                <div style="display:flex;gap:8px;align-items:center;"><button class="btn btn-primary" id="btnAddAlunoTop"><i class="fas fa-plus"></i> Novo Aluno</button><button class="btn btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair</button></div>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <span class="user-badge" id="userBadge"><i class="fas fa-user"></i> <span id="userName">admin</span> · <span id="userNivel">Admin</span></span>
+                    <button class="btn btn-primary btn-sm" id="btnAddAlunoTop"><i class="fas fa-plus"></i> Novo Aluno</button>
+                    <button class="btn btn-logout" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Sair</button>
+                </div>
             </header>
             <div class="page-content">
-                <div class="page active" id="page-dashboard"><div class="stats-grid" id="statsGrid"></div><div class="charts-grid"><div class="chart-card"><h3><i class="fas fa-chart-bar"></i> Alunos por Faixa</h3><canvas id="chartFaixas"></canvas></div><div class="chart-card"><h3><i class="fas fa-chart-pie"></i> Medalhas</h3><canvas id="chartMedalhas"></canvas></div><div class="chart-card chart-full"><h3><i class="fas fa-medal"></i> Top Alunos</h3><canvas id="chartTopAlunos"></canvas></div></div></div>
+                <div class="page active" id="page-dashboard">
+                    <div id="avisoContainer"></div>
+                    <div class="stats-grid" id="statsGrid"></div>
+                    <div class="charts-grid">
+                        <div class="chart-card"><h3><i class="fas fa-chart-bar"></i> Alunos por Faixa</h3><canvas id="chartFaixas"></canvas></div>
+                        <div class="chart-card"><h3><i class="fas fa-chart-pie"></i> Medalhas</h3><canvas id="chartMedalhas"></canvas></div>
+                        <div class="chart-card chart-full"><h3><i class="fas fa-medal"></i> Top Alunos</h3><canvas id="chartTopAlunos"></canvas></div>
+                    </div>
+                </div>
                 <div class="page" id="page-alunos">
                     <div class="table-wrapper">
                         <div class="table-header">
@@ -144,16 +167,7 @@
                             <div class="filter-row">
                                 <input type="text" class="search-input" id="searchAlunos" placeholder="🔍 Buscar...">
                                 <select class="filter-select" id="filterFaixa">
-                                    <option value="todas">Todas as Faixas</option>
-                                    <option value="Branca">Branca</option>
-                                    <option value="Cinza">Cinza</option>
-                                    <option value="Amarela">Amarela</option>
-                                    <option value="Laranja">Laranja</option>
-                                    <option value="Verde">Verde</option>
-                                    <option value="Azul">Azul</option>
-                                    <option value="Roxa">Roxa</option>
-                                    <option value="Marrom">Marrom</option>
-                                    <option value="Preta">Preta</option>
+                                    <option value="todas">Todas as Faixas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option>
                                 </select>
                                 <button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button>
                             </div>
@@ -183,8 +197,14 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // ========== LOGIN ATUALIZADO ==========
-        const CREDENCIAIS = { login: 'admin', senha: '34382098' };
+        const USUARIOS = {
+            'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' },
+            'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' },
+            'lucas': { senha: '34382098', nivel: 'padrao', nome: 'Lucas' },
+            'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' }
+        };
+
+        let usuarioAtual = null;
         const loginOverlay = document.getElementById('loginOverlay');
         const appContainer = document.getElementById('appContainer');
         const loginInput = document.getElementById('loginInput');
@@ -194,7 +214,9 @@
         const btnLogout = document.getElementById('btnLogout');
 
         function verificarLogin() {
-            if (sessionStorage.getItem('gm_logado') === 'true') {
+            const saved = sessionStorage.getItem('gm_user');
+            if (saved) {
+                usuarioAtual = JSON.parse(saved);
                 loginOverlay.style.display = 'none';
                 appContainer.classList.add('visible');
                 return true;
@@ -202,8 +224,12 @@
             return false;
         }
         function realizarLogin() {
-            if (loginInput.value.trim() === CREDENCIAIS.login && senhaInput.value.trim() === CREDENCIAIS.senha) {
-                sessionStorage.setItem('gm_logado', 'true');
+            const login = loginInput.value.trim().toLowerCase();
+            const senha = senhaInput.value.trim();
+            const user = USUARIOS[login];
+            if (user && user.senha === senha) {
+                usuarioAtual = { login, ...user };
+                sessionStorage.setItem('gm_user', JSON.stringify(usuarioAtual));
                 loginOverlay.style.display = 'none';
                 appContainer.classList.add('visible');
                 loginError.style.display = 'none';
@@ -212,16 +238,31 @@
                 loginError.style.display = 'block';
             }
         }
-        function logout() { sessionStorage.removeItem('gm_logado'); location.reload(); }
+        function logout() { sessionStorage.removeItem('gm_user'); location.reload(); }
         btnEntrar.addEventListener('click', realizarLogin);
         senhaInput.addEventListener('keypress', e => { if (e.key === 'Enter') realizarLogin(); });
         loginInput.addEventListener('keypress', e => { if (e.key === 'Enter') senhaInput.focus(); });
         btnLogout.addEventListener('click', logout);
         if (verificarLogin()) initApp();
 
+        function ehAdmin() { return usuarioAtual && usuarioAtual.nivel === 'admin'; }
+
         function initApp() {
             if (window._init) return;
             window._init = true;
+
+            document.getElementById('userName').textContent = usuarioAtual.nome;
+            document.getElementById('userNivel').textContent = ehAdmin() ? 'Admin' : 'Visualização';
+            const badge = document.getElementById('userBadge');
+            if (ehAdmin()) badge.classList.add('admin');
+
+            if (!ehAdmin()) {
+                document.getElementById('btnAddAlunoTop').style.display = 'none';
+                document.getElementById('btnAddAluno').style.display = 'none';
+                document.getElementById('btnAddGraduacao').style.display = 'none';
+                document.getElementById('btnAddCampeonato').style.display = 'none';
+            }
+
             const FAIXAS = ['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Preta'];
             const FAIXA_CORES = {'Branca':'#f5f5f5','Cinza':'#9e9e9e','Amarela':'#fdd835','Laranja':'#fb8c00','Verde':'#2e7d32','Azul':'#1e88e5','Roxa':'#7b1fa2','Marrom':'#6d4c41','Preta':'#212121'};
             const MEDALHAS = ['Ouro','Prata','Bronze','Participação'];
@@ -230,12 +271,14 @@
             const refGraduacoes = database.ref('graduacoes');
             const refCampeonatos = database.ref('campeonatos');
             const refNextId = database.ref('nextId');
-            let db = {alunos:[],graduacoes:[],campeonatos:[],nextId:1};
+            const refAvisos = database.ref('avisos');
+            let db = {alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisos:[]};
 
             refAlunos.on('value', snap => { db.alunos = snap.val() ? Object.values(snap.val()) : []; renderAlunos(); atualizarDashboard(); });
             refGraduacoes.on('value', snap => { db.graduacoes = snap.val() ? Object.values(snap.val()) : []; renderGrad(); });
             refCampeonatos.on('value', snap => { db.campeonatos = snap.val() ? Object.values(snap.val()) : []; renderCamp(); atualizarDashboard(); });
             refNextId.on('value', snap => { db.nextId = snap.val() || 1; });
+            refAvisos.on('value', snap => { db.avisos = snap.val() ? Object.values(snap.val()) : []; renderAvisos(); });
 
             function gerarId() { const id = db.nextId; refNextId.set(id + 1); return id; }
             function getAluno(id) { return db.alunos.find(a => a.id == id); }
@@ -248,6 +291,7 @@
             function showToast(msg, icon='✅') { const c=document.getElementById('toastContainer'); const t=document.createElement('div'); t.className='toast'; t.innerHTML=`${icon} ${msg}`; c.appendChild(t); setTimeout(()=>t.remove(),3000); }
             function openModal(title, icon, bodyHTML, onSave) { const overlay=document.getElementById('modalOverlay'); const content=document.getElementById('modalContent'); content.innerHTML=`<h2><i class="${icon}"></i> ${title}</h2>${bodyHTML}<div class="modal-actions"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`; overlay.style.display='flex'; document.getElementById('modalCancel').onclick=closeModal; document.getElementById('modalSave').onclick=()=>{if(onSave(content))closeModal();}; overlay.onclick=e=>{if(e.target===overlay)closeModal();}; }
             function closeModal() { document.getElementById('modalOverlay').style.display='none'; }
+
             function navigateTo(page) {
                 document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
                 document.querySelectorAll('.sidebar-nav a,.bottom-nav a').forEach(a=>a.classList.remove('active'));
@@ -255,7 +299,7 @@
                 if(el)el.classList.add('active');
                 document.querySelector(`.sidebar-nav a[data-page="${page}"]`)?.classList.add('active');
                 document.querySelector(`.bottom-nav a[data-page="${page}"]`)?.classList.add('active');
-                if(page==='dashboard')atualizarDashboard();
+                if(page==='dashboard') { renderAvisos(); atualizarDashboard(); }
                 if(page==='alunos')renderAlunos();
                 if(page==='graduacoes')renderGrad();
                 if(page==='campeonatos')renderCamp();
@@ -265,52 +309,126 @@
             document.querySelectorAll('.bottom-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.getElementById('hamburgerBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
 
-            // ========== RENDER ALUNOS COM FILTRO DE FAIXA ==========
+            // ========== AVISOS (CORRIGIDO) ==========
+            function abrirModalAviso() {
+                const ultimo = db.avisos.length > 0 ? db.avisos[db.avisos.length - 1] : { titulo: '', texto: '' };
+                const body = `
+                    <div class="form-group"><label>Título do aviso</label><input type="text" id="fTitulo" value="${ultimo.titulo}" placeholder="Ex: Exame de Faixa"></div>
+                    <div class="form-group"><label>Mensagem</label><textarea id="fTexto" placeholder="Detalhes do aviso...">${ultimo.texto}</textarea></div>
+                `;
+                openModal('Editar Aviso', 'fas fa-bullhorn', body, content => {
+                    const titulo = content.querySelector('#fTitulo').value.trim();
+                    const texto = content.querySelector('#fTexto').value.trim();
+                    if (!titulo) { showToast('Digite um título!', '⚠️'); return false; }
+                    const agora = new Date();
+                    const aviso = {
+                        titulo,
+                        texto,
+                        data: agora.toISOString().split('T')[0],
+                        hora: agora.toTimeString().split(' ')[0].substring(0, 5),
+                        autor: usuarioAtual.nome
+                    };
+                    refAvisos.remove();
+                    refAvisos.push(aviso);
+                    showToast('Aviso atualizado!');
+                    return true;
+                });
+            }
+
+            function renderAvisos() {
+                const container = document.getElementById('avisoContainer');
+                if (!container) return;
+                
+                if (db.avisos.length === 0) {
+                    if (ehAdmin()) {
+                        container.innerHTML = `
+                            <button class="btn btn-aviso" id="btnCriarAviso">
+                                <i class="fas fa-bullhorn"></i> Criar Primeiro Aviso
+                            </button>
+                        `;
+                        document.getElementById('btnCriarAviso').addEventListener('click', abrirModalAviso);
+                    } else {
+                        container.innerHTML = '';
+                    }
+                    return;
+                }
+                
+                const aviso = db.avisos[db.avisos.length - 1];
+                container.innerHTML = `
+                    <div class="aviso-card">
+                        <i class="fas fa-bullhorn"></i>
+                        <div class="aviso-content">
+                            <h3>📢 ${aviso.titulo}</h3>
+                            <p>${aviso.texto.replace(/\n/g, '<br>')}</p>
+                            <div class="aviso-data">Publicado em ${formatData(aviso.data)} às ${aviso.hora || ''} por ${aviso.autor || 'Admin'}</div>
+                        </div>
+                        ${ehAdmin() ? `<button class="btn btn-ghost btn-sm" id="btnEditarAviso" style="flex-shrink:0;"><i class="fas fa-edit"></i></button>` : ''}
+                    </div>
+                `;
+                if (ehAdmin()) {
+                    document.getElementById('btnEditarAviso').addEventListener('click', abrirModalAviso);
+                }
+            }
+
             function renderAlunos() {
                 const tbody = document.getElementById('tbodyAlunos');
                 const empty = document.getElementById('emptyAlunos');
                 const termo = (document.getElementById('searchAlunos')?.value || '').toLowerCase();
                 const faixaFiltro = document.getElementById('filterFaixa')?.value || 'todas';
-
                 let lista = db.alunos;
-                // Filtro por nome
                 if (termo) lista = lista.filter(a => a.nome.toLowerCase().includes(termo));
-                // Filtro por faixa
                 if (faixaFiltro !== 'todas') lista = lista.filter(a => a.faixa === faixaFiltro);
-
-                if (lista.length === 0) {
-                    tbody.innerHTML = '';
-                    empty.style.display = 'block';
-                } else {
+                if (lista.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; }
+                else {
                     empty.style.display = 'none';
                     tbody.innerHTML = lista.map(a => {
                         const meds = medalhasCont(a.id);
+                        const botoesAcao = ehAdmin() ? `
+                            <button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>
+                        ` : '<span style="color:var(--text-light);font-size:.75rem;">Apenas visualização</span>';
                         return `<tr>
-                            <td>#${a.id}</td>
-                            <td><strong>${a.nome}</strong></td>
-                            <td>${badgeHTML(a.faixa, a.grau)}</td>
-                            <td>${grauTexto(a.faixa, a.grau) || '-'}</td>
-                            <td>${formatData(a.dataIngresso)}</td>
-                            <td>${meds} 🏅</td>
-                            <td style="display:flex;gap:4px;">
-                                <button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>
-                            </td>
+                            <td>#${a.id}</td><td><strong>${a.nome}</strong></td>
+                            <td>${badgeHTML(a.faixa, a.grau)}</td><td>${grauTexto(a.faixa, a.grau) || '-'}</td>
+                            <td>${formatData(a.dataIngresso)}</td><td>${meds} 🏅</td>
+                            <td style="display:flex;gap:4px;">${botoesAcao}</td>
                         </tr>`;
                     }).join('');
-                    tbody.querySelectorAll('.editar').forEach(b => b.addEventListener('click', () => abrirEditarAluno(parseInt(b.dataset.id))));
-                    tbody.querySelectorAll('.excluir').forEach(b => b.addEventListener('click', () => excluirAluno(parseInt(b.dataset.id))));
+                    if (ehAdmin()) {
+                        tbody.querySelectorAll('.editar').forEach(b => b.addEventListener('click', () => abrirEditarAluno(parseInt(b.dataset.id))));
+                        tbody.querySelectorAll('.excluir').forEach(b => b.addEventListener('click', () => excluirAluno(parseInt(b.dataset.id))));
+                    }
                 }
             }
 
             function renderGrad() { const tbody=document.getElementById('tbodyGraduacoes'); const empty=document.getElementById('emptyGraduacoes'); if(db.graduacoes.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.graduacoes.slice().reverse().map(g=>`<tr><td><strong>${nomeAluno(g.idAluno)}</strong></td><td>${formatData(g.data)}</td><td>${badgeHTML(g.faixaAnterior,g.grauAnterior)}</td><td>${badgeHTML(g.faixaNova,g.grauNovo)}</td></tr>`).join('');} }
-            function renderCamp() { const tbody=document.getElementById('tbodyCampeonatos'); const empty=document.getElementById('emptyCampeonatos'); if(db.campeonatos.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td><button class="btn btn-danger btn-sm excluir-camp" data-key="${c.firebaseKey||c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>excluirCampeonato(b.dataset.key)));} }
-            function abrirNovoAluno() { openModal('Novo Aluno','fas fa-user-plus',`<div class="form-group"><label>Nome</label><input type="text" id="fNome"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}refAlunos.child(gerarId()).set({id:db.nextId-1,nome:n,faixa:f,grau:g,dataIngresso:new Date().toISOString().split('T')[0]});showToast(`Aluno ${n} cadastrado!`);return true;}); }
-            function abrirEditarAluno(id) { const a=getAluno(id); if(!a)return; openModal('Editar Aluno','fas fa-edit',`<div class="form-group"><label>Nome</label><input type="text" id="fNome" value="${a.nome}"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option value="${f}" ${a.faixa===f?'selected':''}>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}" ${a.grau===v?'selected':''}>${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}if(f!==a.faixa||g!==a.grau){refGraduacoes.push({idAluno:a.id,data:new Date().toISOString().split('T')[0],faixaAnterior:a.faixa,grauAnterior:a.grau,faixaNova:f,grauNovo:g});}refAlunos.child(a.id).update({nome:n,faixa:f,grau:g});showToast('Aluno atualizado!');return true;}); }
-            function excluirAluno(id) { const a=getAluno(id); if(!a||!confirm(`Excluir "${a.nome}"?`))return; refAlunos.child(id).remove(); database.ref('graduacoes').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());}); database.ref('campeonatos').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());}); showToast('Aluno excluído.','🗑️'); }
-            function abrirModalGraduacao() { if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;} openModal('Graduação','fas fa-graduation-cap',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome} (${a.faixa}·${grauTexto(a.faixa,a.grau)||'0'})</option>`).join('')}</select></div><div class="form-group"><label>Nova Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Novo Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div><div class="form-group"><label>Data</label><input type="date" id="fData" value="${new Date().toISOString().split('T')[0]}"></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nf=content.querySelector('#fFaixa').value;const ng=parseInt(content.querySelector('#fGrau').value);const data=content.querySelector('#fData').value;const al=getAluno(idAluno);if(!al||(nf===al.faixa&&ng===al.grau)){showToast('Sem alteração!','⚠️');return false;}refGraduacoes.push({idAluno,data,faixaAnterior:al.faixa,grauAnterior:al.grau,faixaNova:nf,grauNovo:ng});refAlunos.child(al.id).update({faixa:nf,grau:ng});showToast(`Graduação registrada para ${al.nome}!`);return true;}); }
-            function abrirModalCampeonato() { if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;} openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nc=content.querySelector('#fNomeCamp').value.trim();const d=content.querySelector('#fDataCamp').value;const med=content.querySelector('#fMedalha').value;if(!nc){showToast('Digite o nome do campeonato!','⚠️');return false;}const ref=refCampeonatos.push({idAluno,nomeCamp:nc,data:d,medalha:med});ref.child('firebaseKey').set(ref.key);showToast('Campeonato registrado!');return true;}); }
-            function excluirCampeonato(key) { if(!confirm('Excluir?'))return; refCampeonatos.child(key).remove(); }
+            function renderCamp() { const tbody=document.getElementById('tbodyCampeonatos'); const empty=document.getElementById('emptyCampeonatos'); if(db.campeonatos.length===0){tbody.innerHTML='';empty.style.display='block';}else{empty.style.display='none';tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td>${ehAdmin()?`<button class="btn btn-danger btn-sm excluir-camp" data-key="${c.firebaseKey||c.id}"><i class="fas fa-trash"></i></button>`:'<span style="color:var(--text-light);font-size:.75rem;">-</span>'}</td></tr>`).join('');if(ehAdmin())tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>excluirCampeonato(b.dataset.key)));} }
+
+            function abrirNovoAluno() {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                openModal('Novo Aluno','fas fa-user-plus',`<div class="form-group"><label>Nome</label><input type="text" id="fNome"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}refAlunos.child(gerarId()).set({id:db.nextId-1,nome:n,faixa:f,grau:g,dataIngresso:new Date().toISOString().split('T')[0]});showToast(`Aluno ${n} cadastrado!`);return true;});
+            }
+            function abrirEditarAluno(id) {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                const a=getAluno(id); if(!a)return; openModal('Editar Aluno','fas fa-edit',`<div class="form-group"><label>Nome</label><input type="text" id="fNome" value="${a.nome}"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option value="${f}" ${a.faixa===f?'selected':''}>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}" ${a.grau===v?'selected':''}>${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();const f=content.querySelector('#fFaixa').value;const g=parseInt(content.querySelector('#fGrau').value);if(!n){showToast('Digite o nome!','⚠️');return false;}if(f!==a.faixa||g!==a.grau){refGraduacoes.push({idAluno:a.id,data:new Date().toISOString().split('T')[0],faixaAnterior:a.faixa,grauAnterior:a.grau,faixaNova:f,grauNovo:g});}refAlunos.child(a.id).update({nome:n,faixa:f,grau:g});showToast('Aluno atualizado!');return true;});
+            }
+            function excluirAluno(id) {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                const a=getAluno(id); if(!a||!confirm(`Excluir "${a.nome}"?`))return; refAlunos.child(id).remove(); database.ref('graduacoes').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());}); database.ref('campeonatos').orderByChild('idAluno').equalTo(id).once('value',snap=>{snap.forEach(c=>c.ref.remove());}); showToast('Aluno excluído.','🗑️');
+            }
+            function abrirModalGraduacao() {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;} openModal('Graduação','fas fa-graduation-cap',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome} (${a.faixa}·${grauTexto(a.faixa,a.grau)||'0'})</option>`).join('')}</select></div><div class="form-group"><label>Nova Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Novo Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div><div class="form-group"><label>Data</label><input type="date" id="fData" value="${new Date().toISOString().split('T')[0]}"></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nf=content.querySelector('#fFaixa').value;const ng=parseInt(content.querySelector('#fGrau').value);const data=content.querySelector('#fData').value;const al=getAluno(idAluno);if(!al||(nf===al.faixa&&ng===al.grau)){showToast('Sem alteração!','⚠️');return false;}refGraduacoes.push({idAluno,data,faixaAnterior:al.faixa,grauAnterior:al.grau,faixaNova:nf,grauNovo:ng});refAlunos.child(al.id).update({faixa:nf,grau:ng});showToast(`Graduação registrada para ${al.nome}!`);return true;});
+            }
+            function abrirModalCampeonato() {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                if(db.alunos.length===0){showToast('Cadastre um aluno antes!','⚠️');return;} openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nc=content.querySelector('#fNomeCamp').value.trim();const d=content.querySelector('#fDataCamp').value;const med=content.querySelector('#fMedalha').value;if(!nc){showToast('Digite o nome do campeonato!','⚠️');return false;}const ref=refCampeonatos.push({idAluno,nomeCamp:nc,data:d,medalha:med});ref.child('firebaseKey').set(ref.key);showToast('Campeonato registrado!');return true;});
+            }
+            function excluirCampeonato(key) {
+                if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; }
+                if(!confirm('Excluir?'))return; refCampeonatos.child(key).remove();
+            }
+
             let cF,cM,cT;
             function atualizarDashboard() {
                 document.getElementById('statsGrid').innerHTML=`<div class="stat-card"><div class="stat-icon green"><i class="fas fa-users"></i></div><div class="stat-info"><h3>${db.alunos.length}</h3><p>Alunos</p></div></div><div class="stat-card"><div class="stat-icon gold"><i class="fas fa-crown"></i></div><div class="stat-info"><h3>${db.alunos.filter(a=>a.faixa==='Preta').length}</h3><p>Faixas Pretas</p></div></div><div class="stat-card"><div class="stat-icon green"><i class="fas fa-medal"></i></div><div class="stat-info"><h3>${db.campeonatos.filter(c=>c.medalha!=='Participação').length}</h3><p>Medalhas</p></div></div><div class="stat-card"><div class="stat-icon gold"><i class="fas fa-trophy"></i></div><div class="stat-info"><h3>${db.campeonatos.length}</h3><p>Campeonatos</p></div></div>`;
@@ -318,14 +436,15 @@
                 if(cM)cM.destroy();const c2=document.getElementById('chartMedalhas')?.getContext('2d');if(c2)cM=new Chart(c2,{type:'doughnut',data:{labels:MEDALHAS.map(m=>MEDALHA_ICONS[m]+' '+m),datasets:[{data:MEDALHAS.map(m=>db.campeonatos.filter(c=>c.medalha===m).length),backgroundColor:['#f0a500','#94a3b8','#d97706','#6b7280']}]}});
                 if(cT)cT.destroy();const c3=document.getElementById('chartTopAlunos')?.getContext('2d');if(c3){const r=db.alunos.map(a=>({nome:a.nome,med:medalhasCont(a.id)})).filter(a=>a.med>0).sort((a,b)=>b.med-a.med).slice(0,10);cT=new Chart(c3,{type:'bar',data:{labels:r.map(x=>x.nome),datasets:[{label:'Medalhas',data:r.map(x=>x.med),backgroundColor:'#2d5a3f'}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});}
             }
-            document.getElementById('btnAddAluno').onclick=abrirNovoAluno;
-            document.getElementById('btnAddAlunoTop').onclick=abrirNovoAluno;
-            document.getElementById('btnAddGraduacao').onclick=abrirModalGraduacao;
-            document.getElementById('btnAddCampeonato').onclick=abrirModalCampeonato;
-            // Eventos de filtro
+
+            document.getElementById('btnAddAluno').onclick = abrirNovoAluno;
+            document.getElementById('btnAddAlunoTop').onclick = abrirNovoAluno;
+            document.getElementById('btnAddGraduacao').onclick = abrirModalGraduacao;
+            document.getElementById('btnAddCampeonato').onclick = abrirModalCampeonato;
             document.getElementById('searchAlunos').addEventListener('input', renderAlunos);
             document.getElementById('filterFaixa').addEventListener('change', renderAlunos);
-            document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
             navigateTo('dashboard');
         }
     </script>
