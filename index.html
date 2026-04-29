@@ -206,7 +206,7 @@
                     <div class="localidade-tabs" id="localidadeTabsAulas"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ MV</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ CAM</button></div>
                     <div class="calendario-grid" id="calendarioGrid"></div>
                 </div>
-                <!-- USUÁRIOS (NOVO) -->
+                <!-- USUÁRIOS -->
                 <div class="page" id="page-usuarios">
                     <div class="presenca-container">
                         <div class="presenca-header"><h2><i class="fas fa-user-cog"></i> Gerenciar Usuários</h2><button class="btn btn-primary btn-sm" id="btnAddUsuario"><i class="fas fa-plus"></i> Novo Usuário</button></div>
@@ -228,7 +228,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Usuários padrão + salvos no Firebase
+        // ========== USUÁRIOS (TODOS NO FIREBASE) ==========
         const USUARIOS_PADRAO = {
             'admin': { senha: '34382098', nivel: 'admin', nome: 'Admin' },
             'erik': { senha: '34382098', nivel: 'padrao', nome: 'Erik' },
@@ -236,14 +236,21 @@
             'adrion': { senha: '34382098', nivel: 'padrao', nome: 'Adrion' },
             'professores': { senha: '34382098', nivel: 'padrao', nome: 'Professores' }
         };
-
-        let USUARIOS = { ...USUARIOS_PADRAO };
         const refUsuarios = database.ref('usuarios');
-        
-        // Carrega usuários do Firebase e mescla com padrão
+        let USUARIOS = {};
+        // Garante que existam os usuários padrão no Firebase (sem sobrescrever)
+        refUsuarios.once('value', snap => {
+            if (!snap.val()) {
+                refUsuarios.set(USUARIOS_PADRAO);
+            } else {
+                // Mescla padrão com o que está no Firebase (padrão prevalece se não existir)
+                const current = snap.val();
+                const merged = { ...USUARIOS_PADRAO, ...current };
+                refUsuarios.set(merged);
+            }
+        });
         refUsuarios.on('value', snap => {
-            const fbUsers = snap.val() || {};
-            USUARIOS = { ...USUARIOS_PADRAO, ...fbUsers };
+            USUARIOS = snap.val() || USUARIOS_PADRAO;
         });
 
         const LOCALIDADES = ['monteVerde', 'camanducaia'];
@@ -303,9 +310,10 @@
             const refPresencas = database.ref('presencas');
             let db = {alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisos:[],aulas:{},presencas:{}};
 
+            // Listeners ajustados para preservar chave do Firebase onde necessário
             refAlunos.on('value', snap => { db.alunos = snap.val() ? Object.values(snap.val()) : []; renderAlunos(); atualizarDashboard(); });
-            refGraduacoes.on('value', snap => { db.graduacoes = snap.val() ? Object.values(snap.val()) : []; renderGrad(); });
-            refCampeonatos.on('value', snap => { db.campeonatos = snap.val() ? Object.values(snap.val()) : []; renderCamp(); atualizarDashboard(); });
+            refGraduacoes.on('value', snap => { db.graduacoes = snap.val() ? Object.entries(snap.val()).map(([k,v]) => ({...v, _key: k})) : []; renderGrad(); });
+            refCampeonatos.on('value', snap => { db.campeonatos = snap.val() ? Object.entries(snap.val()).map(([k,v]) => ({...v, _key: k})) : []; renderCamp(); atualizarDashboard(); });
             refNextId.on('value', snap => { db.nextId = snap.val() || 1; });
             refAvisos.on('value', snap => { db.avisos = snap.val() ? Object.values(snap.val()) : []; renderAvisos(); });
             refAulas.on('value', snap => { db.aulas = snap.val() || {}; renderAulas(); });
@@ -402,16 +410,16 @@
             function abrirModalAulas() { if (!ehAdmin()) { showToast('Acesso negado!', '🔒'); return; } let body = '<div style="display:flex;gap:8px;margin-bottom:16px;">'; LOCALIDADES.forEach(loc => { body += `<button class="localidade-tab ${loc==='monteVerde'?'monte-verde':'camanducaia'} ${loc===localidadeAtivaAulas?'active':''}" id="tabAula_${loc}">${LOCALIDADE_ICONS[loc]} ${LOCALIDADE_LABELS[loc]}</button>`; }); body += '</div><div id="aulasModalContent"></div>'; function rm(loc) { const al = db.aulas[loc] || {}; let h = ''; DIAS.forEach(dia => { const treinos = al[dia] || []; h += `<div class="dia-section"><h4>${DIAS_ICONES[dia]} ${DIAS_NOMES[dia]}</h4><div id="treinos_${loc}_${dia}">`; treinos.forEach(t => { h += `<div class="treino-row"><input placeholder="Início" value="${t.inicio||''}" class="inicio_${loc}_${dia}"><input placeholder="Fim" value="${t.fim||''}" class="fim_${loc}_${dia}"><input placeholder="Professor" value="${t.professor||''}" class="prof_${loc}_${dia}"><input placeholder="Tema" value="${t.tema||''}" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button></div>`; }); h += `</div><button class="btn-add-treino" onclick="window.addTreino('${loc}','${dia}')">+ Adicionar</button></div>`; }); document.getElementById('aulasModalContent').innerHTML = h; } window.addTreino = function(loc, dia) { const c = document.getElementById(`treinos_${loc}_${dia}`); const d = document.createElement('div'); d.className = 'treino-row'; d.innerHTML = `<input placeholder="Início" class="inicio_${loc}_${dia}"><input placeholder="Fim" class="fim_${loc}_${dia}"><input placeholder="Professor" class="prof_${loc}_${dia}"><input placeholder="Tema" class="tema_${loc}_${dia}"><button class="btn-remove-treino" onclick="this.parentElement.remove()">✕</button>`; c.appendChild(d); }; openModal('Editar Cronograma', 'fas fa-calendar-alt', body, content => { const na = {}; LOCALIDADES.forEach(loc => { na[loc] = {}; DIAS.forEach(dia => { const rows = content.querySelectorAll(`#treinos_${loc}_${dia} .treino-row`); const treinos = []; rows.forEach(row => { const ini = row.querySelector(`.inicio_${loc}_${dia}`)?.value?.trim()||''; const fim = row.querySelector(`.fim_${loc}_${dia}`)?.value?.trim()||''; const prof = row.querySelector(`.prof_${loc}_${dia}`)?.value?.trim()||''; const tema = row.querySelector(`.tema_${loc}_${dia}`)?.value?.trim()||''; if (ini||fim||prof||tema) treinos.push({inicio:ini,fim:fim,professor:prof,tema:tema}); }); na[loc][dia] = treinos; }); }); refAulas.set(na).then(() => { showToast('Cronograma atualizado!'); }).catch(() => { showToast('Erro ao salvar!','❌'); }); return true; }); rm(localidadeAtivaAulas); LOCALIDADES.forEach(loc => { document.getElementById(`tabAula_${loc}`).addEventListener('click', function() { document.querySelectorAll('#tabAula_monteVerde,#tabAula_camanducaia').forEach(t=>t.classList.remove('active')); this.classList.add('active'); localidadeAtivaAulas = loc; rm(loc); }); }); }
             document.getElementById('btnEditarAulas')?.addEventListener('click', abrirModalAulas);
 
-            // ========== GERENCIAR USUÁRIOS ==========
+            // ========== USUÁRIOS (CORRIGIDO) ==========
             function renderUsuarios() {
                 if (!ehAdmin()) { document.getElementById('usuariosLista').innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>Acesso restrito ao admin</p></div>'; return; }
                 const container = document.getElementById('usuariosLista');
-                const lista = Object.entries(USUARIOS).filter(([login]) => login !== 'admin'); // admin não pode ser removido
+                const lista = Object.entries(USUARIOS).filter(([login]) => login !== 'admin');
                 container.innerHTML = lista.map(([login, user]) => `
                     <div class="usuario-card">
                         <div class="usuario-info">
                             <div class="usuario-icone ${user.nivel==='admin'?'admin':'padrao'}"><i class="fas fa-user"></i></div>
-                            <div><div class="usuario-nome">${user.nome}</div><div class="usuario-nivel">Login: ${login} · ${user.nivel==='admin'?'Administrador':'Visualização'}</div></div>
+                            <div><div class="usuario-nome">${user.nome}</div><div class="usuario-nivel">Login: ${login} · ${user.nivel==='admin'?'Admin':'Visualização'}</div></div>
                         </div>
                         <button class="btn btn-danger btn-sm btn-remover-usuario" data-login="${login}"><i class="fas fa-trash"></i></button>
                     </div>
@@ -420,7 +428,7 @@
                     btn.addEventListener('click', function() {
                         const login = this.dataset.login;
                         if (confirm(`Remover usuário "${login}"?`)) {
-                            refUsuarios.child(login).remove().then(() => { showToast('Usuário removido!'); refUsuarios.once('value', snap => { const fbUsers = snap.val() || {}; USUARIOS = { ...USUARIOS_PADRAO, ...fbUsers }; renderUsuarios(); }); });
+                            refUsuarios.child(login).remove().then(() => { showToast('Usuário removido!'); });
                         }
                     });
                 });
@@ -438,8 +446,8 @@
                     const senha = content.querySelector('#fSenha').value.trim();
                     const nivel = content.querySelector('#fNivel').value;
                     if (!login || !nome) { showToast('Preencha login e nome!','⚠️'); return false; }
-                    if (USUARIOS[login] && USUARIOS_PADRAO[login]) { showToast('Login já existe!','⚠️'); return false; }
-                    refUsuarios.child(login).set({ senha, nivel, nome }).then(() => { showToast(`Usuário ${nome} criado!`); renderUsuarios(); });
+                    if (USUARIOS[login]) { showToast('Login já existe!','⚠️'); return false; }
+                    refUsuarios.child(login).set({ senha, nivel, nome }).then(() => { showToast(`Usuário ${nome} criado!`); });
                     return true;
                 });
             }
@@ -452,12 +460,12 @@
             // ========== TABELAS / CRUD ==========
             function renderAlunos(){const tbody=document.getElementById('tbodyAlunos');const termo=(document.getElementById('searchAlunos')?.value||'').toLowerCase();const faixaFiltro=document.getElementById('filterFaixa')?.value||'todas';let lista=db.alunos;if(termo)lista=lista.filter(a=>a.nome.toLowerCase().includes(termo));if(faixaFiltro!=='todas')lista=lista.filter(a=>a.faixa===faixaFiltro);if(lista.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;">Nenhum aluno</td></tr>';}else{tbody.innerHTML=lista.map(a=>`<tr><td>#${a.id}</td><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa,a.grau)}</td><td>${grauTexto(a.faixa,a.grau)||'-'}</td><td>${formatData(a.dataIngresso)}</td><td>${medalhasCont(a.id)} 🏅</td><td style="display:flex;gap:4px;">${ehAdmin()?`<button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>`:'Visualização'}</td></tr>`).join('');if(ehAdmin()){tbody.querySelectorAll('.editar').forEach(b=>b.addEventListener('click',()=>abrirEditarAluno(parseInt(b.dataset.id))));tbody.querySelectorAll('.excluir').forEach(b=>b.addEventListener('click',()=>excluirAluno(parseInt(b.dataset.id))));}}}
             function renderGrad(){const tbody=document.getElementById('tbodyGraduacoes');if(db.graduacoes.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma graduação</td></tr>';}else{tbody.innerHTML=db.graduacoes.slice().reverse().map(g=>`<tr><td><strong>${nomeAluno(g.idAluno)}</strong></td><td>${formatData(g.data)}</td><td>${badgeHTML(g.faixaAnterior,g.grauAnterior)}</td><td>${badgeHTML(g.faixaNova,g.grauNovo)}</td></tr>`).join('');}}
-            function renderCamp(){const tbody=document.getElementById('tbodyCampeonatos');if(db.campeonatos.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;">Nenhum campeonato</td></tr>';}else{tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td>${ehAdmin()?`<button class="btn btn-danger btn-sm excluir-camp" data-key="${c.firebaseKey||c.id}"><i class="fas fa-trash"></i></button>`:'-'}</td></tr>`).join('');if(ehAdmin())tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>{if(confirm('Excluir?'))refCampeonatos.child(b.dataset.key).remove();}));}}
+            function renderCamp(){const tbody=document.getElementById('tbodyCampeonatos');if(db.campeonatos.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;">Nenhum campeonato</td></tr>';}else{tbody.innerHTML=db.campeonatos.slice().reverse().map(c=>`<tr><td><strong>${nomeAluno(c.idAluno)}</strong></td><td>${c.nomeCamp}</td><td>${formatData(c.data)}</td><td>${MEDALHA_ICONS[c.medalha]||''} ${c.medalha}</td><td>${ehAdmin()?`<button class="btn btn-danger btn-sm excluir-camp" data-key="${c._key}"><i class="fas fa-trash"></i></button>`:'-'}</td></tr>`).join('');if(ehAdmin())tbody.querySelectorAll('.excluir-camp').forEach(b=>b.addEventListener('click',()=>{if(confirm('Excluir campeonato?'))refCampeonatos.child(b.dataset.key).remove().then(()=>showToast('Campeonato removido!'));}));}}
             function abrirNovoAluno(){if(!ehAdmin())return;openModal('Novo Aluno','fas fa-user-plus',`<div class="form-group"><label>Nome</label><input type="text" id="fNome"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();if(!n){showToast('Digite o nome!','⚠️');return false;}refAlunos.child(gerarId()).set({id:db.nextId-1,nome:n,faixa:content.querySelector('#fFaixa').value,grau:parseInt(content.querySelector('#fGrau').value),dataIngresso:new Date().toISOString().split('T')[0]});showToast(`Aluno ${n} cadastrado!`);return true;});}
             function abrirEditarAluno(id){if(!ehAdmin())return;const a=getAluno(id);if(!a)return;openModal('Editar Aluno','fas fa-edit',`<div class="form-group"><label>Nome</label><input type="text" id="fNome" value="${a.nome}"></div><div class="form-group"><label>Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option value="${f}" ${a.faixa===f?'selected':''}>${f}</option>`).join('')}</select></div><div class="form-group"><label>Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}" ${a.grau===v?'selected':''}>${v}</option>`).join('')}</select></div>`,content=>{const n=content.querySelector('#fNome').value.trim();if(!n){showToast('Digite o nome!','⚠️');return false;}const f=content.querySelector('#fFaixa').value, g=parseInt(content.querySelector('#fGrau').value);if(f!==a.faixa||g!==a.grau){refGraduacoes.push({idAluno:a.id,data:new Date().toISOString().split('T')[0],faixaAnterior:a.faixa,grauAnterior:a.grau,faixaNova:f,grauNovo:g});}refAlunos.child(a.id).update({nome:n,faixa:f,grau:g});showToast('Aluno atualizado!');return true;});}
             function excluirAluno(id){if(!ehAdmin())return;const a=getAluno(id);if(!a||!confirm(`Excluir "${a.nome}"?`))return;refAlunos.child(id).remove();showToast('Aluno excluído.','🗑️');}
             function abrirModalGraduacao(){if(!ehAdmin())return;openModal('Graduação','fas fa-graduation-cap',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Nova Faixa</label><select id="fFaixa">${FAIXAS.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="form-group"><label>Novo Grau</label><select id="fGrau">${[0,1,2,3,4,5,6].map(v=>`<option value="${v}">${v}</option>`).join('')}</select></div><div class="form-group"><label>Data</label><input type="date" id="fData" value="${new Date().toISOString().split('T')[0]}"></div>`,content=>{const idAluno=parseInt(content.querySelector('#fIdAluno').value);const nf=content.querySelector('#fFaixa').value, ng=parseInt(content.querySelector('#fGrau').value);const al=getAluno(idAluno);if(!al||(nf===al.faixa&&ng===al.grau)){showToast('Sem alteração!','⚠️');return false;}refGraduacoes.push({idAluno,data:content.querySelector('#fData').value,faixaAnterior:al.faixa,grauAnterior:al.grau,faixaNova:nf,grauNovo:ng});refAlunos.child(al.id).update({faixa:nf,grau:ng});showToast('Graduação registrada!');return true;});}
-            function abrirModalCampeonato(){if(!ehAdmin())return;openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const nc=content.querySelector('#fNomeCamp').value.trim();if(!nc){showToast('Digite o nome!','⚠️');return false;}const ref=refCampeonatos.push({idAluno:parseInt(content.querySelector('#fIdAluno').value),nomeCamp:nc,data:content.querySelector('#fDataCamp').value,medalha:content.querySelector('#fMedalha').value});ref.child('firebaseKey').set(ref.key);showToast('Campeonato registrado!');return true;});}
+            function abrirModalCampeonato(){if(!ehAdmin())return;openModal('Campeonato','fas fa-trophy',`<div class="form-group"><label>Aluno</label><select id="fIdAluno">${db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="form-group"><label>Campeonato</label><input type="text" id="fNomeCamp"></div><div class="form-group"><label>Data</label><input type="date" id="fDataCamp" value="${new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>Medalha</label><select id="fMedalha">${MEDALHAS.map(m=>`<option>${m}</option>`).join('')}</select></div>`,content=>{const nc=content.querySelector('#fNomeCamp').value.trim();if(!nc){showToast('Digite o nome!','⚠️');return false;}const ref=refCampeonatos.push({idAluno:parseInt(content.querySelector('#fIdAluno').value),nomeCamp:nc,data:content.querySelector('#fDataCamp').value,medalha:content.querySelector('#fMedalha').value});ref.child('_key').set(ref.key);showToast('Campeonato registrado!');return true;});}
 
             // ========== GRÁFICOS ==========
             let cF,cM,cT;
