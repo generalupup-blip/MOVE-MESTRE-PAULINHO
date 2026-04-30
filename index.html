@@ -124,15 +124,15 @@
         .faixa-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-weight:700;font-size:.78rem;letter-spacing:.3px;}
         .empty-state{text-align:center;padding:40px;color:var(--text-light);}
         .empty-state i{font-size:3rem;display:block;margin-bottom:12px;opacity:.5;}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);animation:fadeIn .2s;}
-        .modal{background:#fff;border-radius:var(--radius);padding:24px 28px;width:90%;max-width:700px;box-shadow:var(--shadow-lg);animation:slideUp .25s;max-height:85vh;overflow-y:auto;}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);animation:fadeIn .2s;}
+        .modal-overlay.active{display:flex;}
+        .modal{background:#fff;border-radius:var(--radius);padding:24px 28px;width:90%;max-width:800px;box-shadow:var(--shadow-lg);animation:slideUp .25s;max-height:90vh;overflow-y:auto;}
         @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
         .modal h2{font-size:1.2rem;margin-bottom:18px;display:flex;align-items:center;gap:8px;color:var(--green-dark);}
         .form-group{margin-bottom:14px;}
         .form-group label{display:block;font-weight:600;font-size:.82rem;margin-bottom:5px;}
         .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:.9rem;font-family:var(--font);background:#fafbfc;}
         .btn-excluir-presenca{background:#fee2e2;color:#c0392b;border:none;padding:4px 10px;border-radius:6px;font-size:.7rem;cursor:pointer;font-weight:700;}
-        .btn-excluir-presenca:hover{background:#fecaca;}
         .horario-badge{display:inline-block;background:#f0f6f2;padding:2px 8px;border-radius:10px;font-size:.7rem;font-weight:600;margin:1px 2px;}
         .toast{position:fixed;bottom:90px;right:20px;background:#1f2937;color:#fff;padding:12px 20px;border-radius:25px;font-weight:600;font-size:.85rem;z-index:300;box-shadow:var(--shadow-lg);animation:slideUpToast .3s,fadeOutToast .3s 2.5s forwards;display:flex;align-items:center;gap:8px;}
         @keyframes slideUpToast{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -153,23 +153,6 @@
         .sem-treino{color:var(--text-light);font-size:.8rem;text-align:center;padding:15px;}
         .btn-editar-aulas{background:var(--gold);color:#fff;border:none;padding:8px 16px;border-radius:20px;font-weight:700;font-size:.8rem;cursor:pointer;}
         .calendario-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
-        .tecnicas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
-        .tecnica-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:2px solid var(--border);transition:all var(--transition);cursor:default;position:relative;overflow:hidden;}
-        .tecnica-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--gold);}
-        .tecnica-card .faixa-badge-top{position:absolute;top:12px;right:12px;}
-        .tecnica-card h3{font-size:1.1rem;font-weight:800;color:var(--green-dark);margin-bottom:8px;}
-        .tecnica-card .tecnica-desc{font-size:.85rem;color:var(--text-light);line-height:1.5;margin-bottom:12px;}
-        .tecnica-card .tecnica-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:.75rem;color:var(--text-light);}
-        .tecnica-card .tecnica-meta span{display:flex;align-items:center;gap:4px;}
-        .tag-video-count{display:inline-flex;align-items:center;gap:4px;background:#fee2e2;color:#c0392b;padding:3px 8px;border-radius:10px;font-size:.7rem;font-weight:700;}
-        .btn-play-video{display:inline-flex;align-items:center;gap:6px;background:var(--green-mid);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;margin-top:10px;text-decoration:none;}
-        .btn-play-video:hover{background:var(--green-dark);}
-        .btn-add-video{background:var(--gold);color:#1a1a1a;border:none;padding:6px 12px;border-radius:6px;font-size:.75rem;cursor:pointer;margin-top:8px;width:100%;font-weight:700;}
-        .btn-remove-video{background:#fee2e2;color:#c0392b;border:none;padding:2px 8px;border-radius:4px;font-size:.65rem;cursor:pointer;}
-        .video-item{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-        .video-item input{flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:.78rem;}
-        .video-modal-content{width:100%;max-width:800px;}
-        .video-modal-content video{width:100%;border-radius:var(--radius);}
         .dia-section{border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;}
         .dia-section h4{font-weight:800;margin-bottom:8px;}
         .treino-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
@@ -186,10 +169,7 @@
         .usuario-nivel{font-size:.75rem;color:var(--text-light);}
         .avisos-admin-section{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
         .avisos-admin-section button{flex:1;min-width:200px;}
-        .filtro-tecnicas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-        .filtro-tecnicas select,.filtro-tecnicas input{padding:10px 14px;border:2px solid var(--border);border-radius:25px;font-family:var(--font);font-size:.85rem;outline:none;}
-        .filtro-tecnicas select:focus,.filtro-tecnicas input:focus{border-color:var(--gold);}
-        @media(max-width:768px){.sidebar{transform:translateX(-100%);width:270px;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.calendario-grid,.presenca-grid,.tecnicas-grid{grid-template-columns:1fr;}.presenca-header{flex-direction:column;align-items:flex-start;}.historico-filtros,.filtro-tecnicas{flex-direction:column;align-items:stretch;}.login-wrapper{padding:20px;}}
+        @media(max-width:768px){.sidebar{transform:translateX(-100%);width:270px;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}.bottom-nav{display:block;}.page-content{padding:12px 10px;padding-bottom:100px;}.hamburger{display:block;}.calendario-grid,.presenca-grid{grid-template-columns:1fr;}.presenca-header{flex-direction:column;align-items:flex-start;}.historico-filtros{flex-direction:column;align-items:stretch;}.login-wrapper{padding:20px;}}
     </style>
 </head>
 <body>
@@ -224,7 +204,7 @@
                 <a data-page="alunos"><i class="fas fa-users"></i> Alunos</a>
                 <a data-page="graduacoes"><i class="fas fa-graduation-cap"></i> Graduações</a>
                 <a data-page="campeonatos"><i class="fas fa-trophy"></i> Campeonatos</a>
-                <a data-page="tecnicas"><i class="fas fa-book"></i> Técnicas</a>
+                <a data-page="regras"><i class="fas fa-book"></i> Regras</a>
                 <a data-page="usuarios" style="color:var(--gold);"><i class="fas fa-user-cog"></i> Usuários</a>
             </nav>
             <div class="sidebar-footer">© 2026 · Green Mountain</div>
@@ -239,22 +219,12 @@
                 <div class="page" id="page-presenca"><div class="presenca-container"><div class="presenca-header"><h2><i class="fas fa-clipboard-check"></i> Marcar Presença</h2><div class="localidade-tabs" id="localidadeTabsPresenca"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ MV</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ CAM</button></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><label>Data:</label><input type="date" id="dataPresenca" style="padding:10px;border:2px solid var(--border);border-radius:8px;"><label>Horário:</label><input type="text" id="horarioPresenca" placeholder="19:00" value="19:00" style="padding:10px;border:2px solid var(--border);border-radius:8px;width:100px;"></div><input type="text" id="buscaPresenca" placeholder="🔍 Buscar aluno..." style="padding:10px;border:2px solid var(--border);border-radius:25px;width:200px;"><div class="presenca-stats" id="presencaStats"></div></div><div class="presenca-grid" id="presencaGrid"></div><button class="btn btn-success btn-salvar-presenca" id="btnSalvarPresenca"><i class="fas fa-save"></i> Salvar</button></div></div>
                 <div class="page" id="page-historico"><div class="presenca-container"><div class="presenca-header"><h2><i class="fas fa-history"></i> Histórico</h2></div><div class="historico-filtros"><label>De:</label><input type="date" id="histDataInicio" value="2026-01-01"><label>Até:</label><input type="date" id="histDataFim"><label>Aluno:</label><input type="text" id="histBuscaAluno" placeholder="🔍 Nome..." style="min-width:150px;"><button class="btn btn-primary btn-sm" id="btnFiltrarHistorico"><i class="fas fa-filter"></i></button><button class="btn btn-ghost btn-sm" id="btnLimparHistorico"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table><thead><tr><th>Aluno</th><th>Faixa</th><th>🏔️MV</th><th>🏙️CAM</th><th>Total</th><th>Horários</th><th>Ações</th></tr></thead><tbody id="tbodyHistorico"></tbody></table><div class="empty-state" id="emptyHistorico" style="display:none;"><i class="fas fa-search"></i></div></div></div></div>
                 <div class="page" id="page-aulas"><div class="presenca-header"><h2><i class="fas fa-calendar-alt"></i> Cronograma</h2><button class="btn-editar-aulas" id="btnEditarAulas"><i class="fas fa-edit"></i> Editar</button></div><div class="localidade-tabs" id="localidadeTabsAulas"><button class="localidade-tab monte-verde active" data-local="monteVerde">🏔️ MV</button><button class="localidade-tab camanducaia" data-local="camanducaia">🏙️ CAM</button></div><div class="calendario-grid" id="calendarioGrid"></div></div>
-                <div class="page" id="page-tecnicas">
-                    <div class="presenca-header"><h2><i class="fas fa-book"></i> Biblioteca de Técnicas</h2><div class="localidade-tabs" id="tabsBiblioteca"><button class="localidade-tab monte-verde active" data-tab="tecnicas">🥋 Técnicas</button><button class="localidade-tab camanducaia" data-tab="regras">📋 Regras & Pontuação</button></div></div>
-                    <div id="tabTecnicas">
-                        <div class="filtro-tecnicas">
-                            <select id="filtroFaixaTecnica"><option value="todas">Todas as Faixas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option></select>
-                            <select id="filtroTipoTecnica"><option value="todas">Todos os Tipos</option><option value="Raspagem">Raspagem</option><option value="Guarda">Guarda</option><option value="Passagem">Passagem de Guarda</option><option value="Finalização">Finalização</option><option value="Estrangulamento">Estrangulamento</option><option value="Chave">Chave</option><option value="Queda">Queda</option><option value="Defesa">Defesa</option><option value="Transição">Transição</option><option value="Posição">Posição</option></select>
-                            <input type="text" id="buscaTecnica" placeholder="🔍 Buscar técnica...">
-                        </div>
-                        <div class="tecnicas-grid" id="tecnicasGrid"></div>
-                    </div>
-                    <div id="tabRegras" style="display:none;">
-                        <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>🏆 Sistema de Pontuação IBJJF</h2></div><table><thead><tr><th>Movimento</th><th>Pontos</th><th>Descrição</th></tr></thead><tbody><tr><td><strong>Queda / Projeção</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Derrubar o oponente e estabilizar no chão por 3 segundos</td></tr><tr><td><strong>Raspagem</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Inverter a posição estando por baixo e ficar por cima</td></tr><tr><td><strong>Passagem de Guarda</strong></td><td><span style="color:#2d5a3f;font-weight:900;">3 pts</span></td><td>Passar a guarda e estabilizar por 3 segundos</td></tr><tr><td><strong>Montada</strong></td><td><span style="color:#2d5a3f;font-weight:900;">4 pts</span></td><td>Montar no oponente (sentado sobre o tronco) por 3 segundos</td></tr><tr><td><strong>Pegada de Costas</strong></td><td><span style="color:#2d5a3f;font-weight:900;">4 pts</span></td><td>Controlar as costas do oponente com os dois ganchos</td></tr><tr><td><strong>Joelho na Barriga</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Colocar o joelho sobre a barriga do oponente e estabilizar</td></tr></tbody></table></div>
-                        <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>⏱️ Tempo de Luta por Faixa</h2></div><table><thead><tr><th>Faixa</th><th>Adulto</th><th>Máster</th></tr></thead><tbody><tr><td>Branca</td><td>5 min</td><td>5 min</td></tr><tr><td>Azul</td><td>6 min</td><td>5 min</td></tr><tr><td>Roxa</td><td>7 min</td><td>6 min</td></tr><tr><td>Marrom</td><td>8 min</td><td>6 min</td></tr><tr><td>Preta</td><td>10 min</td><td>6 min</td></tr></tbody></table></div>
-                        <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>⬆️ Ordem das Faixas</h2></div><table><thead><tr><th>Ordem</th><th>Faixa</th><th>Idade Mínima</th><th>Tempo Mínimo</th></tr></thead><tbody><tr><td>1ª</td><td>Branca</td><td>4 anos</td><td>-</td></tr><tr><td>2ª</td><td>Cinza</td><td>4-15 anos</td><td>6 meses</td></tr><tr><td>3ª</td><td>Amarela</td><td>7-15 anos</td><td>6 meses</td></tr><tr><td>4ª</td><td>Laranja</td><td>10-15 anos</td><td>6 meses</td></tr><tr><td>5ª</td><td>Verde</td><td>13-15 anos</td><td>6 meses</td></tr><tr><td>6ª</td><td>Azul</td><td>16 anos</td><td>1 ano</td></tr><tr><td>7ª</td><td>Roxa</td><td>16 anos</td><td>2 anos</td></tr><tr><td>8ª</td><td>Marrom</td><td>18 anos</td><td>1,5 ano</td></tr><tr><td>9ª</td><td>Preta</td><td>19 anos</td><td>2 anos</td></tr></tbody></table></div>
-                        <div class="table-wrapper"><div class="table-header"><h2>🚫 Penalidades</h2></div><table><thead><tr><th>Falta</th><th>Penalidade</th></tr></thead><tbody><tr><td>Falta leve (ex: falta de combatividade)</td><td>Vantagem para o oponente</td></tr><tr><td>Falta grave (ex: desrespeito)</td><td>2 pontos para o oponente</td></tr><tr><td>Falta gravíssima (ex: agressão)</td><td>Desclassificação</td></tr></tbody></table></div>
-                    </div>
+                <div class="page" id="page-regras">
+                    <div class="presenca-header"><h2><i class="fas fa-book"></i> Regras & Pontuação IBJJF</h2></div>
+                    <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>🏆 Sistema de Pontuação</h2></div><table><thead><tr><th>Movimento</th><th>Pontos</th><th>Descrição</th></tr></thead><tbody><tr><td><strong>Queda / Projeção</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Derrubar o oponente e estabilizar no chão por 3 segundos</td></tr><tr><td><strong>Raspagem</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Inverter a posição estando por baixo e ficar por cima</td></tr><tr><td><strong>Passagem de Guarda</strong></td><td><span style="color:#2d5a3f;font-weight:900;">3 pts</span></td><td>Passar a guarda e estabilizar por 3 segundos</td></tr><tr><td><strong>Montada</strong></td><td><span style="color:#2d5a3f;font-weight:900;">4 pts</span></td><td>Montar no oponente (sentado sobre o tronco) por 3 segundos</td></tr><tr><td><strong>Pegada de Costas</strong></td><td><span style="color:#2d5a3f;font-weight:900;">4 pts</span></td><td>Controlar as costas do oponente com os dois ganchos</td></tr><tr><td><strong>Joelho na Barriga</strong></td><td><span style="color:#2d5a3f;font-weight:900;">2 pts</span></td><td>Colocar o joelho sobre a barriga do oponente e estabilizar</td></tr></tbody></table></div>
+                    <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>⏱️ Tempo de Luta por Faixa</h2></div><table><thead><tr><th>Faixa</th><th>Adulto</th><th>Máster</th></tr></thead><tbody><tr><td>Branca</td><td>5 min</td><td>5 min</td></tr><tr><td>Azul</td><td>6 min</td><td>5 min</td></tr><tr><td>Roxa</td><td>7 min</td><td>6 min</td></tr><tr><td>Marrom</td><td>8 min</td><td>6 min</td></tr><tr><td>Preta</td><td>10 min</td><td>6 min</td></tr></tbody></table></div>
+                    <div class="table-wrapper" style="margin-bottom:24px;"><div class="table-header"><h2>⬆️ Ordem das Faixas</h2></div><table><thead><tr><th>Ordem</th><th>Faixa</th><th>Idade Mínima</th><th>Tempo Mínimo</th></tr></thead><tbody><tr><td>1ª</td><td>Branca</td><td>4 anos</td><td>-</td></tr><tr><td>2ª</td><td>Cinza</td><td>4-15 anos</td><td>6 meses</td></tr><tr><td>3ª</td><td>Amarela</td><td>7-15 anos</td><td>6 meses</td></tr><tr><td>4ª</td><td>Laranja</td><td>10-15 anos</td><td>6 meses</td></tr><tr><td>5ª</td><td>Verde</td><td>13-15 anos</td><td>6 meses</td></tr><tr><td>6ª</td><td>Azul</td><td>16 anos</td><td>1 ano</td></tr><tr><td>7ª</td><td>Roxa</td><td>16 anos</td><td>2 anos</td></tr><tr><td>8ª</td><td>Marrom</td><td>18 anos</td><td>1,5 ano</td></tr><tr><td>9ª</td><td>Preta</td><td>19 anos</td><td>2 anos</td></tr></tbody></table></div>
+                    <div class="table-wrapper"><div class="table-header"><h2>🚫 Penalidades</h2></div><table><thead><tr><th>Falta</th><th>Penalidade</th></tr></thead><tbody><tr><td>Falta leve (ex: falta de combatividade)</td><td>Vantagem para o oponente</td></tr><tr><td>Falta grave (ex: desrespeito)</td><td>2 pontos para o oponente</td></tr><tr><td>Falta gravíssima (ex: agressão)</td><td>Desclassificação</td></tr></tbody></table></div>
                 </div>
                 <div class="page" id="page-usuarios"><div class="presenca-container"><div class="presenca-header"><h2><i class="fas fa-user-cog"></i> Gerenciar Usuários</h2><button class="btn btn-primary btn-sm" id="btnAddUsuario"><i class="fas fa-plus"></i> Novo Usuário</button></div><div id="usuariosLista"></div></div></div>
                 <div class="page" id="page-alunos"><div class="table-wrapper"><div class="presenca-header"><h2><i class="fas fa-users"></i> Alunos</h2><div style="display:flex;gap:8px;"><input type="text" id="searchAlunos" placeholder="🔍 Buscar..." style="padding:8px;border-radius:20px;border:1px solid var(--border);"><select id="filterFaixa" style="padding:8px;border-radius:20px;border:1px solid var(--border);"><option value="todas">Todas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option></select><button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i></button></div></div><table><thead><tr><th>ID</th><th>Nome</th><th>Faixa</th><th>Grau</th><th>Ingresso</th><th>Med.</th><th>Ações</th></tr></thead><tbody id="tbodyAlunos"></tbody></table></div></div>
@@ -264,7 +234,7 @@
         </div>
     </div>
     <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-inner"><a data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i></a><a data-page="presenca"><i class="fas fa-clipboard-check"></i></a><a data-page="historico"><i class="fas fa-history"></i></a><a data-page="aulas"><i class="fas fa-calendar-alt"></i></a><a data-page="alunos"><i class="fas fa-users"></i></a><a data-page="campeonatos"><i class="fas fa-trophy"></i></a></div></nav>
-    <div class="modal-overlay" id="modalOverlay" style="display:none;"><div class="modal" id="modalContent"></div></div>
+    <div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
     <div id="toastContainer"></div>
     <script>
         // Música
@@ -285,66 +255,6 @@
         const DIAS=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];const DIAS_NOMES={segunda:'Segunda',terca:'Terça',quarta:'Quarta',quinta:'Quinta',sexta:'Sexta',sabado:'Sábado',domingo:'Domingo'};const DIAS_ICONES={segunda:'🥋',terca:'💪',quarta:'🥋',quinta:'💪',sexta:'🥋',sabado:'🏆',domingo:'🧘'};
         const FAIXAS=['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Preta'];const FAIXA_CORES={'Branca':'#e0e0e0','Cinza':'#9e9e9e','Amarela':'#fdd835','Laranja':'#fb8c00','Verde':'#2e7d32','Azul':'#1e88e5','Roxa':'#7b1fa2','Marrom':'#6d4c41','Preta':'#212121'};
         const MEDALHAS=['Ouro','Prata','Bronze','Participação'];const MEDALHA_ICONS={Ouro:'🥇',Prata:'🥈',Bronze:'🥉',Participação:'🏅'};
-
-        // Técnicas iniciais (sem vídeos, depois podem ser adicionados)
-        const TECNICAS_PADRAO=[
-            {nome:"Raspagem de Guarda Fechada",faixa:"Branca",tipo:"Raspagem",desc:"Raspagem básica a partir da guarda fechada.",videos:[]},
-            {nome:"Triângulo",faixa:"Branca",tipo:"Finalização",desc:"Finalização clássica com as pernas.",videos:[]},
-            {nome:"Mata-Leão",faixa:"Branca",tipo:"Estrangulamento",desc:"Estrangulamento pelas costas.",videos:[]},
-            {nome:"Armlock",faixa:"Branca",tipo:"Chave",desc:"Chave de braço a partir da montada.",videos:[]},
-            {nome:"Americana",faixa:"Branca",tipo:"Chave",desc:"Chave de ombro na posição lateral.",videos:[]},
-            {nome:"Guilhotina",faixa:"Branca",tipo:"Estrangulamento",desc:"Estrangulamento frontal.",videos:[]},
-            {nome:"Queda de Quadril",faixa:"Branca",tipo:"Queda",desc:"Queda básica de judô adaptada.",videos:[]},
-            {nome:"Passagem de Guarda Básica",faixa:"Branca",tipo:"Passagem",desc:"Passagem de guarda abrindo os joelhos.",videos:[]},
-            {nome:"Raspagem de Tesoura",faixa:"Branca",tipo:"Raspagem",desc:"Raspagem com movimento de tesoura.",videos:[]},
-            {nome:"Escape de Montada",faixa:"Branca",tipo:"Defesa",desc:"Defesa da montada (Upa).",videos:[]},
-            {nome:"Escape de Joelho na Barriga",faixa:"Branca",tipo:"Defesa",desc:"Defesa do joelho na barriga.",videos:[]},
-            {nome:"Chave de Pé Reta",faixa:"Branca",tipo:"Chave",desc:"Finalização de tornozelo.",videos:[]},
-            {nome:"Kimura",faixa:"Amarela",tipo:"Chave",desc:"Chave de ombro com figura-4.",videos:[]},
-            {nome:"Estrangulamento com Lapela",faixa:"Amarela",tipo:"Estrangulamento",desc:"Usando a lapela do oponente.",videos:[]},
-            {nome:"Raspagem de Gancho",faixa:"Amarela",tipo:"Raspagem",desc:"Raspagem com ganchos.",videos:[]},
-            {nome:"Passagem de Guarda de Joelho",faixa:"Amarela",tipo:"Passagem",desc:"Passagem apoiando o joelho.",videos:[]},
-            {nome:"Montada Técnica",faixa:"Amarela",tipo:"Transição",desc:"Transição da meia-guarda.",videos:[]},
-            {nome:"Defesa de Triângulo",faixa:"Amarela",tipo:"Defesa",desc:"Como defender o triângulo.",videos:[]},
-            {nome:"Berimbolo",faixa:"Laranja",tipo:"Raspagem",desc:"Raspagem girando sobre as costas.",videos:[]},
-            {nome:"Estrangulamento Bow and Arrow",faixa:"Laranja",tipo:"Estrangulamento",desc:"Usando gola e perna.",videos:[]},
-            {nome:"Guarda Aranha",faixa:"Laranja",tipo:"Posição",desc:"Controlando as mangas.",videos:[]},
-            {nome:"Guarda Laço",faixa:"Laranja",tipo:"Posição",desc:"Uma perna por dentro, outra por fora.",videos:[]},
-            {nome:"Raspagem da Guarda Aranha",faixa:"Laranja",tipo:"Raspagem",desc:"A partir da guarda aranha.",videos:[]},
-            {nome:"Passagem de Guarda Torre",faixa:"Verde",tipo:"Passagem",desc:"Usando pressão e controle.",videos:[]},
-            {nome:"Finalização da Guarda Laço",faixa:"Verde",tipo:"Finalização",desc:"Triângulo ou chave de braço.",videos:[]},
-            {nome:"Chave de Braço Voadora",faixa:"Verde",tipo:"Chave",desc:"Saltando para a montada.",videos:[]},
-            {nome:"Guarda De La Riva",faixa:"Azul",tipo:"Posição",desc:"Pé no quadril, outro enganchando.",videos:[]},
-            {nome:"Raspagem De La Riva",faixa:"Azul",tipo:"Raspagem",desc:"Controlando manga e calcanhar.",videos:[]},
-            {nome:"Triângulo Invertido",faixa:"Azul",tipo:"Finalização",desc:"De cabeça para baixo.",videos:[]},
-            {nome:"Chave de Joelho",faixa:"Azul",tipo:"Chave",desc:"Atacando o joelho.",videos:[]},
-            {nome:"Raspagem de Meia Guarda",faixa:"Azul",tipo:"Raspagem",desc:"Com controle do pé.",videos:[]},
-            {nome:"Meia Guarda Profunda",faixa:"Azul",tipo:"Posição",desc:"Joelho no chão.",videos:[]},
-            {nome:"Estrangulamento Loop Choke",faixa:"Azul",tipo:"Estrangulamento",desc:"Usando a gola e o braço.",videos:[]},
-            {nome:"Passagem de Guarda de Pressão",faixa:"Azul",tipo:"Passagem",desc:"Peso do corpo constante.",videos:[]},
-            {nome:"Guarda X",faixa:"Roxa",tipo:"Posição",desc:"Pernas em X.",videos:[]},
-            {nome:"Raspagem da Guarda X",faixa:"Roxa",tipo:"Raspagem",desc:"Estendendo as pernas.",videos:[]},
-            {nome:"Guarda 50/50",faixa:"Roxa",tipo:"Posição",desc:"Uma perna por dentro, outra por fora.",videos:[]},
-            {nome:"Chave de Calcanhar",faixa:"Roxa",tipo:"Chave",desc:"Atacando o calcanhar.",videos:[]},
-            {nome:"Estrangulamento de Relógio",faixa:"Roxa",tipo:"Estrangulamento",desc:"Com lapela girando.",videos:[]},
-            {nome:"Passagem de Guarda de Torreão",faixa:"Roxa",tipo:"Passagem",desc:"Empilhando o oponente.",videos:[]},
-            {nome:"Raspagem de Polvo",faixa:"Roxa",tipo:"Raspagem",desc:"Múltiplos ganchos.",videos:[]},
-            {nome:"Finalização Ezekiel",faixa:"Roxa",tipo:"Estrangulamento",desc:"Usando a manga do kimono.",videos:[]},
-            {nome:"Guarda Borboleta",faixa:"Marrom",tipo:"Posição",desc:"Pés nos quadris.",videos:[]},
-            {nome:"Raspagem Borboleta",faixa:"Marrom",tipo:"Raspagem",desc:"Elevando o oponente.",videos:[]},
-            {nome:"Chave de Tornozelo",faixa:"Marrom",tipo:"Chave",desc:"Torcendo o tornozelo.",videos:[]},
-            {nome:"Estrangulamento Baseball",faixa:"Marrom",tipo:"Estrangulamento",desc:"Duas lapelas.",videos:[]},
-            {nome:"Passagem de Guarda de Berimbolo",faixa:"Marrom",tipo:"Passagem",desc:"Contra-ataque ao berimbolo.",videos:[]},
-            {nome:"Guarda Single Leg X",faixa:"Marrom",tipo:"Posição",desc:"Variação da guarda X.",videos:[]},
-            {nome:"Triângulo de Mão",faixa:"Preta",tipo:"Estrangulamento",desc:"Com os braços.",videos:[]},
-            {nome:"Chave de Braço Invertida",faixa:"Preta",tipo:"Chave",desc:"Ângulos não convencionais.",videos:[]},
-            {nome:"Raspagem de Lapela",faixa:"Preta",tipo:"Raspagem",desc:"Lapela como alavanca.",videos:[]},
-            {nome:"Estrangulamento Worm",faixa:"Preta",tipo:"Estrangulamento",desc:"Lapela por entre as pernas.",videos:[]},
-            {nome:"Omoplata",faixa:"Preta",tipo:"Chave",desc:"Pressão no ombro com as pernas.",videos:[]},
-            {nome:"Guarda Invertida",faixa:"Preta",tipo:"Posição",desc:"Para transições avançadas.",videos:[]},
-            {nome:"Chave de Bíceps",faixa:"Preta",tipo:"Chave",desc:"Comprimindo o bíceps.",videos:[]},
-            {nome:"Guarda Gêmea",faixa:"Preta",tipo:"Posição",desc:"Controle total das pernas.",videos:[]}
-        ];
 
         let usuarioAtual=null;let localidadeAtivaPresenca='monteVerde';let localidadeAtivaAulas='monteVerde';
         const loginOverlay=document.getElementById('loginOverlay'),appContainer=document.getElementById('appContainer'),loginInput=document.getElementById('loginInput'),senhaInput=document.getElementById('senhaInput'),loginError=document.getElementById('loginError'),btnEntrar=document.getElementById('btnEntrar'),btnLogout=document.getElementById('btnLogout');
@@ -367,11 +277,8 @@
             if(ehAdmin())document.getElementById('userBadge').classList.add('admin');
             if(ehAluno()){document.querySelectorAll('.sidebar-nav a[data-page="presenca"],.sidebar-nav a[data-page="historico"],.sidebar-nav a[data-page="graduacoes"],.sidebar-nav a[data-page="usuarios"]').forEach(a=>a.style.display='none');document.getElementById('btnAddAlunoTop').style.display='none';document.getElementById('btnAddAluno').style.display='none';document.getElementById('btnAddGraduacao').style.display='none';document.getElementById('btnAddCampeonato').style.display='none';document.getElementById('btnEditarAulas').style.display='none';document.querySelectorAll('.bottom-nav a[data-page="presenca"],.bottom-nav a[data-page="historico"]').forEach(a=>a.style.display='none');}else if(!ehAdmin()){document.getElementById('btnAddAlunoTop').style.display='none';document.getElementById('btnAddAluno').style.display='none';document.getElementById('btnAddGraduacao').style.display='none';document.getElementById('btnAddCampeonato').style.display='none';document.getElementById('btnEditarAulas').style.display='none';document.querySelector('.sidebar-nav a[data-page="usuarios"]').style.display='none';}
 
-            const refAlunos=database.ref('alunos'),refGraduacoes=database.ref('graduacoes'),refCampeonatos=database.ref('campeonatos'),refNextId=database.ref('nextId'),refAvisosAlunos=database.ref('avisos_alunos'),refAvisosProfessores=database.ref('avisos_professores'),refAulas=database.ref('aulas'),refPresencas=database.ref('presencas'),refTecnicas=database.ref('tecnicas');
-            let db={alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisosAlunos:[],avisosProfessores:[],aulas:{},presencas:{},tecnicas:[]};
-
-            refTecnicas.once('value',snap=>{if(!snap.val()||Object.keys(snap.val()).length===0)refTecnicas.set(TECNICAS_PADRAO);});
-            refTecnicas.on('value',snap=>{const val=snap.val();db.tecnicas=val?Object.values(val):TECNICAS_PADRAO;renderTecnicas();});
+            const refAlunos=database.ref('alunos'),refGraduacoes=database.ref('graduacoes'),refCampeonatos=database.ref('campeonatos'),refNextId=database.ref('nextId'),refAvisosAlunos=database.ref('avisos_alunos'),refAvisosProfessores=database.ref('avisos_professores'),refAulas=database.ref('aulas'),refPresencas=database.ref('presencas');
+            let db={alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisosAlunos:[],avisosProfessores:[],aulas:{},presencas:{}};
 
             refAlunos.on('value',snap=>{db.alunos=snap.val()?Object.values(snap.val()):[];renderAlunos();atualizarDashboard();});
             refGraduacoes.on('value',snap=>{db.graduacoes=snap.val()?Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})):[];renderGrad();});
@@ -391,8 +298,8 @@
             function grauTexto(faixa,grau){if(faixa==='Preta')return`${grau}º grau`;if(grau>0)return`${grau} listra${grau>1?'s':''}`;return'';}
             function badgeHTML(faixa,grau){const cor=corFaixa(faixa);const txt=(faixa=='Branca'||faixa=='Amarela')?'#333':'#fff';return`<span class="faixa-badge" style="background:${cor};color:${txt};"><span class="faixa-dot" style="background:${cor};border:2px solid ${txt};"></span>${faixa}${grau?' · '+grauTexto(faixa,grau):''}</span>`;}
             function showToast(msg,icon='✅'){const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className='toast';t.innerHTML=`${icon} ${msg}`;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
-            function openModal(title,icon,bodyHTML,onSave){const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');content.innerHTML=`<h2><i class="${icon}"></i> ${title}</h2>${bodyHTML}<div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;overlay.style.display='flex';document.getElementById('modalCancel').onclick=closeModal;document.getElementById('modalSave').onclick=()=>{if(onSave(content))closeModal();};overlay.onclick=e=>{if(e.target===overlay)closeModal();};}
-            function closeModal(){document.getElementById('modalOverlay').style.display='none';}
+            function openModal(title,icon,bodyHTML,onSave){const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');content.innerHTML=`<h2><i class="${icon}"></i> ${title}</h2>${bodyHTML}<div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;overlay.classList.add('active');document.getElementById('modalCancel').onclick=closeModal;document.getElementById('modalSave').onclick=()=>{if(onSave(content))closeModal();};overlay.onclick=e=>{if(e.target===overlay)closeModal();};}
+            function closeModal(){const overlay=document.getElementById('modalOverlay');overlay.classList.remove('active');const iframe=overlay.querySelector('iframe');if(iframe)iframe.src='';}
 
             function navigateTo(page){
                 document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -404,12 +311,6 @@
                 if(page==='presenca')renderPresenca();
                 if(page==='historico')renderHistorico();
                 if(page==='aulas')renderAulas();
-                if(page==='tecnicas'){
-                    document.getElementById('tabsBiblioteca')?.querySelectorAll('.localidade-tab').forEach(t=>{t.classList.toggle('active',t.dataset.tab==='tecnicas');});
-                    document.getElementById('tabTecnicas').style.display='block';
-                    document.getElementById('tabRegras').style.display='none';
-                    renderTecnicas();
-                }
                 if(page==='usuarios')renderUsuarios();
                 if(page==='alunos')renderAlunos();
                 if(page==='graduacoes')renderGrad();
@@ -419,40 +320,9 @@
             document.querySelectorAll('.sidebar-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.querySelectorAll('.bottom-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
             document.getElementById('hamburgerBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+            document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-            document.getElementById('tabsBiblioteca')?.addEventListener('click',function(e){const tab=e.target.closest('.localidade-tab');if(!tab)return;this.querySelectorAll('.localidade-tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');const tn=tab.dataset.tab;document.getElementById('tabTecnicas').style.display=tn==='tecnicas'?'block':'none';document.getElementById('tabRegras').style.display=tn==='regras'?'block':'none';if(tn==='tecnicas')renderTecnicas();});
-
-            // ========== BIBLIOTECA DE TÉCNICAS (COM PLAYER DE VÍDEO EMBUTIDO) ==========
-            function renderTecnicas(){const grid=document.getElementById('tecnicasGrid');if(!grid)return;const ff=document.getElementById('filtroFaixaTecnica')?.value||'todas';const ft=document.getElementById('filtroTipoTecnica')?.value||'todas';const busca=(document.getElementById('buscaTecnica')?.value||'').toLowerCase();let lista=db.tecnicas;if(ff!=='todas')lista=lista.filter(t=>t.faixa===ff);if(ft!=='todas')lista=lista.filter(t=>t.tipo===ft);if(busca)lista=lista.filter(t=>t.nome.toLowerCase().includes(busca)||t.desc.toLowerCase().includes(busca));if(lista.length===0){grid.innerHTML='<div class="empty-state"><i class="fas fa-book-open"></i><p>Nenhuma técnica encontrada</p></div>';return;}grid.innerHTML=lista.map(t=>{const videos=t.videos||[];const temVideos=videos.length>0;return`<div class="tecnica-card"><div class="faixa-badge-top">${badgeHTML(t.faixa,0)}</div><h3>${t.nome}</h3><div class="tecnica-desc">${t.desc}</div><div class="tecnica-meta"><span><i class="fas fa-tag"></i> ${t.tipo}</span><span><i class="fas fa-circle"></i> ${t.faixa}</span>${temVideos?`<span class="tag-video-count"><i class="fas fa-video"></i> ${videos.length} vídeo${videos.length>1?'s':''}</span>`:''}</div>${temVideos?`<button class="btn-play-video" onclick="abrirPlayerVideo('${t.nome.replace(/'/g,"&#39;")}','${videos[0].replace(/'/g,"&#39;")}')"><i class="fas fa-play"></i> Assistir Vídeo</button>`:'<span style="color:#999;font-size:.7rem;margin-top:6px;display:block;">Nenhum vídeo</span>'}${podeEditar()?`<button class="btn-add-video btn-editar-tecnica" data-id="${t._key||t.nome}" data-nome="${t.nome}" data-videos='${JSON.stringify(videos).replace(/'/g,"&#39;")}'><i class="fas fa-plus"></i> Editar Vídeos</button>`:''}</div>`;}).join('');if(podeEditar()){grid.querySelectorAll('.btn-editar-tecnica').forEach(btn=>{btn.addEventListener('click',function(){const id=this.dataset.id;const nome=this.dataset.nome;const videos=JSON.parse(this.dataset.videos);abrirModalEditarVideos(id,nome,videos);});});}}
-
-            function abrirPlayerVideo(titulo,url){
-                const overlay=document.getElementById('modalOverlay');
-                const content=document.getElementById('modalContent');
-                content.innerHTML=`<div class="video-modal-content"><h2 style="margin-bottom:12px;">${titulo}</h2><video controls autoplay style="width:100%;max-height:70vh;border-radius:8px;"><source src="${url}" type="video/mp4">Seu navegador não suporta vídeo.</video><div style="text-align:right;margin-top:12px;"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('modalOverlay').style.display='none'">Fechar</button></div></div>`;
-                overlay.style.display='flex';
-                overlay.onclick=e=>{if(e.target===overlay)overlay.style.display='none';};
-            }
-
-            function abrirModalEditarVideos(tecnicaId,tecnicaNome,videosAtuais){
-                let bodyHTML=`<h3 style="margin-bottom:16px;">📹 Vídeos: ${tecnicaNome}</h3><div id="videosContainer">`;
-                const vids=videosAtuais||[];
-                vids.forEach(v=>{bodyHTML+=`<div class="video-item"><input type="text" value="${v}" placeholder="URL do vídeo (MP4, WebM, etc.)"><button class="btn-remove-video" onclick="this.parentElement.remove()">✕</button></div>`;});
-                if(vids.length===0)bodyHTML+='<div class="video-item"><input type="text" placeholder="URL do vídeo (MP4, WebM, etc.)"><button class="btn-remove-video" onclick="this.parentElement.remove()">✕</button></div>';
-                bodyHTML+=`</div><button class="btn-add-video" id="btnAddVideoField"><i class="fas fa-plus"></i> Adicionar mais vídeos</button>`;
-                openModal('Editar Vídeos','fas fa-video',bodyHTML,content=>{
-                    const inputs=content.querySelectorAll('#videosContainer input');
-                    const novosVideos=[];
-                    inputs.forEach(inp=>{const val=inp.value.trim();if(val)novosVideos.push(val);});
-                    refTecnicas.once('value',snap=>{const tecnicas=snap.val()||{};let foundKey=null;Object.entries(tecnicas).forEach(([key,t])=>{if(t.nome===tecnicaNome||key===tecnicaId){foundKey=key;}});if(foundKey){refTecnicas.child(foundKey).update({videos:novosVideos}).then(()=>{showToast(`${novosVideos.length} vídeo(s) salvos!`);});}else{showToast('Técnica não encontrada!','⚠️');}});
-                    return true;
-                });
-                setTimeout(()=>{document.getElementById('btnAddVideoField')?.addEventListener('click',function(){const container=document.getElementById('videosContainer');const div=document.createElement('div');div.className='video-item';div.innerHTML='<input type="text" placeholder="URL do vídeo (MP4, WebM, etc.)"><button class="btn-remove-video" onclick="this.parentElement.remove()">✕</button>';container.appendChild(div);});},300);
-            }
-            document.getElementById('filtroFaixaTecnica')?.addEventListener('change',renderTecnicas);
-            document.getElementById('filtroTipoTecnica')?.addEventListener('change',renderTecnicas);
-            document.getElementById('buscaTecnica')?.addEventListener('input',renderTecnicas);
-
-            // ========== DEMAIS FUNÇÕES (mantidas) ==========
+            // ========== DEMAIS FUNÇÕES ==========
             function getDataSel(){const i=document.getElementById('dataPresenca');return i?i.value:new Date().toISOString().split('T')[0];}
             function getHorarioSel(){const i=document.getElementById('horarioPresenca');return i?i.value.trim()||'19:00':'19:00';}
             function getBuscaPresenca(){const i=document.getElementById('buscaPresenca');return i?i.value.toLowerCase():'';}
@@ -490,7 +360,6 @@
             document.getElementById('btnAddAluno').onclick=abrirNovoAluno;document.getElementById('btnAddAlunoTop').onclick=abrirNovoAluno;
             document.getElementById('btnAddGraduacao').onclick=abrirModalGraduacao;document.getElementById('btnAddCampeonato').onclick=abrirModalCampeonato;
             document.getElementById('searchAlunos')?.addEventListener('input',renderAlunos);document.getElementById('filterFaixa')?.addEventListener('change',renderAlunos);
-            document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
             navigateTo('dashboard');
         }
     </script>
