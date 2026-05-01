@@ -257,8 +257,16 @@
 
         const USUARIOS_PADRAO={'admin':{senha:'34382098',nivel:'admin',nome:'Admin'},'erik':{senha:'34382098',nivel:'padrao',nome:'Erik'},'lucas':{senha:'34382098',nivel:'padrao',nome:'Lucas'},'adrion':{senha:'34382098',nivel:'padrao',nome:'Adrion'},'professores':{senha:'34382098',nivel:'padrao',nome:'Professores'}};
         const refUsuarios=database.ref('usuarios');let USUARIOS={};
-        refUsuarios.once('value',snap=>{const current=snap.val()||{};const merged={...USUARIOS_PADRAO,...current};refUsuarios.set(merged);});
-        refUsuarios.on('value',snap=>{USUARIOS=snap.val()||USUARIOS_PADRAO;});
+
+        // Inicialização única: grava padrões apenas se o nó 'usuarios' estiver vazio
+        refUsuarios.once('value',snap=>{
+            if(!snap.exists()){
+                refUsuarios.set(USUARIOS_PADRAO).catch(err=>console.error(err));
+            }
+        });
+        refUsuarios.on('value',snap=>{
+            USUARIOS=snap.val()||USUARIOS_PADRAO;
+        });
 
         const LOCALIDADES=['monteVerde','camanducaia'];const LOCALIDADE_LABELS={monteVerde:'Monte Verde',camanducaia:'Camanducaia'};const LOCALIDADE_ICONS={monteVerde:'🏔️',camanducaia:'🏙️'};
         const DIAS=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];const DIAS_NOMES={segunda:'Segunda',terca:'Terça',quarta:'Quarta',quinta:'Quinta',sexta:'Sexta',sabado:'Sábado',domingo:'Domingo'};const DIAS_ICONES={segunda:'🥋',terca:'💪',quarta:'🥋',quinta:'💪',sexta:'🥋',sabado:'🏆',domingo:'🧘'};
@@ -353,8 +361,33 @@
                 const idAluno=getIdAlunoDoUsuario();
                 if(!idAluno){container.innerHTML='';return;}
                 const meusFeedbacks=db.feedbacks[idAluno]||[];
-                if(meusFeedbacks.length===0){container.innerHTML='';return;}
-                container.innerHTML='<h3 style="margin-bottom:12px;"><i class="fas fa-comment-dots"></i> Meus Feedbacks</h3>'+meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} - Prof. ${f.professor}</div></div>`).join('');
+                const storageKey = 'gm_showFeedbacks';
+                const show = localStorage.getItem(storageKey) !== 'false'; // padrão true
+                container.innerHTML=`
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <h3 style="margin:0;"><i class="fas fa-comment-dots"></i> Meus Feedbacks (${meusFeedbacks.length})</h3>
+                        <button id="toggleFeedbacksBtn" class="btn btn-sm btn-ghost" style="font-size:0.8rem;">
+                            <i class="fas ${show ? 'fa-eye-slash' : 'fa-eye'}"></i> ${show ? 'Ocultar' : 'Mostrar'}
+                        </button>
+                    </div>
+                    <div id="feedbacksList" style="display:${show ? 'block' : 'none'};">
+                        ${meusFeedbacks.length===0 ? '<p style="color:var(--text-light);">Nenhum feedback.</p>' :
+                            meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} - Prof. ${f.professor}</div></div>`).join('')}
+                    </div>
+                `;
+                document.getElementById('toggleFeedbacksBtn').addEventListener('click', function(){
+                    const listDiv = document.getElementById('feedbacksList');
+                    const isHidden = listDiv.style.display === 'none';
+                    if (isHidden) {
+                        listDiv.style.display = 'block';
+                        this.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar';
+                        localStorage.setItem(storageKey, 'true');
+                    } else {
+                        listDiv.style.display = 'none';
+                        this.innerHTML = '<i class="fas fa-eye"></i> Mostrar';
+                        localStorage.setItem(storageKey, 'false');
+                    }
+                });
             }
 
             function renderFeedbackLista(){
