@@ -255,28 +255,17 @@
         const firebaseConfig={apiKey:"AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q",authDomain:"academia-move.firebaseapp.com",databaseURL:"https://academia-move-default-rtdb.firebaseio.com",projectId:"academia-move",storageBucket:"academia-move.firebasestorage.app",messagingSenderId:"329888597951",appId:"1:329888597951:web:ac19b928a92123d76f430a"};
         firebase.initializeApp(firebaseConfig);const database=firebase.database();
 
-        const USUARIOS_PADRAO={'admin':{senha:'34382098',nivel:'admin',nome:'Admin'},'erik':{senha:'34382098',nivel:'padrao',nome:'Erik'},'lucas':{senha:'34382098',nivel:'padrao',nome:'Lucas'},'adrion':{senha:'34382098',nivel:'padrao',nome:'Adrion'},'professores':{senha:'34382098',nivel:'padrao',nome:'Professores'}};
+        // Apenas usuários fixos do sistema (nenhum aluno automático)
+        const USUARIOS_FIXOS={'admin':{senha:'34382098',nivel:'admin',nome:'Admin'},'erik':{senha:'34382098',nivel:'padrao',nome:'Erik'},'lucas':{senha:'34382098',nivel:'padrao',nome:'Lucas'},'adrion':{senha:'34382098',nivel:'padrao',nome:'Adrion'},'professores':{senha:'34382098',nivel:'padrao',nome:'Professores'}};
         const refUsuarios=database.ref('usuarios');let USUARIOS={};
-
-        // Inicialização única: grava padrões apenas se o nó 'usuarios' estiver vazio
-        refUsuarios.once('value',snap=>{
-            if(!snap.exists()){
-                refUsuarios.set(USUARIOS_PADRAO).catch(err=>console.error(err));
-            }
-        });
-        refUsuarios.on('value',snap=>{
-            USUARIOS=snap.val()||USUARIOS_PADRAO;
-        });
+        // Inicializa apenas se o nó 'usuarios' estiver vazio
+        refUsuarios.once('value',snap=>{if(!snap.val())refUsuarios.set(USUARIOS_FIXOS);});
+        refUsuarios.on('value',snap=>{USUARIOS=snap.val()||USUARIOS_FIXOS;});
 
         const LOCALIDADES=['monteVerde','camanducaia'];const LOCALIDADE_LABELS={monteVerde:'Monte Verde',camanducaia:'Camanducaia'};const LOCALIDADE_ICONS={monteVerde:'🏔️',camanducaia:'🏙️'};
         const DIAS=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];const DIAS_NOMES={segunda:'Segunda',terca:'Terça',quarta:'Quarta',quinta:'Quinta',sexta:'Sexta',sabado:'Sábado',domingo:'Domingo'};const DIAS_ICONES={segunda:'🥋',terca:'💪',quarta:'🥋',quinta:'💪',sexta:'🥋',sabado:'🏆',domingo:'🧘'};
         const FAIXAS=['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom','Preta'];const FAIXA_CORES={'Branca':'#e0e0e0','Cinza':'#9e9e9e','Amarela':'#fdd835','Laranja':'#fb8c00','Verde':'#2e7d32','Azul':'#1e88e5','Roxa':'#7b1fa2','Marrom':'#6d4c41','Preta':'#212121'};
         const MEDALHAS=['Ouro','Prata','Bronze','Participação'];const MEDALHA_ICONS={Ouro:'🥇',Prata:'🥈',Bronze:'🥉',Participação:'🏅'};
-
-        // Logins dos alunos (gerados automaticamente)
-        const LOGINS_ALUNOS={
-            'luiz':'LUIZ HENRIQUE DA SILVA','bruno':'BRUNO LUIZ DA SILVA','jecival':'JECIVAL MENEZES PEREIRA','wellington':'Wellington negão','amadeu':'Amadeu Vicente','larissa':'Larissa','lucas.harry':'Lucas harry','adrion.japa':'Adrion japa','luiz2':'Luiz','henzo':'Henzo','geovanna':'Geovanna','gustavo':'Gustavo','maria.emanuelle':'Maria Emanuelle','maria':'Maria','ibramovic':'Ibramovic','joao.paulo':'João Paulo','bill':'Bill','guilherme':'Guilherme','juan':'Juan','gustavo.telles':'Gustavo telles','miguel':'Miguel','arthur':'Arthur pacheco','arthurzin':'Arthurzin pachecco','david':'David belaguarda','paulinho.mestre':'Paulinho mestre','dani':'Dani sensei','ythan':'Ythan','aysha':'Aysha','marcelo.silva':'Marcelo Silva','jessica':'Jessica Magalhães','marcelo.magalhaes':'Marcelo Magalhães','michael':'Michael careca','maicon':'Maicon queixão','pedro.henrique':'Pedro Henrique','helena':'Helena Ribas','ana.laura':'Ana Laura','cecilia':'Cecilia','cleber':'Cleber Adriano Guimarães Paula','carlos':'Carlos Adriano Bressan souza','vitor':'Vitor Pires','igor':'Igor Pires','thiago':'Thiago lima','lucia':'Lucia vianna','matheus.faria':'Matheus faria','pedro.almeida':'Pedro Almeida','maisa':'Maisa Siqueira','diegao':'Diegão','joao.mendes':'João Mendes','gabriel.grandao':'Gabriel grandão','maria.vitoria':'Maria Vitória','regis':'Regis','yohann':'Yohann da Silva','pedro.silverio':'Pedro Silvério','gabriel.quintino':'Gabriel quintino','thiago.moreno':'Thiago moreno','icaro':'Ícaro Romero','milena':'Milena Gonçalves','julia':'Julia Caroline Campos','sofia':'Sofia Fernanda Couto','joao.vitor':'João Vitor messias Rodrigues','maria.vitoria2':'Maria Vitória Lima','heloisa':'Heloisa da Silva Moura','pietro':'Pietro Siqueira Pires Lisboa','davi':'Davi Lucas Moraes da Silva','samuel':'Samuel Henrique Moraes da Silva','miguel.goncalves':'Miguel Gonçalves de Oliveira','alice':'Alice Heloísa Santos','luiz.otavio':'Luiz Otávio Inácio Rodrigues','guilherme.faria':'Guilherme Daniel Faria','marcos':'Marcos Vinicius Santos','benjamim':'Benjamim Teofilo Toledo','danielle':'Danielle sensei','paulao':'Paulão Rezende mestrão','paulao2':'Paulão Rezende mestrão','manuelle':'Manuelle faria','wesley.faria':'Wesley faria','lorrayne':'Lorrayne','innara':'Innara','lannaly':'Lannaly','matheus.lorrayne':'Matheus/Lorrayne','alexandre':'Alexandre senna','ingrid':'Ingrid','erik.ribas':'Erik Ribas','renan':'Renan Ribeiro','lazaro':'Sr.lazaro','ronaldo':'Ronaldo Paes','danielly':'Danielly','lucas.gabriel':'Lucas Gabriel','lucas.luz':'Lucas luz','kauan':'Kauan Silva','camilo':'Camilo Silva','jefinho':'Jefinho','iasmim':'Iasmim firmino','kaique':'Kaique Brito','junio':'Junio Augusto','maria.eduarda':'Maria Eduarda','julio':'Julio Silva','lais':'Laís Helena','anna':'Anna Flavya','wesley.grandao':'Wesley Grandão','tierry':'Tierry','maria.clara':'Maria Clara','emily':'Emily Vitória','giovanna':'Giovanna Carvalho','gabriela':'Gabriela Carvalho','ana.beatriz':'Ana Beatriz','carlos.eduardo':'Carlos Eduardo cunha','yasmim':'Yasmim vitória','matheus.monteiro':'Matheus Monteiro','oswin':'Oswin Botelho','yohann.botelho':'Yohann Botelho','gabriel.bayeux':'Gabriel bayeux'
-        };
 
         let usuarioAtual=null;let localidadeAtivaPresenca='monteVerde';let localidadeAtivaAulas='monteVerde';
         const loginOverlay=document.getElementById('loginOverlay'),appContainer=document.getElementById('appContainer'),loginInput=document.getElementById('loginInput'),senhaInput=document.getElementById('senhaInput'),loginError=document.getElementById('loginError'),btnEntrar=document.getElementById('btnEntrar'),btnLogout=document.getElementById('btnLogout');
@@ -322,9 +311,6 @@
             const refAlunos=database.ref('alunos'),refGraduacoes=database.ref('graduacoes'),refCampeonatos=database.ref('campeonatos'),refNextId=database.ref('nextId'),refAvisosAlunos=database.ref('avisos_alunos'),refAvisosProfessores=database.ref('avisos_professores'),refAulas=database.ref('aulas'),refPresencas=database.ref('presencas'),refFeedbacks=database.ref('feedbacks'),refVinculos=database.ref('vinculos');
             let db={alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisosAlunos:[],avisosProfessores:[],aulas:{},presencas:{},feedbacks:{},vinculos:{}};
 
-            // Importar logins dos alunos se não existirem
-            refUsuarios.once('value',snap=>{const users=snap.val()||{};Object.entries(LOGINS_ALUNOS).forEach(([login,nome])=>{if(!users[login]){refUsuarios.child(login).set({senha:'34382098',nivel:'aluno',nome:nome});}});});
-
             refAlunos.on('value',snap=>{db.alunos=snap.val()?Object.values(snap.val()):[];renderAlunos();atualizarDashboard();});
             refGraduacoes.on('value',snap=>{db.graduacoes=snap.val()?Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})):[];renderGrad();});
             refCampeonatos.on('value',snap=>{db.campeonatos=snap.val()?Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})):[];renderCamp();atualizarDashboard();});
@@ -361,33 +347,8 @@
                 const idAluno=getIdAlunoDoUsuario();
                 if(!idAluno){container.innerHTML='';return;}
                 const meusFeedbacks=db.feedbacks[idAluno]||[];
-                const storageKey = 'gm_showFeedbacks';
-                const show = localStorage.getItem(storageKey) !== 'false'; // padrão true
-                container.innerHTML=`
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                        <h3 style="margin:0;"><i class="fas fa-comment-dots"></i> Meus Feedbacks (${meusFeedbacks.length})</h3>
-                        <button id="toggleFeedbacksBtn" class="btn btn-sm btn-ghost" style="font-size:0.8rem;">
-                            <i class="fas ${show ? 'fa-eye-slash' : 'fa-eye'}"></i> ${show ? 'Ocultar' : 'Mostrar'}
-                        </button>
-                    </div>
-                    <div id="feedbacksList" style="display:${show ? 'block' : 'none'};">
-                        ${meusFeedbacks.length===0 ? '<p style="color:var(--text-light);">Nenhum feedback.</p>' :
-                            meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} - Prof. ${f.professor}</div></div>`).join('')}
-                    </div>
-                `;
-                document.getElementById('toggleFeedbacksBtn').addEventListener('click', function(){
-                    const listDiv = document.getElementById('feedbacksList');
-                    const isHidden = listDiv.style.display === 'none';
-                    if (isHidden) {
-                        listDiv.style.display = 'block';
-                        this.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar';
-                        localStorage.setItem(storageKey, 'true');
-                    } else {
-                        listDiv.style.display = 'none';
-                        this.innerHTML = '<i class="fas fa-eye"></i> Mostrar';
-                        localStorage.setItem(storageKey, 'false');
-                    }
-                });
+                if(meusFeedbacks.length===0){container.innerHTML='';return;}
+                container.innerHTML='<h3 style="margin-bottom:12px;"><i class="fas fa-comment-dots"></i> Meus Feedbacks</h3>'+meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} - Prof. ${f.professor}</div></div>`).join('');
             }
 
             function renderFeedbackLista(){
@@ -412,11 +373,11 @@
                 ref.once('value',snap=>{const lista=snap.val()||[];lista.push(novo);ref.set(lista);showToast('Feedback enviado!');document.getElementById('feedbackTexto').value='';});
             });
 
-            // ========== VINCULAR USUÁRIO A ALUNO (NOVO) ==========
+            // ========== VINCULAR USUÁRIO A ALUNO ==========
             function abrirModalVincular(login,user){
                 const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');
                 const idAtual=user.idAluno||'';
-                content.innerHTML=`<h2><i class="fas fa-link"></i> Vincular Usuário "${login}"</h2><div class="form-group"><label>Aluno</label><select id="vincAluno"><option value="">Nenhum</option>${db.alunos.map(a=>`<option value="${a.id}" ${a.id==idAtual?'selected':''}>#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;
+                content.innerHTML=`<h2><i class="fas fa-link"></i> Vincular "${login}"</h2><div class="form-group"><label>Aluno</label><select id="vincAluno"><option value="">Nenhum</option>${db.alunos.map(a=>`<option value="${a.id}" ${a.id==idAtual?'selected':''}>#${a.id} - ${a.nome}</option>`).join('')}</select></div><div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;
                 overlay.classList.add('active');
                 document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');
                 document.getElementById('modalSave').onclick=()=>{
