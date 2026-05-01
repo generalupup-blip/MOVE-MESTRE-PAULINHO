@@ -185,12 +185,27 @@
         <div class="login-wrapper">
             <div class="login-card">
                 <div class="login-logo"><div class="login-logo-faixa"></div></div>
-                <h2>GREEN MOUNTAIN</h2><p class="sub">Brazilian Jiu‑Jitsu</p>
-                <div class="form-group"><label>LOGIN</label><input type="text" id="loginInput" placeholder="Digite seu login" autocomplete="off"></div>
-                <div class="form-group"><label>SENHA</label><input type="password" id="senhaInput" placeholder="Digite sua senha"></div>
-                <button class="btn-login" id="btnEntrar"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-                <div class="login-error" id="loginError">Login ou senha incorretos.</div>
-                <span class="link-alterar-senha" id="linkAlterarSenha">🔒 Alterar minha senha</span>
+                <h2>GREEN MOUNTAIN</h2>
+                <p class="sub">Brazilian Jiu‑Jitsu</p>
+
+                <!-- FORMULÁRIO DE LOGIN -->
+                <div id="loginForm">
+                    <div class="form-group"><label>LOGIN</label><input type="text" id="loginInput" placeholder="Digite seu login" autocomplete="off"></div>
+                    <div class="form-group"><label>SENHA</label><input type="password" id="senhaInput" placeholder="Digite sua senha"></div>
+                    <button class="btn-login" id="btnEntrar"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+                    <div class="login-error" id="loginError">Login ou senha incorretos.</div>
+                    <span class="link-alterar-senha" id="linkAlterarSenha">🔒 Alterar minha senha</span>
+                </div>
+
+                <!-- FORMULÁRIO DE ALTERAR SENHA (oculto) -->
+                <div id="alterarSenhaForm" style="display:none;">
+                    <div class="form-group"><label>LOGIN</label><input type="text" id="altLogin" placeholder="Seu login"></div>
+                    <div class="form-group"><label>SENHA ATUAL</label><input type="password" id="altSenhaAtual" placeholder="Senha atual"></div>
+                    <div class="form-group"><label>NOVA SENHA</label><input type="password" id="altNovaSenha" placeholder="Nova senha"></div>
+                    <button class="btn-login" id="btnAlterarSenha"><i class="fas fa-key"></i> Alterar senha</button>
+                    <span class="link-alterar-senha" id="linkVoltarLogin">← Voltar ao login</span>
+                    <div class="login-error" id="alterarError" style="display:none;"></div>
+                </div>
             </div>
             <div class="contato-info">
                 <div class="contato-divider"></div>
@@ -255,10 +270,8 @@
         const firebaseConfig={apiKey:"AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q",authDomain:"academia-move.firebaseapp.com",databaseURL:"https://academia-move-default-rtdb.firebaseio.com",projectId:"academia-move",storageBucket:"academia-move.firebasestorage.app",messagingSenderId:"329888597951",appId:"1:329888597951:web:ac19b928a92123d76f430a"};
         firebase.initializeApp(firebaseConfig);const database=firebase.database();
 
-        // Apenas usuários fixos do sistema (nenhum aluno automático)
         const USUARIOS_FIXOS={'admin':{senha:'34382098',nivel:'admin',nome:'Admin'},'erik':{senha:'34382098',nivel:'padrao',nome:'Erik'},'lucas':{senha:'34382098',nivel:'padrao',nome:'Lucas'},'adrion':{senha:'34382098',nivel:'padrao',nome:'Adrion'},'professores':{senha:'34382098',nivel:'padrao',nome:'Professores'}};
         const refUsuarios=database.ref('usuarios');let USUARIOS={};
-        // Inicializa apenas se o nó 'usuarios' estiver vazio
         refUsuarios.once('value',snap=>{if(!snap.val())refUsuarios.set(USUARIOS_FIXOS);});
         refUsuarios.on('value',snap=>{USUARIOS=snap.val()||USUARIOS_FIXOS;});
 
@@ -276,25 +289,69 @@
         btnEntrar.addEventListener('click',realizarLogin);senhaInput.addEventListener('keypress',e=>{if(e.key==='Enter')realizarLogin();});loginInput.addEventListener('keypress',e=>{if(e.key==='Enter')senhaInput.focus();});btnLogout.addEventListener('click',logout);
         if(verificarLogin())initApp();
 
-        // Link "Alterar Senha"
-        document.getElementById('linkAlterarSenha').addEventListener('click',function(e){e.stopPropagation();abrirModalAlterarSenha();});
-
-        function abrirModalAlterarSenha(){
-            const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');
-            content.innerHTML=`<h2><i class="fas fa-key"></i> Alterar Senha</h2><div class="form-group"><label>Login</label><input type="text" id="altLogin" placeholder="Seu login"></div><div class="form-group"><label>Senha atual</label><input type="password" id="altSenhaAtual" placeholder="Senha atual"></div><div class="form-group"><label>Nova senha</label><input type="password" id="altNovaSenha" placeholder="Nova senha"></div><div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;
-            overlay.classList.add('active');
-            document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');
-            document.getElementById('modalSave').onclick=()=>{
-                const login=document.getElementById('altLogin').value.trim().toLowerCase();
-                const senhaAtual=document.getElementById('altSenhaAtual').value.trim();
-                const novaSenha=document.getElementById('altNovaSenha').value.trim();
-                if(!login||!senhaAtual||!novaSenha){alert('Preencha todos os campos!');return;}
-                const user=USUARIOS[login];
-                if(!user||user.senha!==senhaAtual){alert('Login ou senha atual incorretos!');return;}
-                refUsuarios.child(login).update({senha:novaSenha}).then(()=>{alert('Senha alterada com sucesso!');overlay.classList.remove('active');}).catch(()=>{alert('Erro ao alterar senha!');});
-            };
-            overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active');};
+        // Alternar entre formulários de login e alterar senha
+        function mostrarAlterarSenha() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('alterarSenhaForm').style.display = 'block';
+            document.getElementById('altLogin').value = '';
+            document.getElementById('altSenhaAtual').value = '';
+            document.getElementById('altNovaSenha').value = '';
+            document.getElementById('alterarError').style.display = 'none';
+            document.getElementById('loginError').style.display = 'none';
         }
+
+        function mostrarLogin() {
+            document.getElementById('alterarSenhaForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function realizarAlteracaoSenha() {
+            const login = document.getElementById('altLogin').value.trim().toLowerCase();
+            const senhaAtual = document.getElementById('altSenhaAtual').value.trim();
+            const novaSenha = document.getElementById('altNovaSenha').value.trim();
+            const erro = document.getElementById('alterarError');
+
+            if (!login || !senhaAtual || !novaSenha) {
+                erro.textContent = 'Preencha todos os campos.';
+                erro.style.display = 'block';
+                return;
+            }
+
+            const user = USUARIOS[login];
+            if (!user || user.senha !== senhaAtual) {
+                erro.textContent = 'Login ou senha atual incorretos.';
+                erro.style.display = 'block';
+                return;
+            }
+
+            refUsuarios.child(login).update({ senha: novaSenha })
+                .then(() => {
+                    erro.style.display = 'none';
+                    alert('Senha alterada com sucesso!');
+                    mostrarLogin();
+                })
+                .catch(() => {
+                    erro.textContent = 'Erro ao alterar senha. Tente novamente.';
+                    erro.style.display = 'block';
+                });
+        }
+
+        document.getElementById('linkAlterarSenha').addEventListener('click', function(e) {
+            e.stopPropagation();
+            mostrarAlterarSenha();
+        });
+
+        document.getElementById('linkVoltarLogin').addEventListener('click', function(e) {
+            e.stopPropagation();
+            mostrarLogin();
+        });
+
+        document.getElementById('btnAlterarSenha').addEventListener('click', realizarAlteracaoSenha);
+
+        document.getElementById('altNovaSenha').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') realizarAlteracaoSenha();
+        });
 
         function ehAdmin(){return usuarioAtual&&usuarioAtual.nivel==='admin';}
         function ehAluno(){return usuarioAtual&&usuarioAtual.nivel==='aluno';}
