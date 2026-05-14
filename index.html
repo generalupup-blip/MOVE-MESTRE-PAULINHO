@@ -11,425 +11,587 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green-dark:#0d2818;--green-mid:#1a4a2e;--green-leaf:#2d7a4f;--green-light:#4caf7d;
-            --gold:#c9a96e;--gold-bright:#f0c060;--gold-light:#f5e6c8;--gold-glow:rgba(201,169,110,0.4);
-            --bg:#f0f4f1;--bg2:#e8efe9;--card:#ffffff;--text:#1a2e1f;--text-light:#5a7060;
-            --border:#d4e0d8;--shadow:0 2px 8px rgba(13,40,24,0.08);--shadow-md:0 4px 16px rgba(13,40,24,0.12);
-            --shadow-lg:0 12px 40px rgba(13,40,24,0.18);--radius:16px;--radius-sm:10px;--radius-xs:6px;
-            --transition:0.25s cubic-bezier(0.4,0,0.2,1);--font:'Inter',system-ui,sans-serif;
-            --font-display:'Bebas Neue',sans-serif;--sidebar-bg:#071510;--sidebar-w:280px;
-            --mv-color:#1a4a2e;--cam-color:#1e3a8a;
+            --green-dark: #0d2818;
+            --green-mid: #1a4a2e;
+            --green-leaf: #2d7a4f;
+            --green-light: #4caf7d;
+            --gold: #c9a96e;
+            --gold-bright: #f0c060;
+            --gold-light: #f5e6c8;
+            --bg: #f0f4f1;
+            --bg2: #e8efe9;
+            --card: #ffffff;
+            --text: #1a2e1f;
+            --text-light: #5a7060;
+            --border: #d4e0d8;
+            --shadow: 0 2px 8px rgba(13,40,24,0.08);
+            --shadow-md: 0 4px 16px rgba(13,40,24,0.12);
+            --shadow-lg: 0 12px 40px rgba(13,40,24,0.18);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+            --font: 'Inter', system-ui, sans-serif;
+            --font-display: 'Bebas Neue', sans-serif;
+            --sidebar-bg: #071510;
+            --sidebar-w: 280px;
+            --mv-color: #1a4a2e;
+            --cam-color: #1e3a8a;
         }
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-        ::-webkit-scrollbar{width:6px;height:6px;}
-        ::-webkit-scrollbar-track{background:transparent;}
-        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
-        ::-webkit-scrollbar-thumb:hover{background:var(--green-leaf);}
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        /* LOGIN */
-        .login-overlay{position:fixed;inset:0;z-index:9999;background:#050e08;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-        .login-bg-grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(45,122,79,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(45,122,79,0.07) 1px,transparent 1px);background-size:40px 40px;animation:gridMove 20s linear infinite;}
-        @keyframes gridMove{0%{background-position:0 0}100%{background-position:40px 40px}}
-        .login-bg-glow{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(45,122,79,0.18) 0%,transparent 70%),radial-gradient(ellipse 50% 40% at 80% 70%,rgba(201,169,110,0.12) 0%,transparent 70%);}
-        .login-particles{position:absolute;inset:0;z-index:0;background:radial-gradient(1.5px 1.5px at 10% 20%,rgba(201,169,110,0.7),transparent),radial-gradient(1px 1px at 25% 60%,rgba(201,169,110,0.5),transparent),radial-gradient(2px 2px at 40% 10%,rgba(201,169,110,0.6),transparent),radial-gradient(1px 1px at 55% 75%,rgba(201,169,110,0.4),transparent),radial-gradient(1.5px 1.5px at 70% 30%,rgba(201,169,110,0.6),transparent),radial-gradient(1px 1px at 80% 55%,rgba(201,169,110,0.5),transparent),radial-gradient(2px 2px at 90% 15%,rgba(201,169,110,0.7),transparent),radial-gradient(1px 1px at 15% 85%,rgba(201,169,110,0.4),transparent);animation:floatParticles 10s ease-in-out infinite alternate;}
-        @keyframes floatParticles{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-15px) scale(1.02)}}
-        .login-wrapper{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:28px;width:90%;max-width:460px;animation:fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);}
-        @keyframes fadeInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-        .login-card{background:rgba(10,25,15,0.85);backdrop-filter:blur(24px);border:1px solid rgba(201,169,110,0.25);border-radius:24px;padding:44px 36px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.05);text-align:center;position:relative;overflow:hidden;}
-        .login-card::before{content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;background:conic-gradient(from 0deg at 50% 50%,transparent 0deg,rgba(201,169,110,0.04) 60deg,transparent 120deg,rgba(45,122,79,0.04) 180deg,transparent 240deg,rgba(201,169,110,0.04) 300deg,transparent 360deg);animation:rotateConic 15s linear infinite;z-index:-1;}
-        @keyframes rotateConic{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        .login-logo-wrap{position:relative;width:100px;height:100px;margin:0 auto 24px;}
-        .login-logo-ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;background:linear-gradient(135deg,var(--gold),transparent,var(--gold)) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:spinRing 8s linear infinite;}
-        @keyframes spinRing{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        .login-logo{width:100px;height:100px;background:linear-gradient(135deg,#0d2818,#071510);border:2px solid rgba(201,169,110,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 40px rgba(201,169,110,0.2),0 10px 30px rgba(0,0,0,0.6);}
-        .login-logo::after{content:"GM";font-family:var(--font-display);font-size:2.4rem;letter-spacing:2px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-        .login-logo-pulse{position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(201,169,110,0.2);animation:pulse 3s ease-in-out infinite;}
-        @keyframes pulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.08);opacity:0.2}}
-        .login-card h2{font-family:var(--font-display);font-size:2rem;letter-spacing:3px;color:#fff;margin-bottom:4px;}
-        .login-card .sub{font-size:.72rem;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:28px;font-weight:500;}
-        .login-input-wrap{position:relative;margin-bottom:14px;text-align:left;}
-        .login-input-wrap label{display:block;font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
-        .login-input-wrap .input-icon{position:absolute;left:14px;bottom:13px;color:rgba(201,169,110,0.5);font-size:.9rem;pointer-events:none;}
-        .login-input-wrap input{width:100%;padding:13px 14px 13px 40px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.08);font-size:.95rem;font-family:var(--font);background:rgba(255,255,255,0.04);color:#fff;outline:none;transition:all var(--transition);}
-        .login-input-wrap input:focus{border-color:rgba(201,169,110,0.5);background:rgba(255,255,255,0.07);box-shadow:0 0 0 3px rgba(201,169,110,0.1);}
-        .login-input-wrap input::placeholder{color:rgba(255,255,255,0.2);}
-        .btn-login{width:100%;padding:15px;background:linear-gradient(135deg,#c9a96e,#a07840,#c9a96e);background-size:200% 100%;color:#1a0e00;border:none;border-radius:var(--radius-sm);font-family:var(--font);font-weight:800;font-size:.95rem;cursor:pointer;transition:all var(--transition);margin-top:8px;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(201,169,110,0.3);}
-        .btn-login:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,169,110,0.45);}
-        .login-error{color:#ff7070;font-size:.82rem;margin-top:10px;display:none;font-weight:600;}
-        .link-alterar-senha{color:rgba(201,169,110,0.7);font-size:.78rem;cursor:pointer;text-decoration:underline;margin-top:10px;display:inline-block;transition:color var(--transition);}
-        .link-alterar-senha:hover{color:var(--gold);}
-        .contato-info{text-align:center;color:rgba(255,255,255,0.6);font-size:.85rem;display:flex;flex-direction:column;gap:8px;}
-        .contato-info a{color:var(--gold);text-decoration:none;font-weight:600;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;}
-        .contato-info a:hover{color:var(--gold-bright);}
-        .contato-divider{width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:4px auto;}
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--green-leaf); }
 
-        /* MUSIC */
-        .music-player{position:fixed;bottom:24px;right:24px;z-index:10000;background:rgba(7,21,16,0.9);border:1px solid rgba(201,169,110,0.3);border-radius:40px;padding:10px 18px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(12px);cursor:pointer;transition:all var(--transition);box-shadow:0 4px 20px rgba(0,0,0,0.4);}
-        .music-player:hover{border-color:var(--gold);}
-        .music-bars{display:flex;align-items:flex-end;gap:2px;height:16px;}
-        .music-bars span{display:block;width:3px;background:var(--gold);border-radius:2px;}
-        .music-bars span:nth-child(1){height:6px;}
-        .music-bars span:nth-child(2){height:12px;}
-        .music-bars span:nth-child(3){height:8px;}
-        .music-bars span:nth-child(4){height:14px;}
-        .music-bars span:nth-child(5){height:6px;}
-        .music-player.playing .music-bars span:nth-child(1){animation:bar 0.8s ease-in-out infinite alternate;}
-        .music-player.playing .music-bars span:nth-child(2){animation:bar 0.6s ease-in-out infinite alternate 0.1s;}
-        .music-player.playing .music-bars span:nth-child(3){animation:bar 0.9s ease-in-out infinite alternate 0.2s;}
-        .music-player.playing .music-bars span:nth-child(4){animation:bar 0.7s ease-in-out infinite alternate 0.05s;}
-        .music-player.playing .music-bars span:nth-child(5){animation:bar 1s ease-in-out infinite alternate 0.15s;}
-        @keyframes bar{0%{height:4px}100%{height:16px}}
-        .music-player span{color:rgba(255,255,255,0.7);font-size:.72rem;font-weight:600;}
+        /* ===== LOGIN ===== */
+        .login-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #050e08;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .login-bg-grid {
+            position: absolute; inset: 0; z-index: 0;
+            background-image:
+                linear-gradient(rgba(45,122,79,0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(45,122,79,0.07) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0%{background-position:0 0} 100%{background-position:40px 40px} }
+        .login-bg-glow {
+            position: absolute; inset: 0; z-index: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 30%, rgba(45,122,79,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 70%, rgba(201,169,110,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 60% at 50% 50%, rgba(13,40,24,0.5) 0%, transparent 80%);
+        }
+        .login-particles {
+            position: absolute; inset: 0; z-index: 0;
+            background:
+                radial-gradient(1.5px 1.5px at 10% 20%, rgba(201,169,110,0.7), transparent),
+                radial-gradient(1px 1px at 25% 60%, rgba(201,169,110,0.5), transparent),
+                radial-gradient(2px 2px at 40% 10%, rgba(201,169,110,0.6), transparent),
+                radial-gradient(1px 1px at 55% 75%, rgba(201,169,110,0.4), transparent),
+                radial-gradient(1.5px 1.5px at 70% 30%, rgba(201,169,110,0.6), transparent),
+                radial-gradient(1px 1px at 80% 55%, rgba(201,169,110,0.5), transparent),
+                radial-gradient(2px 2px at 90% 15%, rgba(201,169,110,0.7), transparent),
+                radial-gradient(1px 1px at 15% 85%, rgba(201,169,110,0.4), transparent),
+                radial-gradient(1.5px 1.5px at 60% 90%, rgba(201,169,110,0.5), transparent),
+                radial-gradient(1px 1px at 35% 40%, rgba(201,169,110,0.3), transparent);
+            animation: floatParticles 10s ease-in-out infinite alternate;
+        }
+        @keyframes floatParticles { 0%{transform:translateY(0) scale(1)} 100%{transform:translateY(-15px) scale(1.02)} }
+        .login-wrapper {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center; gap: 28px;
+            width: 90%; max-width: 460px;
+            animation: fadeInUp 0.7s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+        .login-card {
+            background: rgba(10,25,15,0.85);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(201,169,110,0.25);
+            border-radius: 24px;
+            padding: 44px 36px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+            text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
+            background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(201,169,110,0.04) 60deg, transparent 120deg, rgba(45,122,79,0.04) 180deg, transparent 240deg, rgba(201,169,110,0.04) 300deg, transparent 360deg);
+            animation: rotateConic 15s linear infinite;
+            z-index: -1;
+        }
+        @keyframes rotateConic { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .login-logo-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 24px; }
+        .login-logo-ring {
+            position: absolute; inset: -4px; border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, var(--gold), transparent, var(--gold)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out; mask-composite: exclude;
+            animation: spinRing 8s linear infinite;
+        }
+        @keyframes spinRing { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .login-logo {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, #0d2818, #071510);
+            border: 2px solid rgba(201,169,110,0.4); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 40px rgba(201,169,110,0.2), 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .login-logo::after {
+            content: "GM"; font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .login-logo-pulse {
+            position: absolute; inset: -8px; border-radius: 50%;
+            border: 1px solid rgba(201,169,110,0.2);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.08);opacity:0.2} }
+        .login-card h2 { font-family: var(--font-display); font-size: 2rem; letter-spacing: 3px; color: #fff; margin-bottom: 4px; }
+        .login-card .sub { font-size: .72rem; color: var(--gold); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 28px; font-weight: 500; }
+        .login-input-wrap { position: relative; margin-bottom: 14px; text-align: left; }
+        .login-input-wrap label { display: block; font-size: .72rem; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+        .login-input-wrap .input-icon { position: absolute; left: 14px; bottom: 13px; color: rgba(201,169,110,0.5); font-size: .9rem; pointer-events: none; }
+        .login-input-wrap input {
+            width: 100%; padding: 13px 14px 13px 40px;
+            border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08);
+            font-size: .95rem; font-family: var(--font);
+            background: rgba(255,255,255,0.04); color: #fff; outline: none;
+            transition: all var(--transition);
+        }
+        .login-input-wrap input:focus { border-color: rgba(201,169,110,0.5); background: rgba(255,255,255,0.07); box-shadow: 0 0 0 3px rgba(201,169,110,0.1); }
+        .login-input-wrap input::placeholder { color: rgba(255,255,255,0.2); }
+        .btn-login {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, #c9a96e, #a07840, #c9a96e); background-size: 200% 100%;
+            color: #1a0e00; border: none; border-radius: var(--radius-sm);
+            font-family: var(--font); font-weight: 800; font-size: .95rem;
+            cursor: pointer; transition: all var(--transition);
+            margin-top: 8px; letter-spacing: 1.5px; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 20px rgba(201,169,110,0.3);
+        }
+        .btn-login:hover { background-position: 100% 0; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,169,110,0.45); }
+        .login-error { color: #ff7070; font-size: .82rem; margin-top: 10px; display: none; font-weight: 600; }
+        .link-alterar-senha { color: rgba(201,169,110,0.7); font-size: .78rem; cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; transition: color var(--transition); }
+        .link-alterar-senha:hover { color: var(--gold); }
+        .contato-info { text-align: center; color: rgba(255,255,255,0.6); font-size: .85rem; display: flex; flex-direction: column; gap: 8px; }
+        .contato-info a { color: var(--gold); text-decoration: none; font-weight: 600; transition: all var(--transition); display: inline-flex; align-items: center; gap: 6px; }
+        .contato-info a:hover { color: var(--gold-bright); text-shadow: 0 0 12px rgba(201,169,110,0.5); }
+        .contato-divider { width: 50px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 4px auto; }
+
+        /* MUSIC PLAYER */
+        .music-player {
+            position: fixed; bottom: 24px; right: 24px; z-index: 10000;
+            background: rgba(7,21,16,0.9); border: 1px solid rgba(201,169,110,0.3);
+            border-radius: 40px; padding: 10px 18px;
+            display: flex; align-items: center; gap: 10px;
+            backdrop-filter: blur(12px); cursor: pointer; transition: all var(--transition);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .music-player:hover { border-color: var(--gold); box-shadow: 0 4px 24px rgba(201,169,110,0.25); }
+        .music-bars { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+        .music-bars span { display: block; width: 3px; background: var(--gold); border-radius: 2px; }
+        .music-bars span:nth-child(1){height:6px} .music-bars span:nth-child(2){height:12px} .music-bars span:nth-child(3){height:8px} .music-bars span:nth-child(4){height:14px} .music-bars span:nth-child(5){height:6px}
+        .music-player.playing .music-bars span:nth-child(1){animation:bar 0.8s ease-in-out infinite alternate}
+        .music-player.playing .music-bars span:nth-child(2){animation:bar 0.6s ease-in-out infinite alternate 0.1s}
+        .music-player.playing .music-bars span:nth-child(3){animation:bar 0.9s ease-in-out infinite alternate 0.2s}
+        .music-player.playing .music-bars span:nth-child(4){animation:bar 0.7s ease-in-out infinite alternate 0.05s}
+        .music-player.playing .music-bars span:nth-child(5){animation:bar 1s ease-in-out infinite alternate 0.15s}
+        @keyframes bar { 0%{height:4px} 100%{height:16px} }
+        .music-player span { color: rgba(255,255,255,0.7); font-size: .72rem; font-weight: 600; letter-spacing: .5px; }
 
         /* APP */
-        .app-container{display:none;min-height:100vh;}
-        .app-container.visible{display:flex;}
+        .app-container { display: none; min-height: 100vh; }
+        .app-container.visible { display: flex; }
 
         /* SIDEBAR */
-        .sidebar{width:var(--sidebar-w);background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform var(--transition);box-shadow:4px 0 24px rgba(0,0,0,0.4);overflow-y:auto;overflow-x:hidden;border-right:1px solid rgba(255,255,255,0.04);}
-        .sidebar-brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;}
-        .brand-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.3rem;color:var(--gold);box-shadow:0 4px 12px rgba(45,122,79,0.4);flex-shrink:0;}
-        .brand-text{line-height:1.2;}
-        .brand-text strong{display:block;font-family:var(--font-display);font-size:1.1rem;letter-spacing:1.5px;color:#fff;}
-        .brand-text span{font-size:.65rem;color:rgba(255,255,255,0.35);font-weight:500;letter-spacing:1px;text-transform:uppercase;}
-        .sidebar-section-label{padding:16px 20px 6px;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);}
-        .sidebar-nav a{display:flex;align-items:center;gap:12px;padding:11px 20px;color:rgba(255,255,255,0.45);text-decoration:none;font-weight:500;font-size:.875rem;border-left:3px solid transparent;cursor:pointer;transition:all var(--transition);position:relative;}
-        .sidebar-nav a .nav-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;background:rgba(255,255,255,0.04);transition:all var(--transition);flex-shrink:0;}
-        .sidebar-nav a:hover{color:rgba(255,255,255,0.85);border-left-color:rgba(201,169,110,0.4);}
-        .sidebar-nav a:hover .nav-icon{background:rgba(45,122,79,0.25);color:var(--gold);}
-        .sidebar-nav a.active{color:#fff;border-left-color:var(--gold);background:linear-gradient(90deg,rgba(45,122,79,0.15),transparent);}
-        .sidebar-nav a.active .nav-icon{background:rgba(45,122,79,0.35);color:var(--gold-bright);box-shadow:0 0 12px rgba(201,169,110,0.2);}
-        .nav-badge{background:var(--gold);color:#1a0e00;font-size:.55rem;font-weight:800;padding:2px 6px;border-radius:99px;letter-spacing:.5px;margin-left:auto;}
-        .nav-notif{background:#ef4444;color:#fff;font-size:.55rem;font-weight:800;padding:2px 6px;border-radius:99px;margin-left:auto;min-width:18px;text-align:center;animation:notifPulse 2s ease-in-out infinite;}
-        @keyframes notifPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 4px rgba(239,68,68,0)}}
-        .sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);font-size:.68rem;color:rgba(255,255,255,0.2);text-align:center;}
+        .sidebar {
+            width: var(--sidebar-w); background: var(--sidebar-bg);
+            display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+            transition: transform var(--transition);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+            overflow-y: auto; overflow-x: hidden;
+            border-right: 1px solid rgba(255,255,255,0.04);
+        }
+        .sidebar-brand {
+            padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .brand-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-leaf));
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-display); font-size: 1.3rem; color: var(--gold);
+            box-shadow: 0 4px 12px rgba(45,122,79,0.4); flex-shrink: 0;
+        }
+        .brand-text { line-height: 1.2; }
+        .brand-text strong { display: block; font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 1.5px; color: #fff; }
+        .brand-text span { font-size: .65rem; color: rgba(255,255,255,0.35); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-section-label { padding: 16px 20px 6px; font-size: .6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+        .sidebar-nav a {
+            display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+            color: rgba(255,255,255,0.45); text-decoration: none; font-weight: 500; font-size: .875rem;
+            border-left: 3px solid transparent; cursor: pointer; transition: all var(--transition); position: relative;
+        }
+        .sidebar-nav a .nav-icon {
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; font-size: .95rem;
+            background: rgba(255,255,255,0.04); transition: all var(--transition); flex-shrink: 0;
+        }
+        .sidebar-nav a:hover { color: rgba(255,255,255,0.85); border-left-color: rgba(201,169,110,0.4); }
+        .sidebar-nav a:hover .nav-icon { background: rgba(45,122,79,0.25); color: var(--gold); }
+        .sidebar-nav a.active { color: #fff; border-left-color: var(--gold); background: linear-gradient(90deg, rgba(45,122,79,0.15), transparent); }
+        .sidebar-nav a.active .nav-icon { background: rgba(45,122,79,0.35); color: var(--gold-bright); box-shadow: 0 0 12px rgba(201,169,110,0.2); }
+        .nav-badge { background: var(--gold); color: #1a0e00; font-size: .55rem; font-weight: 800; padding: 2px 6px; border-radius: 99px; letter-spacing: .5px; margin-left: auto; }
+        .nav-badge-unread { background: #ef4444; color: #fff; font-size: .55rem; font-weight: 800; padding: 2px 6px; border-radius: 99px; margin-left: auto; min-width: 18px; text-align: center; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: .68rem; color: rgba(255,255,255,0.2); text-align: center; }
 
         /* MAIN */
-        .main-content{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-height:100vh;transition:margin var(--transition);}
+        .main-content { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-height: 100vh; transition: margin var(--transition); }
 
         /* TOPBAR */
-        .topbar{background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 0 var(--border),var(--shadow);position:sticky;top:0;z-index:50;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
-        .topbar h1{font-size:1.15rem;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--green-dark);letter-spacing:-.3px;}
-        .topbar h1 i{color:var(--gold);}
-        .user-badge{display:flex;align-items:center;gap:8px;background:var(--bg2);padding:7px 14px;border-radius:99px;font-size:.8rem;font-weight:600;border:1px solid var(--border);color:var(--text);}
-        .user-badge.admin{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#f59e0b;color:#78350f;}
-        .user-badge .avatar{width:24px;height:24px;border-radius:50%;background:var(--green-leaf);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:800;}
+        .topbar {
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+            padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 0 var(--border), var(--shadow);
+            position: sticky; top: 0; z-index: 50; gap: 12px; flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar h1 { font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--green-dark); letter-spacing: -.3px; }
+        .topbar h1 i { color: var(--gold); }
+        .user-badge { display: flex; align-items: center; gap: 8px; background: var(--bg2); padding: 7px 14px; border-radius: 99px; font-size: .8rem; font-weight: 600; border: 1px solid var(--border); color: var(--text); }
+        .user-badge.admin { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; color: #78350f; }
+        .user-badge .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--green-leaf); display: flex; align-items: center; justify-content: center; color: #fff; font-size: .7rem; font-weight: 800; }
 
         /* BUTTONS */
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius-sm);font-family:var(--font);font-weight:600;font-size:.875rem;cursor:pointer;border:none;transition:all var(--transition);text-decoration:none;white-space:nowrap;}
-        .btn-primary{background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));color:#fff;box-shadow:0 2px 8px rgba(26,74,46,0.3);}
-        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(26,74,46,0.4);}
-        .btn-sm{padding:7px 14px;font-size:.8rem;border-radius:var(--radius-xs);}
-        .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
-        .btn-ghost:hover{background:var(--bg2);}
-        .btn-danger{background:#fff;color:#dc2626;border:1px solid #fecaca;}
-        .btn-danger:hover{background:#fef2f2;}
-        .btn-logout{background:#fff;color:var(--text);border:1px solid var(--border);font-size:.82rem;padding:8px 14px;}
-        .btn-logout:hover{background:var(--bg2);}
-        .btn-success{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,0.3);}
-        .btn-success:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(5,150,105,0.4);}
-        .btn-aviso{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1.5px solid #f59e0b;font-weight:700;width:100%;justify-content:center;margin-bottom:12px;}
-        .btn-aviso-prof{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;border:1.5px solid #3b82f6;font-weight:700;width:100%;justify-content:center;margin-bottom:12px;}
-        .btn-editar-aulas{background:linear-gradient(135deg,var(--gold),#a07840);color:#fff;border:none;padding:9px 18px;border-radius:99px;font-weight:700;font-size:.8rem;cursor:pointer;transition:all var(--transition);box-shadow:0 2px 8px rgba(201,169,110,0.3);}
-        .btn-editar-aulas:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(201,169,110,0.4);}
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: var(--radius-sm); font-family: var(--font); font-weight: 600; font-size: .875rem; cursor: pointer; border: none; transition: all var(--transition); text-decoration: none; white-space: nowrap; }
+        .btn-primary { background: linear-gradient(135deg, var(--green-mid), var(--green-leaf)); color: #fff; box-shadow: 0 2px 8px rgba(26,74,46,0.3); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(26,74,46,0.4); }
+        .btn-sm { padding: 7px 14px; font-size: .8rem; border-radius: var(--radius-xs); }
+        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-ghost:hover { background: var(--bg2); }
+        .btn-danger { background: #fff; color: #dc2626; border: 1px solid #fecaca; }
+        .btn-danger:hover { background: #fef2f2; }
+        .btn-logout { background: #fff; color: var(--text); border: 1px solid var(--border); font-size: .82rem; padding: 8px 14px; }
+        .btn-logout:hover { background: var(--bg2); }
+        .btn-success { background: linear-gradient(135deg, #059669, #10b981); color: #fff; box-shadow: 0 2px 8px rgba(5,150,105,0.3); }
+        .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(5,150,105,0.4); }
+        .btn-aviso { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; border: 1.5px solid #f59e0b; font-weight: 700; width: 100%; justify-content: center; margin-bottom: 12px; }
+        .btn-aviso-prof { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e40af; border: 1.5px solid #3b82f6; font-weight: 700; width: 100%; justify-content: center; margin-bottom: 12px; }
+        .btn-editar-aulas { background: linear-gradient(135deg, var(--gold), #a07840); color: #fff; border: none; padding: 9px 18px; border-radius: 99px; font-weight: 700; font-size: .8rem; cursor: pointer; transition: all var(--transition); box-shadow: 0 2px 8px rgba(201,169,110,0.3); }
+        .btn-editar-aulas:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,169,110,0.4); }
 
         /* PAGE */
-        .page-content{padding:24px 28px;flex:1;padding-bottom:100px;}
-        .page{display:none;animation:fadeIn .3s ease;}
-        .page.active{display:block;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .page-content { padding: 24px 28px; flex: 1; padding-bottom: 100px; }
+        .page { display: none; animation: fadeIn .3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-        /* CARDS */
-        .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
-        .stat-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:center;gap:16px;transition:all var(--transition);position:relative;overflow:hidden;}
-        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green-leaf),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform var(--transition);}
-        .stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
-        .stat-card:hover::before{transform:scaleX(1);}
-        .stat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
-        .stat-icon.green{background:linear-gradient(135deg,#e8f5ee,#d1ead9);color:var(--green-leaf);}
-        .stat-icon.gold{background:linear-gradient(135deg,#fef9ec,#fef3c7);color:#d97706;}
-        .stat-info h3{font-size:1.8rem;font-weight:900;color:var(--green-dark);line-height:1;}
-        .stat-info p{font-size:.75rem;color:var(--text-light);font-weight:500;margin-top:3px;}
-        .charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
-        .chart-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--border);}
-        .chart-card h3{font-size:.9rem;font-weight:700;color:var(--green-dark);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
-        .chart-card h3 i{color:var(--gold);}
-        .chart-full{grid-column:1/-1;}
+        /* STAT CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card {
+            background: var(--card); border-radius: var(--radius); padding: 22px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 16px;
+            transition: all var(--transition); position: relative; overflow: hidden;
+        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green-leaf), var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform var(--transition); }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .stat-card:hover::before { transform: scaleX(1); }
+        .stat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+        .stat-icon.green { background: linear-gradient(135deg, #e8f5ee, #d1ead9); color: var(--green-leaf); }
+        .stat-icon.gold { background: linear-gradient(135deg, #fef9ec, #fef3c7); color: #d97706; }
+        .stat-icon.blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #2563eb; }
+        .stat-icon.purple { background: linear-gradient(135deg, #faf5ff, #ede9fe); color: #7c3aed; }
+        .stat-info h3 { font-size: 1.8rem; font-weight: 900; color: var(--green-dark); line-height: 1; }
+        .stat-info p { font-size: .75rem; color: var(--text-light); font-weight: 500; margin-top: 3px; }
+
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+        .chart-card { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .chart-card h3 { font-size: .9rem; font-weight: 700; color: var(--green-dark); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+        .chart-card h3 i { color: var(--gold); }
+        .chart-full { grid-column: 1 / -1; }
 
         /* AVISOS */
-        .aviso-card{border-radius:var(--radius);padding:18px 22px;margin-bottom:16px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow);}
-        .aviso-card.aluno{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #f59e0b;}
-        .aviso-card.prof{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #3b82f6;}
-        .aviso-card i{font-size:1.5rem;margin-top:2px;}
-        .aviso-card.aluno i,.aviso-card.aluno .aviso-content h3,.aviso-card.aluno .aviso-data{color:#92400e;}
-        .aviso-card.prof i,.aviso-card.prof .aviso-content h3,.aviso-card.prof .aviso-data{color:#1e40af;}
-        .aviso-card .aviso-content{flex:1;}
-        .aviso-card .aviso-content h3{font-size:.95rem;font-weight:700;margin-bottom:5px;}
-        .aviso-card .aviso-content p{font-size:.875rem;line-height:1.5;color:var(--text);}
-        .aviso-card .aviso-data{font-size:.7rem;margin-top:6px;opacity:.8;}
-        .avisos-admin-section{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
-        .avisos-admin-section button{flex:1;min-width:200px;}
+        .aviso-card { border-radius: var(--radius); padding: 18px 22px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 14px; box-shadow: var(--shadow); }
+        .aviso-card.aluno { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1.5px solid #f59e0b; }
+        .aviso-card.prof { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1.5px solid #3b82f6; }
+        .aviso-card i { font-size: 1.5rem; margin-top: 2px; }
+        .aviso-card.aluno i, .aviso-card.aluno .aviso-content h3, .aviso-card.aluno .aviso-data { color: #92400e; }
+        .aviso-card.prof i, .aviso-card.prof .aviso-content h3, .aviso-card.prof .aviso-data { color: #1e40af; }
+        .aviso-card .aviso-content { flex: 1; }
+        .aviso-card .aviso-content h3 { font-size: .95rem; font-weight: 700; margin-bottom: 5px; }
+        .aviso-card .aviso-content p { font-size: .875rem; line-height: 1.5; color: var(--text); }
+        .aviso-card .aviso-data { font-size: .7rem; margin-top: 6px; opacity: .8; }
+        .avisos-admin-section { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .avisos-admin-section button { flex: 1; min-width: 200px; }
 
         /* FEEDBACK */
-        .feedback-card{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:var(--radius);padding:18px 22px;margin-bottom:14px;box-shadow:var(--shadow);}
-        .feedback-card h3{color:#166534;font-size:.9rem;font-weight:700;margin-bottom:6px;}
-        .feedback-card p{color:#14532d;font-size:.875rem;line-height:1.5;}
-        .feedback-card .feedback-meta{font-size:.7rem;color:#4ade80;margin-top:6px;font-weight:600;}
+        .feedback-card { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1.5px solid #86efac; border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px; box-shadow: var(--shadow); }
+        .feedback-card h3 { color: #166534; font-size: .9rem; font-weight: 700; margin-bottom: 6px; }
+        .feedback-card p { color: #14532d; font-size: .875rem; line-height: 1.5; }
+        .feedback-card .feedback-meta { font-size: .7rem; color: #4ade80; margin-top: 6px; font-weight: 600; }
 
         /* TABS */
-        .localidade-tabs{display:flex;gap:4px;background:var(--bg2);border-radius:99px;padding:4px;width:fit-content;border:1px solid var(--border);}
-        .localidade-tab{padding:8px 22px;border-radius:99px;font-weight:700;font-size:.82rem;cursor:pointer;border:none;background:transparent;transition:all var(--transition);}
-        .localidade-tab.monte-verde{color:var(--green-mid);}
-        .localidade-tab.camanducaia{color:#1e40af;}
-        .localidade-tab.active.monte-verde{background:var(--mv-color);color:#fff;box-shadow:0 2px 8px rgba(26,74,46,0.3);}
-        .localidade-tab.active.camanducaia{background:var(--cam-color);color:#fff;box-shadow:0 2px 8px rgba(30,58,138,0.3);}
+        .localidade-tabs { display: flex; gap: 4px; background: var(--bg2); border-radius: 99px; padding: 4px; width: fit-content; border: 1px solid var(--border); }
+        .localidade-tab { padding: 8px 22px; border-radius: 99px; font-weight: 700; font-size: .82rem; cursor: pointer; border: none; background: transparent; transition: all var(--transition); }
+        .localidade-tab.monte-verde { color: var(--green-mid); }
+        .localidade-tab.camanducaia { color: #1e40af; }
+        .localidade-tab.active.monte-verde { background: var(--mv-color); color: #fff; box-shadow: 0 2px 8px rgba(26,74,46,0.3); }
+        .localidade-tab.active.camanducaia { background: var(--cam-color); color: #fff; box-shadow: 0 2px 8px rgba(30,58,138,0.3); }
 
         /* PRESENÇA */
-        .presenca-container{max-width:1100px;margin:0 auto;}
-        .presenca-header{background:var(--card);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;border:1px solid var(--border);}
-        .presenca-header h2{font-size:1.1rem;font-weight:800;color:var(--green-dark);display:flex;align-items:center;gap:8px;}
-        .presenca-stats{display:flex;gap:8px;flex-wrap:wrap;}
-        .presenca-stat{padding:7px 14px;border-radius:99px;font-weight:700;font-size:.78rem;}
-        .presenca-stat.presentes{background:#dcfce7;color:#166534;}
-        .presenca-stat.ausentes{background:#fee2e2;color:#dc2626;}
-        .presenca-stat.total{background:var(--bg2);color:var(--green-dark);border:1px solid var(--border);}
-        .presenca-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
-        .presenca-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:2px solid var(--border);transition:all var(--transition);cursor:pointer;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;}
-        .presenca-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--green-light);}
-        .presenca-card.presente{border-color:#10b981;background:linear-gradient(135deg,#f0fdf4,#dcfce7);}
-        .presenca-card.presente::after{content:'✓';position:absolute;top:10px;right:14px;font-size:1.1rem;font-weight:900;color:#10b981;}
-        .aluno-foto{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
-        .aluno-nome{font-weight:700;font-size:.9rem;}
-        .aluno-faixa{font-size:.72rem;color:var(--text-light);margin-top:2px;}
-        .btn-salvar-presenca{width:100%;padding:15px;font-size:1rem;margin-top:20px;border-radius:var(--radius);}
+        .presenca-container { max-width: 1100px; margin: 0 auto; }
+        .presenca-header {
+            background: var(--card); border-radius: var(--radius); padding: 20px 24px;
+            box-shadow: var(--shadow); margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+            border: 1px solid var(--border);
+        }
+        .presenca-header h2 { font-size: 1.1rem; font-weight: 800; color: var(--green-dark); display: flex; align-items: center; gap: 8px; }
+        .presenca-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+        .presenca-stat { padding: 7px 14px; border-radius: 99px; font-weight: 700; font-size: .78rem; }
+        .presenca-stat.presentes { background: #dcfce7; color: #166534; }
+        .presenca-stat.ausentes { background: #fee2e2; color: #dc2626; }
+        .presenca-stat.total { background: var(--bg2); color: var(--green-dark); border: 1px solid var(--border); }
+        .presenca-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .presenca-card {
+            background: var(--card); border-radius: var(--radius); padding: 16px;
+            box-shadow: var(--shadow); border: 2px solid var(--border);
+            transition: all var(--transition); cursor: pointer;
+            display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden;
+        }
+        .presenca-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--green-light); }
+        .presenca-card.presente { border-color: #10b981; background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+        .presenca-card.presente::after { content: '✓'; position: absolute; top: 10px; right: 14px; font-size: 1.1rem; font-weight: 900; color: #10b981; }
+        .aluno-foto { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #fff; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .aluno-nome { font-weight: 700; font-size: .9rem; }
+        .aluno-faixa { font-size: .72rem; color: var(--text-light); margin-top: 2px; }
+        .btn-salvar-presenca { width: 100%; padding: 15px; font-size: 1rem; margin-top: 20px; border-radius: var(--radius); }
 
         /* HISTORICO */
-        .historico-filtros{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;}
-        .historico-filtros input{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.85rem;font-family:var(--font);background:var(--card);color:var(--text);outline:none;transition:border-color var(--transition);}
-        .historico-filtros input:focus{border-color:var(--green-leaf);}
+        .historico-filtros { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .historico-filtros input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: .85rem; font-family: var(--font); background: var(--card); color: var(--text); outline: none; transition: border-color var(--transition); }
+        .historico-filtros input:focus { border-color: var(--green-leaf); }
 
         /* TABLE */
-        .table-wrapper{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
-        .table-header{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);}
-        .table-header h2{font-size:1rem;font-weight:700;color:var(--green-dark);}
-        table{width:100%;border-collapse:collapse;font-size:.875rem;}
-        table th,table td{padding:13px 18px;text-align:left;border-bottom:1px solid var(--border);}
-        table th{background:var(--bg2);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);}
-        table tbody tr{transition:background var(--transition);}
-        table tbody tr:hover{background:var(--bg);}
-        table tbody tr:last-child td{border-bottom:none;}
-        .faixa-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-weight:700;font-size:.72rem;letter-spacing:.3px;}
+        .table-wrapper { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
+        .table-header { padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+        .table-header h2 { font-size: 1rem; font-weight: 700; color: var(--green-dark); }
+        table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+        table th, table td { padding: 13px 18px; text-align: left; border-bottom: 1px solid var(--border); }
+        table th { background: var(--bg2); font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .8px; color: var(--text-light); }
+        table tbody tr { transition: background var(--transition); }
+        table tbody tr:hover { background: var(--bg); }
+        table tbody tr:last-child td { border-bottom: none; }
+        .faixa-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; font-weight: 700; font-size: .72rem; letter-spacing: .3px; }
 
         /* MODAL */
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-        .modal-overlay.active{display:flex;}
-        .modal{background:var(--card);border-radius:var(--radius);padding:28px 32px;width:90%;max-width:580px;box-shadow:var(--shadow-lg);animation:slideUp .25s cubic-bezier(0.4,0,0.2,1);max-height:90vh;overflow-y:auto;border:1px solid var(--border);}
-        @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-        .modal h2{font-size:1.15rem;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:8px;color:var(--green-dark);}
-        .form-group{margin-bottom:14px;}
-        .form-group label{display:block;font-weight:600;font-size:.78rem;margin-bottom:6px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;}
-        .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:.9rem;font-family:var(--font);background:var(--bg);color:var(--text);outline:none;transition:border-color var(--transition);}
-        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green-leaf);box-shadow:0 0 0 3px rgba(45,122,79,0.1);}
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--card); border-radius: var(--radius); padding: 28px 32px; width: 90%; max-width: 580px; box-shadow: var(--shadow-lg); animation: slideUp .25s cubic-bezier(0.4,0,0.2,1); max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); }
+        @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .modal h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; color: var(--green-dark); }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-weight: 600; font-size: .78rem; margin-bottom: 6px; color: var(--text-light); text-transform: uppercase; letter-spacing: .5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: .9rem; font-family: var(--font); background: var(--bg); color: var(--text); outline: none; transition: border-color var(--transition); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--green-leaf); box-shadow: 0 0 0 3px rgba(45,122,79,0.1); }
 
         /* AULAS */
-        .calendario-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-        .dia-card-aula{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1.5px solid var(--border);transition:all var(--transition);}
-        .dia-card-aula:hover{box-shadow:var(--shadow-md);}
-        .dia-card-aula.hoje{border-color:var(--gold);background:linear-gradient(135deg,#fffdf5,#fef9e7);}
-        .dia-header{font-weight:800;font-size:.9rem;color:var(--green-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-        .treino-item{background:var(--bg2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;border-left:3px solid var(--green-leaf);}
-        .treino-horario{font-weight:700;font-size:.8rem;color:var(--green-leaf);}
-        .treino-professor{font-size:.82rem;color:var(--text);font-weight:500;}
-        .treino-tema{font-size:.75rem;color:var(--text-light);font-style:italic;margin-top:2px;}
-        .sem-treino{color:var(--text-light);font-size:.82rem;text-align:center;padding:20px;}
-        .dia-section{border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;}
-        .dia-section h4{font-weight:800;margin-bottom:10px;color:var(--green-dark);}
-        .treino-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
-        .treino-row input{flex:1;min-width:60px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-xs);font-size:.78rem;font-family:var(--font);}
-        .btn-add-treino{background:var(--green-leaf);color:#fff;border:none;padding:5px 12px;border-radius:var(--radius-xs);font-size:.72rem;cursor:pointer;font-weight:600;}
-        .btn-remove-treino{background:#fee2e2;color:#dc2626;border:none;padding:3px 8px;border-radius:var(--radius-xs);font-size:.68rem;cursor:pointer;font-weight:700;}
+        .calendario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+        .dia-card-aula { background: var(--card); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); border: 1.5px solid var(--border); transition: all var(--transition); }
+        .dia-card-aula:hover { box-shadow: var(--shadow-md); }
+        .dia-card-aula.hoje { border-color: var(--gold); background: linear-gradient(135deg, #fffdf5, #fef9e7); }
+        .dia-header { font-weight: 800; font-size: .9rem; color: var(--green-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .treino-item { background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; border-left: 3px solid var(--green-leaf); }
+        .treino-horario { font-weight: 700; font-size: .8rem; color: var(--green-leaf); }
+        .treino-professor { font-size: .82rem; color: var(--text); font-weight: 500; }
+        .treino-tema { font-size: .75rem; color: var(--text-light); font-style: italic; margin-top: 2px; }
+        .sem-treino { color: var(--text-light); font-size: .82rem; text-align: center; padding: 20px; }
+        .dia-section { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; }
+        .dia-section h4 { font-weight: 800; margin-bottom: 10px; color: var(--green-dark); }
+        .treino-row { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+        .treino-row input { flex: 1; min-width: 60px; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-xs); font-size: .78rem; font-family: var(--font); }
+        .btn-add-treino { background: var(--green-leaf); color: #fff; border: none; padding: 5px 12px; border-radius: var(--radius-xs); font-size: .72rem; cursor: pointer; font-weight: 600; }
+        .btn-remove-treino { background: #fee2e2; color: #dc2626; border: none; padding: 3px 8px; border-radius: var(--radius-xs); font-size: .68rem; cursor: pointer; font-weight: 700; }
 
         /* USUARIOS */
-        .usuario-card{background:var(--card);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;transition:all var(--transition);}
-        .usuario-card:hover{box-shadow:var(--shadow-md);}
-        .usuario-info{display:flex;align-items:center;gap:12px;}
-        .usuario-icone{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;}
-        .usuario-icone.admin{background:linear-gradient(135deg,#f59e0b,#d97706);}
-        .usuario-icone.padrao{background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));}
-        .usuario-icone.aluno{background:linear-gradient(135deg,#3b82f6,#1d4ed8);}
-        .usuario-nome{font-weight:700;font-size:.9rem;}
-        .usuario-nivel{font-size:.72rem;color:var(--text-light);margin-top:2px;}
+        .usuario-card { background: var(--card); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; transition: all var(--transition); }
+        .usuario-card:hover { box-shadow: var(--shadow-md); }
+        .usuario-info { display: flex; align-items: center; gap: 12px; }
+        .usuario-icone { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; color: #fff; }
+        .usuario-icone.admin { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .usuario-icone.padrao { background: linear-gradient(135deg, var(--green-mid), var(--green-leaf)); }
+        .usuario-icone.aluno { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .usuario-nome { font-weight: 700; font-size: .9rem; }
+        .usuario-nivel { font-size: .72rem; color: var(--text-light); margin-top: 2px; }
 
         /* RANKING */
-        .rank-container{padding:4px;}
-        .rank-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding-right:4px;}
-        .rank-item{display:flex;align-items:center;gap:14px;background:var(--bg);border-radius:99px;padding:8px 20px 8px 8px;border:1px solid var(--border);transition:all var(--transition);}
-        .rank-item:hover{transform:translateX(6px);box-shadow:var(--shadow);border-color:var(--gold);}
-        .rank-item.top-1{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#f59e0b;}
-        .rank-item.top-2{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-color:#94a3b8;}
-        .rank-item.top-3{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:#f97316;}
-        .rank-pos{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-        .rank-pos.p1{background:linear-gradient(135deg,#FFD700,#f5a623);color:#5a3a00;}
-        .rank-pos.p2{background:linear-gradient(135deg,#e2e8f0,#cbd5e1);color:#334155;}
-        .rank-pos.p3{background:linear-gradient(135deg,#fed7aa,#fb923c);color:#7c2d12;}
-        .rank-pos.pn{background:var(--card);color:var(--text-light);font-size:.9rem;border:1px solid var(--border);}
-        .rank-info{flex:1;}
-        .rank-name{font-weight:800;font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-        .faixa-pill{font-size:.62rem;padding:2px 8px;border-radius:99px;font-weight:700;}
-        .rank-sub{font-size:.7rem;color:var(--text-light);margin-top:2px;}
-        .rank-medals-count{display:flex;align-items:center;gap:6px;background:var(--gold-light);padding:5px 14px;border-radius:99px;font-weight:700;font-size:.8rem;color:var(--green-dark);white-space:nowrap;}
-        .rank-medals-count i{color:var(--gold);}
-        .empty-rank{text-align:center;padding:40px;color:var(--text-light);}
-
-        /* ===== CHAT ===== */
-        .chat-layout{display:grid;grid-template-columns:320px 1fr;gap:0;height:calc(100vh - 140px);background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;}
-
-        /* Chat Sidebar */
-        .chat-sidebar{background:var(--sidebar-bg);display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,0.06);}
-        .chat-sidebar-header{padding:20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
-        .chat-sidebar-header h3{color:#fff;font-size:1rem;font-weight:800;display:flex;align-items:center;gap:8px;}
-        .chat-sidebar-header h3 i{color:var(--gold);}
-        .chat-search{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);}
-        .chat-search input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:99px;padding:9px 16px;color:#fff;font-family:var(--font);font-size:.82rem;outline:none;transition:all var(--transition);}
-        .chat-search input::placeholder{color:rgba(255,255,255,0.3);}
-        .chat-search input:focus{border-color:rgba(201,169,110,0.4);background:rgba(255,255,255,0.09);}
-        .chat-rooms-list{flex:1;overflow-y:auto;padding:8px 0;}
-        .chat-room-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;transition:all var(--transition);position:relative;border-left:3px solid transparent;}
-        .chat-room-item:hover{background:rgba(255,255,255,0.05);}
-        .chat-room-item.active{background:rgba(45,122,79,0.2);border-left-color:var(--gold);}
-        .chat-room-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0;position:relative;}
-        .chat-room-avatar.group{background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));border-radius:14px;}
-        .chat-room-avatar.dm{background:linear-gradient(135deg,#3b82f6,#1d4ed8);}
-        .chat-room-avatar.admin-dm{background:linear-gradient(135deg,#f59e0b,#d97706);}
-        .online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:#10b981;border-radius:50%;border:2px solid var(--sidebar-bg);}
-        .chat-room-info{flex:1;min-width:0;}
-        .chat-room-name{color:#fff;font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .chat-room-preview{color:rgba(255,255,255,0.4);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
-        .chat-room-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-        .chat-room-time{color:rgba(255,255,255,0.3);font-size:.65rem;}
-        .chat-unread{background:var(--gold);color:#1a0e00;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:99px;min-width:18px;text-align:center;}
-        .chat-section-label{padding:10px 16px 4px;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);}
-
-        /* Chat Main */
-        .chat-main{display:flex;flex-direction:column;background:var(--bg);}
-        .chat-topbar{background:var(--card);padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
-        .chat-topbar-info{display:flex;align-items:center;gap:12px;}
-        .chat-topbar-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0;}
-        .chat-topbar-avatar.group{background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));border-radius:12px;}
-        .chat-topbar-avatar.dm{background:linear-gradient(135deg,#3b82f6,#1d4ed8);}
-        .chat-topbar-name{font-weight:800;font-size:1rem;color:var(--green-dark);}
-        .chat-topbar-status{font-size:.72rem;color:var(--text-light);display:flex;align-items:center;gap:4px;}
-        .chat-topbar-status .dot{width:7px;height:7px;background:#10b981;border-radius:50%;display:inline-block;}
-        .chat-topbar-actions{display:flex;gap:8px;}
-        .chat-action-btn{width:36px;height:36px;border-radius:99px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-light);transition:all var(--transition);font-size:.9rem;}
-        .chat-action-btn:hover{background:var(--bg2);color:var(--green-leaf);}
-
-        /* Messages */
-        .chat-messages{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:4px;}
-        .chat-date-divider{text-align:center;margin:16px 0;position:relative;}
-        .chat-date-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
-        .chat-date-divider span{background:var(--bg);padding:4px 14px;border-radius:99px;font-size:.7rem;color:var(--text-light);font-weight:600;position:relative;border:1px solid var(--border);}
-        .msg-group{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;}
-        .msg-row{display:flex;align-items:flex-end;gap:8px;}
-        .msg-row.mine{flex-direction:row-reverse;}
-        .msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;flex-shrink:0;align-self:flex-end;}
-        .msg-avatar.hidden{visibility:hidden;}
-        .msg-content{max-width:65%;display:flex;flex-direction:column;gap:2px;}
-        .msg-row.mine .msg-content{align-items:flex-end;}
-        .msg-sender{font-size:.68rem;font-weight:700;color:var(--text-light);margin-bottom:2px;padding:0 4px;}
-        .msg-bubble{padding:10px 14px;border-radius:18px;font-size:.875rem;line-height:1.5;word-break:break-word;position:relative;box-shadow:0 1px 2px rgba(0,0,0,0.06);}
-        .msg-bubble.other{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text);}
-        .msg-bubble.mine{background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));color:#fff;border-bottom-right-radius:4px;}
-        .msg-bubble.system{background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:var(--text-light);font-style:italic;font-size:.78rem;text-align:center;border-radius:99px;padding:6px 16px;}
-        .msg-time{font-size:.62rem;color:var(--text-light);padding:0 4px;margin-top:2px;}
-        .msg-row.mine .msg-time{color:rgba(255,255,255,0.6);}
-        .msg-status{font-size:.65rem;color:rgba(255,255,255,0.6);margin-left:4px;}
-        .msg-reactions{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
-        .msg-reaction{background:var(--bg2);border:1px solid var(--border);border-radius:99px;padding:2px 8px;font-size:.75rem;cursor:pointer;transition:all var(--transition);}
-        .msg-reaction:hover{background:var(--gold-light);border-color:var(--gold);}
-        .msg-image{max-width:240px;border-radius:12px;cursor:pointer;transition:opacity var(--transition);}
-        .msg-image:hover{opacity:.9;}
-
-        /* Typing indicator */
-        .typing-indicator{display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--text-light);font-size:.78rem;font-style:italic;}
-        .typing-dots{display:flex;gap:3px;}
-        .typing-dots span{width:6px;height:6px;background:var(--text-light);border-radius:50%;animation:typingDot 1.4s ease-in-out infinite;}
-        .typing-dots span:nth-child(2){animation-delay:.2s;}
-        .typing-dots span:nth-child(3){animation-delay:.4s;}
-        @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
-
-        /* Chat Input */
-        .chat-input-area{background:var(--card);border-top:1px solid var(--border);padding:16px 24px;}
-        .chat-reply-preview{background:var(--bg2);border-left:3px solid var(--green-leaf);border-radius:var(--radius-xs);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-        .chat-reply-preview p{font-size:.78rem;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .chat-reply-preview strong{color:var(--green-leaf);font-size:.78rem;}
-        .btn-cancel-reply{background:none;border:none;color:var(--text-light);cursor:pointer;font-size:1rem;padding:0 4px;}
-        .chat-input-row{display:flex;align-items:flex-end;gap:10px;}
-        .chat-input-tools{display:flex;gap:4px;}
-        .chat-tool-btn{width:36px;height:36px;border-radius:99px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-light);transition:all var(--transition);font-size:.9rem;flex-shrink:0;}
-        .chat-tool-btn:hover{background:var(--bg2);color:var(--green-leaf);border-color:var(--green-leaf);}
-        .chat-input-wrap{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:24px;display:flex;align-items:flex-end;padding:8px 16px;gap:8px;transition:border-color var(--transition);}
-        .chat-input-wrap:focus-within{border-color:var(--green-leaf);box-shadow:0 0 0 3px rgba(45,122,79,0.1);}
-        .chat-input-wrap textarea{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:.9rem;color:var(--text);resize:none;max-height:120px;line-height:1.5;}
-        .chat-input-wrap textarea::placeholder{color:var(--text-light);}
-        .btn-send{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--green-mid),var(--green-leaf));border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);flex-shrink:0;font-size:1rem;box-shadow:0 2px 8px rgba(26,74,46,0.3);}
-        .btn-send:hover{transform:scale(1.08);box-shadow:0 4px 16px rgba(26,74,46,0.4);}
-        .btn-send:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-
-        /* Emoji picker */
-        .emoji-picker{position:absolute;bottom:80px;left:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow-lg);display:none;z-index:10;flex-wrap:wrap;gap:4px;width:280px;}
-        .emoji-picker.open{display:flex;}
-        .emoji-btn{font-size:1.4rem;cursor:pointer;padding:4px;border-radius:6px;transition:background var(--transition);}
-        .emoji-btn:hover{background:var(--bg2);}
-
-        /* Chat empty state */
-        .chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);gap:12px;}
-        .chat-empty i{font-size:3rem;opacity:.3;}
-        .chat-empty p{font-size:.9rem;font-weight:500;}
-        .chat-empty small{font-size:.78rem;opacity:.7;}
-
-        /* New chat modal */
-        .new-chat-btn{width:32px;height:32px;border-radius:99px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.3);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition);font-size:.85rem;}
-        .new-chat-btn:hover{background:rgba(201,169,110,0.25);}
+        .rank-container { padding: 4px; }
+        .rank-list { display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+        .rank-item { display: flex; align-items: center; gap: 14px; background: var(--bg); border-radius: 99px; padding: 8px 20px 8px 8px; border: 1px solid var(--border); transition: all var(--transition); }
+        .rank-item:hover { transform: translateX(6px); box-shadow: var(--shadow); border-color: var(--gold); }
+        .rank-item.top-1 { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #f59e0b; }
+        .rank-item.top-2 { background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-color: #94a3b8; }
+        .rank-item.top-3 { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #f97316; }
+        .rank-pos { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .rank-pos.p1 { background: linear-gradient(135deg, #FFD700, #f5a623); color: #5a3a00; }
+        .rank-pos.p2 { background: linear-gradient(135deg, #e2e8f0, #cbd5e1); color: #334155; }
+        .rank-pos.p3 { background: linear-gradient(135deg, #fed7aa, #fb923c); color: #7c2d12; }
+        .rank-pos.pn { background: var(--card); color: var(--text-light); font-size: .9rem; border: 1px solid var(--border); }
+        .rank-info { flex: 1; }
+        .rank-name { font-weight: 800; font-size: .9rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .faixa-pill { font-size: .62rem; padding: 2px 8px; border-radius: 99px; font-weight: 700; }
+        .rank-sub { font-size: .7rem; color: var(--text-light); margin-top: 2px; }
+        .rank-medals-count { display: flex; align-items: center; gap: 6px; background: var(--gold-light); padding: 5px 14px; border-radius: 99px; font-weight: 700; font-size: .8rem; color: var(--green-dark); white-space: nowrap; }
+        .rank-medals-count i { color: var(--gold); }
+        .empty-rank { text-align: center; padding: 40px; color: var(--text-light); }
 
         /* TOAST */
-        .toast{position:fixed;bottom:100px;right:24px;background:var(--green-dark);color:#fff;padding:13px 22px;border-radius:99px;font-weight:600;font-size:.85rem;z-index:300;box-shadow:var(--shadow-lg);animation:slideUpToast .3s,fadeOutToast .3s 2.5s forwards;display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,0.1);}
-        @keyframes slideUpToast{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-        @keyframes fadeOutToast{to{opacity:0;transform:translateY(20px)}}
+        .toast { position: fixed; bottom: 100px; right: 24px; background: var(--green-dark); color: #fff; padding: 13px 22px; border-radius: 99px; font-weight: 600; font-size: .85rem; z-index: 300; box-shadow: var(--shadow-lg); animation: slideUpToast .3s, fadeOutToast .3s 2.5s forwards; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        @keyframes slideUpToast { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+        @keyframes fadeOutToast { to{opacity:0;transform:translateY(20px)} }
 
         /* BOTTOM NAV */
-        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);z-index:150;box-shadow:0 -4px 20px rgba(0,0,0,0.08);padding:6px 0;}
-        .bottom-nav-inner{display:flex;justify-content:space-around;}
-        .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;color:var(--text-light);text-decoration:none;font-size:.62rem;font-weight:600;cursor:pointer;flex:1;text-align:center;transition:color var(--transition);}
-        .bottom-nav a.active{color:var(--green-leaf);}
-        .bottom-nav a i{font-size:1.2rem;}
+        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border); z-index: 150; box-shadow: 0 -4px 20px rgba(0,0,0,0.08); padding: 6px 0; }
+        .bottom-nav-inner { display: flex; justify-content: space-around; }
+        .bottom-nav a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 10px; color: var(--text-light); text-decoration: none; font-size: .62rem; font-weight: 600; cursor: pointer; flex: 1; text-align: center; transition: color var(--transition); }
+        .bottom-nav a.active { color: var(--green-leaf); }
+        .bottom-nav a i { font-size: 1.2rem; }
 
         /* MISC */
-        .hamburger{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);padding:4px;}
-        .empty-state{text-align:center;padding:50px;color:var(--text-light);}
-        .empty-state i{font-size:3rem;display:block;margin-bottom:14px;opacity:.4;}
-        .btn-excluir-presenca{background:#fee2e2;color:#dc2626;border:none;padding:5px 10px;border-radius:var(--radius-xs);font-size:.7rem;cursor:pointer;font-weight:700;}
-        .horario-badge{display:inline-block;background:var(--bg2);padding:2px 8px;border-radius:99px;font-size:.68rem;font-weight:600;margin:1px 2px;border:1px solid var(--border);}
+        .hamburger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text); padding: 4px; }
+        .empty-state { text-align: center; padding: 50px; color: var(--text-light); }
+        .empty-state i { font-size: 3rem; display: block; margin-bottom: 14px; opacity: .4; }
+        .btn-excluir-presenca { background: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: var(--radius-xs); font-size: .7rem; cursor: pointer; font-weight: 700; }
+        .horario-badge { display: inline-block; background: var(--bg2); padding: 2px 8px; border-radius: 99px; font-size: .68px; font-weight: 600; margin: 1px 2px; border: 1px solid var(--border); }
 
-        @media(max-width:900px){
-            .chat-layout{grid-template-columns:1fr;height:auto;}
-            .chat-sidebar{display:none;}
-            .chat-sidebar.mobile-open{display:flex;position:fixed;inset:0;z-index:200;}
+        /* ===== CHAT ===== */
+        .chat-page-wrap { height: calc(100vh - 130px); display: flex; flex-direction: column; }
+        .chat-layout {
+            display: flex; flex: 1; overflow: hidden;
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow); border: 1px solid var(--border);
         }
-        @media(max-width:768px){
-            .sidebar{transform:translateX(-100%);}
-            .sidebar.open{transform:translateX(0);}
-            .main-content{margin-left:0;}
-            .bottom-nav{display:block;}
-            .page-content{padding:14px 12px;padding-bottom:100px;}
-            .hamburger{display:block;}
-            .calendario-grid,.presenca-grid{grid-template-columns:1fr;}
-            .presenca-header{flex-direction:column;align-items:flex-start;}
-            .historico-filtros{flex-direction:column;align-items:stretch;}
-            .login-card{padding:32px 22px;}
-            .stats-grid{grid-template-columns:repeat(2,1fr);}
+        /* Chat Sidebar */
+        .chat-sidebar {
+            width: 300px; flex-shrink: 0; border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; background: var(--bg2);
+            overflow: hidden;
+        }
+        .chat-sidebar-header {
+            padding: 16px 18px; border-bottom: 1px solid var(--border);
+            background: var(--card); flex-shrink: 0;
+        }
+        .chat-sidebar-header h3 { font-size: .95rem; font-weight: 800; color: var(--green-dark); display: flex; align-items: center; gap: 8px; }
+        .chat-search { padding: 10px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .chat-search input { width: 100%; padding: 8px 14px; border-radius: 99px; border: 1.5px solid var(--border); font-size: .82rem; font-family: var(--font); background: var(--card); outline: none; transition: border-color var(--transition); }
+        .chat-search input:focus { border-color: var(--green-leaf); }
+        .chat-section-label { padding: 10px 16px 4px; font-size: .6rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-light); }
+        .chat-conv-list { flex: 1; overflow-y: auto; }
+        .chat-conv-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            cursor: pointer; transition: all var(--transition);
+            border-left: 3px solid transparent;
+        }
+        .chat-conv-item:hover { background: rgba(45,122,79,0.06); }
+        .chat-conv-item.active { background: rgba(45,122,79,0.1); border-left-color: var(--green-leaf); }
+        .chat-conv-avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: .9rem; color: #fff; flex-shrink: 0; position: relative;
+        }
+        .chat-conv-avatar.group { border-radius: 12px; }
+        .chat-online-dot { position: absolute; bottom: 1px; right: 1px; width: 10px; height: 10px; background: #10b981; border-radius: 50%; border: 2px solid var(--card); }
+        .chat-conv-info { flex: 1; min-width: 0; }
+        .chat-conv-name { font-weight: 700; font-size: .85rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-conv-preview { font-size: .72rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+        .chat-conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .chat-conv-time { font-size: .65rem; color: var(--text-light); }
+        .chat-unread-badge { background: var(--green-leaf); color: #fff; font-size: .6rem; font-weight: 800; padding: 2px 6px; border-radius: 99px; min-width: 18px; text-align: center; }
+        /* Chat Main */
+        .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+        .chat-empty-state {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--text-light); gap: 12px;
+        }
+        .chat-empty-state i { font-size: 3.5rem; opacity: .2; }
+        .chat-empty-state p { font-weight: 600; font-size: .95rem; }
+        .chat-empty-state small { font-size: .8rem; opacity: .7; }
+        .chat-active { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .chat-active.visible { display: flex; }
+        .chat-topbar {
+            padding: 14px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+            background: var(--card); flex-shrink: 0;
+        }
+        .chat-topbar-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .85rem; color: #fff; flex-shrink: 0; }
+        .chat-topbar-avatar.group { border-radius: 10px; }
+        .chat-topbar-info { flex: 1; }
+        .chat-topbar-name { font-weight: 800; font-size: .95rem; color: var(--green-dark); }
+        .chat-topbar-status { font-size: .72rem; color: var(--text-light); }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 4px; background: var(--bg); }
+        .chat-date-divider { text-align: center; margin: 12px 0; }
+        .chat-date-divider span { background: var(--border); color: var(--text-light); font-size: .68rem; font-weight: 600; padding: 3px 12px; border-radius: 99px; }
+        .chat-msg { display: flex; gap: 8px; max-width: 75%; animation: msgIn .2s ease; }
+        @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .chat-msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-msg.other { align-self: flex-start; }
+        .chat-msg-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .7rem; color: #fff; flex-shrink: 0; align-self: flex-end; }
+        .chat-msg-body { display: flex; flex-direction: column; gap: 2px; }
+        .chat-msg-sender { font-size: .68rem; font-weight: 700; color: var(--text-light); padding: 0 4px; }
+        .chat-msg-bubble {
+            padding: 10px 14px; border-radius: 18px; font-size: .875rem;
+            line-height: 1.5; word-break: break-word; position: relative; cursor: pointer;
+        }
+        .chat-msg.mine .chat-msg-bubble { background: linear-gradient(135deg, var(--green-mid), var(--green-leaf)); color: #fff; border-bottom-right-radius: 4px; }
+        .chat-msg.other .chat-msg-bubble { background: var(--card); color: var(--text); border-bottom-left-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+        .chat-msg-bubble:hover { opacity: .92; }
+        .chat-msg-time { font-size: .62rem; color: var(--text-light); padding: 0 4px; align-self: flex-end; }
+        .chat-msg.mine .chat-msg-time { text-align: right; }
+        .chat-reply-preview-bubble { background: rgba(45,122,79,0.1); border-left: 3px solid var(--green-leaf); padding: 5px 10px; border-radius: 8px; margin-bottom: 4px; font-size: .75rem; color: var(--text-light); }
+        .chat-msg.mine .chat-reply-preview-bubble { background: rgba(255,255,255,0.15); border-left-color: rgba(255,255,255,0.5); color: rgba(255,255,255,0.85); }
+        .chat-typing-area { padding: 6px 20px; font-size: .75rem; color: var(--text-light); font-style: italic; min-height: 26px; flex-shrink: 0; }
+        .chat-input-area { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--card); flex-shrink: 0; }
+        .chat-reply-bar {
+            display: none; background: var(--bg2); border-radius: var(--radius-sm);
+            padding: 7px 12px; margin-bottom: 8px; font-size: .78rem; color: var(--text-light);
+            align-items: center; justify-content: space-between; border-left: 3px solid var(--green-leaf);
+        }
+        .chat-reply-bar.show { display: flex; }
+        .chat-reply-bar button { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: .9rem; padding: 0 4px; }
+        .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+        .chat-input-row textarea {
+            flex: 1; padding: 10px 14px; border-radius: 22px;
+            border: 1.5px solid var(--border); font-size: .875rem; font-family: var(--font);
+            resize: none; outline: none; max-height: 120px; min-height: 42px; line-height: 1.4;
+            transition: border-color var(--transition); background: var(--bg);
+        }
+        .chat-input-row textarea:focus { border-color: var(--green-leaf); }
+        .chat-send-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-mid), var(--green-leaf));
+            color: #fff; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1rem;
+            transition: all var(--transition); flex-shrink: 0;
+        }
+        .chat-send-btn:hover { transform: scale(1.08); box-shadow: 0 4px 12px rgba(45,122,79,0.4); }
+        .chat-back-btn { display: none; background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 1.2rem; padding: 4px 8px 4px 0; }
+
+        @media(max-width:768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .bottom-nav { display: block; }
+            .page-content { padding: 14px 12px; padding-bottom: 100px; }
+            .hamburger { display: block; }
+            .calendario-grid, .presenca-grid { grid-template-columns: 1fr; }
+            .presenca-header { flex-direction: column; align-items: flex-start; }
+            .historico-filtros { flex-direction: column; align-items: stretch; }
+            .login-card { padding: 32px 22px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chat-sidebar { width: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 2; }
+            .chat-sidebar.hidden-mobile { display: none; }
+            .chat-main { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; }
+            .chat-layout { position: relative; }
+            .chat-back-btn { display: block; }
         }
     </style>
 </head>
@@ -517,7 +679,7 @@
             <a data-page="graduacoes"><div class="nav-icon"><i class="fas fa-graduation-cap"></i></div> Graduações</a>
             <a data-page="campeonatos"><div class="nav-icon"><i class="fas fa-trophy"></i></div> Campeonatos</a>
             <div class="sidebar-section-label">Comunicação</div>
-            <a data-page="chat"><div class="nav-icon"><i class="fas fa-comments"></i></div> Chat <span class="nav-notif" id="chatNotifBadge" style="display:none;">0</span></a>
+            <a data-page="chat"><div class="nav-icon"><i class="fas fa-comments"></i></div> Chat <span class="nav-badge-unread" id="chatBadge" style="display:none;">0</span></a>
             <a data-page="feedback"><div class="nav-icon"><i class="fas fa-comment-dots"></i></div> Feedback</a>
             <a data-page="regras"><div class="nav-icon"><i class="fas fa-book"></i></div> Regras IBJJF</a>
             <a data-page="usuarios"><div class="nav-icon"><i class="fas fa-user-cog"></i></div> Usuários <span class="nav-badge">ADM</span></a>
@@ -614,52 +776,6 @@
                 <div class="calendario-grid" id="calendarioGrid"></div>
             </div>
 
-            <!-- CHAT -->
-            <div class="page" id="page-chat">
-                <div class="chat-layout" id="chatLayout">
-                    <!-- Chat Sidebar -->
-                    <div class="chat-sidebar" id="chatSidebar">
-                        <div class="chat-sidebar-header">
-                            <h3><i class="fas fa-comments"></i> Mensagens</h3>
-                            <button class="new-chat-btn" id="btnNewChat" title="Nova conversa"><i class="fas fa-edit"></i></button>
-                        </div>
-                        <div class="chat-search">
-                            <input type="text" id="chatSearchInput" placeholder="🔍 Buscar conversa...">
-                        </div>
-                        <div class="chat-rooms-list" id="chatRoomsList"></div>
-                    </div>
-                    <!-- Chat Main -->
-                    <div class="chat-main" id="chatMain">
-                        <div class="chat-empty" id="chatEmpty">
-                            <i class="fas fa-comments"></i>
-                            <p>Selecione uma conversa</p>
-                            <small>Escolha um canal ou contato para começar</small>
-                        </div>
-                        <div id="chatActiveArea" style="display:none;flex-direction:column;height:100%;">
-                            <div class="chat-topbar" id="chatTopbar"></div>
-                            <div class="chat-messages" id="chatMessages"></div>
-                            <div id="typingIndicatorArea" style="padding:0 24px 4px;"></div>
-                            <div class="chat-input-area" style="position:relative;">
-                                <div id="chatReplyPreview" style="display:none;" class="chat-reply-preview">
-                                    <div><strong id="replyAuthor"></strong><p id="replyText"></p></div>
-                                    <button class="btn-cancel-reply" id="btnCancelReply">✕</button>
-                                </div>
-                                <div class="emoji-picker" id="emojiPicker"></div>
-                                <div class="chat-input-row">
-                                    <div class="chat-input-tools">
-                                        <button class="chat-tool-btn" id="btnEmoji" title="Emoji"><i class="fas fa-smile"></i></button>
-                                    </div>
-                                    <div class="chat-input-wrap">
-                                        <textarea id="chatInput" placeholder="Digite uma mensagem..." rows="1"></textarea>
-                                    </div>
-                                    <button class="btn-send" id="btnSendMsg"><i class="fas fa-paper-plane"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- FEEDBACK -->
             <div class="page" id="page-feedback">
                 <div class="presenca-header"><h2><i class="fas fa-comment-dots"></i> Feedback dos Alunos</h2></div>
@@ -682,7 +798,8 @@
                 <div class="presenca-header"><h2><i class="fas fa-book"></i> Regras & Pontuação IBJJF</h2></div>
                 <div class="table-wrapper" style="margin-bottom:20px;"><div class="table-header"><h2>🏆 Sistema de Pontuação</h2></div><table><thead><tr><th>Movimento</th><th>Pontos</th><th>Descrição</th></tr></thead><tbody><tr><td><strong>Queda / Projeção</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">2 pts</span></td><td>Derrubar o oponente e estabilizar no chão por 3 segundos</td></tr><tr><td><strong>Raspagem</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">2 pts</span></td><td>Inverter a posição estando por baixo e ficar por cima</td></tr><tr><td><strong>Passagem de Guarda</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">3 pts</span></td><td>Passar a guarda e estabilizar por 3 segundos</td></tr><tr><td><strong>Montada</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">4 pts</span></td><td>Montar no oponente por 3 segundos</td></tr><tr><td><strong>Pegada de Costas</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">4 pts</span></td><td>Controlar as costas com os dois ganchos</td></tr><tr><td><strong>Joelho na Barriga</strong></td><td><span style="color:var(--green-leaf);font-weight:900;">2 pts</span></td><td>Colocar o joelho sobre a barriga e estabilizar</td></tr></tbody></table></div>
                 <div class="table-wrapper" style="margin-bottom:20px;"><div class="table-header"><h2>⏱️ Tempo de Luta por Faixa</h2></div><table><thead><tr><th>Faixa</th><th>Adulto</th><th>Máster</th></tr></thead><tbody><tr><td>Branca</td><td>5 min</td><td>5 min</td></tr><tr><td>Azul</td><td>6 min</td><td>5 min</td></tr><tr><td>Roxa</td><td>7 min</td><td>6 min</td></tr><tr><td>Marrom</td><td>8 min</td><td>6 min</td></tr><tr><td>Preta</td><td>10 min</td><td>6 min</td></tr></tbody></table></div>
-                <div class="table-wrapper"><div class="table-header"><h2>🚫 Penalidades</h2></div><table><thead><tr><th>Falta</th><th>Penalidade</th></tr></thead><tbody><tr><td>Falta leve</td><td>Vantagem para o oponente</td></tr><tr><td>Falta grave</td><td>2 pontos para o oponente</td></tr><tr><td>Falta gravíssima</td><td>Desclassificação</td></tr></tbody></table></div>
+                <div class="table-wrapper" style="margin-bottom:20px;"><div class="table-header"><h2>⬆️ Ordem das Faixas</h2></div><table><thead><tr><th>Ordem</th><th>Faixa</th><th>Idade Mínima</th><th>Tempo Mínimo</th></tr></thead><tbody><tr><td>1ª</td><td>Branca</td><td>4 anos</td><td>-</td></tr><tr><td>2ª</td><td>Cinza</td><td>4-15 anos</td><td>6 meses</td></tr><tr><td>3ª</td><td>Amarela</td><td>7-15 anos</td><td>6 meses</td></tr><tr><td>4ª</td><td>Laranja</td><td>10-15 anos</td><td>6 meses</td></tr><tr><td>5ª</td><td>Verde</td><td>13-15 anos</td><td>6 meses</td></tr><tr><td>6ª</td><td>Azul</td><td>16 anos</td><td>1 ano</td></tr><tr><td>7ª</td><td>Roxa</td><td>16 anos</td><td>2 anos</td></tr><tr><td>8ª</td><td>Marrom</td><td>18 anos</td><td>1,5 ano</td></tr><tr><td>9ª</td><td>Preta</td><td>19 anos</td><td>2 anos</td></tr></tbody></table></div>
+                <div class="table-wrapper"><div class="table-header"><h2>🚫 Penalidades</h2></div><table><thead><tr><th>Falta</th><th>Penalidade</th></tr></thead><tbody><tr><td>Falta leve (ex: falta de combatividade)</td><td>Vantagem para o oponente</td></tr><tr><td>Falta grave (ex: desrespeito)</td><td>2 pontos para o oponente</td></tr><tr><td>Falta gravíssima (ex: agressão)</td><td>Desclassificação</td></tr></tbody></table></div>
             </div>
 
             <!-- USUÁRIOS -->
@@ -700,7 +817,7 @@
                         <h2><i class="fas fa-users"></i> Alunos</h2>
                         <div style="display:flex;gap:8px;flex-wrap:wrap;">
                             <input type="text" id="searchAlunos" placeholder="🔍 Buscar..." style="padding:8px 14px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:.85rem;outline:none;">
-                            <select id="filterFaixa" style="padding:8px 14px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:.85rem;background:var(--card);"><option value="todas">Todas as Faixas</option><option>Branca</option><option>Cinza</option><option>Amarela</option><option>Laranja</option><option>Verde</option><option>Azul</option><option>Roxa</option><option>Marrom</option><option>Preta</option></select>
+                            <select id="filterFaixa" style="padding:8px 14px;border-radius:99px;border:1.5px solid var(--border);font-family:var(--font);font-size:.85rem;background:var(--card);"><option value="todas">Todas as Faixas</option><option value="Branca">Branca</option><option value="Cinza">Cinza</option><option value="Amarela">Amarela</option><option value="Laranja">Laranja</option><option value="Verde">Verde</option><option value="Azul">Azul</option><option value="Roxa">Roxa</option><option value="Marrom">Marrom</option><option value="Preta">Preta</option></select>
                             <button class="btn btn-primary btn-sm" id="btnAddAluno"><i class="fas fa-plus"></i> Novo</button>
                         </div>
                     </div>
@@ -723,6 +840,59 @@
                     <table><thead><tr><th>Aluno</th><th>Campeonato</th><th>Data</th><th>Medalha</th><th>Ações</th></tr></thead><tbody id="tbodyCampeonatos"></tbody></table>
                 </div>
             </div>
+
+            <!-- CHAT -->
+            <div class="page" id="page-chat">
+                <div class="chat-page-wrap">
+                    <div class="chat-layout" id="chatLayout">
+                        <!-- Sidebar de conversas -->
+                        <div class="chat-sidebar" id="chatSidebar">
+                            <div class="chat-sidebar-header">
+                                <h3><i class="fas fa-comments" style="color:var(--gold);"></i> Mensagens</h3>
+                            </div>
+                            <div class="chat-search">
+                                <input type="text" id="chatSearchInput" placeholder="🔍 Buscar conversa ou usuário...">
+                            </div>
+                            <div class="chat-conv-list">
+                                <div class="chat-section-label">Canais</div>
+                                <div id="chatChannelsList"></div>
+                                <div class="chat-section-label">Mensagens Diretas</div>
+                                <div id="chatDMsList"></div>
+                            </div>
+                        </div>
+                        <!-- Área principal do chat -->
+                        <div class="chat-main" id="chatMain">
+                            <div class="chat-empty-state" id="chatEmptyState">
+                                <i class="fas fa-comments"></i>
+                                <p>Selecione uma conversa</p>
+                                <small>Escolha um canal ou usuário para começar a conversar</small>
+                            </div>
+                            <div class="chat-active" id="chatActiveArea">
+                                <div class="chat-topbar">
+                                    <button class="chat-back-btn" id="chatBackBtn"><i class="fas fa-arrow-left"></i></button>
+                                    <div class="chat-topbar-avatar" id="chatTopbarAvatar"></div>
+                                    <div class="chat-topbar-info">
+                                        <div class="chat-topbar-name" id="chatTopbarName"></div>
+                                        <div class="chat-topbar-status" id="chatTopbarStatus"></div>
+                                    </div>
+                                </div>
+                                <div class="chat-messages" id="chatMessages"></div>
+                                <div class="chat-typing-area" id="chatTypingArea"></div>
+                                <div class="chat-input-area">
+                                    <div class="chat-reply-bar" id="chatReplyBar">
+                                        <span id="chatReplyText">Respondendo...</span>
+                                        <button onclick="cancelarResposta()">✕</button>
+                                    </div>
+                                    <div class="chat-input-row">
+                                        <textarea id="chatInput" placeholder="Digite uma mensagem... (Enter para enviar, Shift+Enter para nova linha)" rows="1"></textarea>
+                                        <button class="chat-send-btn" id="chatSendBtn"><i class="fas fa-paper-plane"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -731,10 +901,10 @@
     <div class="bottom-nav-inner">
         <a data-page="dashboard" class="active"><i class="fas fa-chart-pie"></i><span>Dash</span></a>
         <a data-page="presenca"><i class="fas fa-clipboard-check"></i><span>Presença</span></a>
-        <a data-page="chat"><i class="fas fa-comments"></i><span>Chat</span></a>
+        <a data-page="historico"><i class="fas fa-history"></i><span>Histórico</span></a>
         <a data-page="aulas"><i class="fas fa-calendar-alt"></i><span>Aulas</span></a>
         <a data-page="alunos"><i class="fas fa-users"></i><span>Alunos</span></a>
-        <a data-page="campeonatos"><i class="fas fa-trophy"></i><span>Camps.</span></a>
+        <a data-page="chat"><i class="fas fa-comments"></i><span>Chat</span></a>
     </div>
 </nav>
 
@@ -744,14 +914,15 @@
 <script>
 // ===== MÚSICA =====
 const bgMusic=document.getElementById('bgMusic'),musicPlayer=document.getElementById('musicPlayer'),musicLabel=document.getElementById('musicLabel');
-let musicPlaying=false;bgMusic.volume=0.3;
+let musicPlaying=false; bgMusic.volume=0.3;
 function tryPlay(){const p=bgMusic.play();if(p!==undefined){p.then(()=>{musicPlaying=true;musicPlayer.classList.add('playing');musicLabel.textContent='🎵 Tocando';}).catch(()=>{musicLabel.textContent='▶️ Clique para tocar';['click','touchstart','keydown'].forEach(e=>document.addEventListener(e,()=>{if(!musicPlaying)bgMusic.play().then(()=>{musicPlaying=true;musicPlayer.classList.add('playing');musicLabel.textContent='🎵 Tocando';}).catch(()=>{});},{once:true}));});}}
 musicPlayer.addEventListener('click',e=>{e.stopPropagation();if(musicPlaying){bgMusic.pause();musicPlaying=false;musicPlayer.classList.remove('playing');musicLabel.textContent='⏸️ Pausada';}else{bgMusic.play().then(()=>{musicPlaying=true;musicPlayer.classList.add('playing');musicLabel.textContent='🎵 Tocando';}).catch(()=>{});}});
-tryPlay();setTimeout(()=>{if(!musicPlaying)tryPlay();},1500);
+tryPlay(); setTimeout(()=>{if(!musicPlaying)tryPlay();},1500);
 
 // ===== FIREBASE =====
 const firebaseConfig={apiKey:"AIzaSyBn3mCcrTS13QfJffxJXYvBIqcUconMp5Q",authDomain:"academia-move.firebaseapp.com",databaseURL:"https://academia-move-default-rtdb.firebaseio.com",projectId:"academia-move",storageBucket:"academia-move.firebasestorage.app",messagingSenderId:"329888597951",appId:"1:329888597951:web:ac19b928a92123d76f430a"};
-firebase.initializeApp(firebaseConfig);const database=firebase.database();
+firebase.initializeApp(firebaseConfig);
+const database=firebase.database();
 
 // ===== USUÁRIOS =====
 const USUARIOS_FIXOS={'admin':{senha:'34382098',nivel:'admin',nome:'Admin'},'erik':{senha:'34382098',nivel:'padrao',nome:'Erik'},'lucas':{senha:'34382098',nivel:'padrao',nome:'Lucas'},'adrion':{senha:'34382098',nivel:'padrao',nome:'Adrion'},'negao':{senha:'34382098',nivel:'padrao',nome:'Negão'},'professores':{senha:'34382098',nivel:'padrao',nome:'Professores'}};
@@ -770,10 +941,8 @@ const FAIXAS=['Branca','Cinza','Amarela','Laranja','Verde','Azul','Roxa','Marrom
 const FAIXA_CORES={'Branca':'#b0b0b0','Cinza':'#78909c','Amarela':'#f9a825','Laranja':'#ef6c00','Verde':'#2e7d32','Azul':'#1565c0','Roxa':'#6a1b9a','Marrom':'#4e342e','Preta':'#1a1a1a'};
 const MEDALHAS=['Ouro','Prata','Bronze','Participação'];
 const MEDALHA_ICONS={Ouro:'🥇',Prata:'🥈',Bronze:'🥉',Participação:'🏅'};
-const EMOJIS=['😀','😂','🥰','😎','🤩','🥋','💪','🏆','🥇','🎉','👏','🔥','❤️','👍','🙏','😅','🤔','😤','💯','⚡'];
-const AVATAR_COLORS=['#1565c0','#6a1b9a','#2e7d32','#ef6c00','#c62828','#00838f','#4527a0','#558b2f'];
 
-let usuarioAtual=null,localidadeAtivaPresenca='monteVerde',localidadeAtivaAulas='monteVerde';
+let usuarioAtual=null, localidadeAtivaPresenca='monteVerde', localidadeAtivaAulas='monteVerde';
 
 // ===== LOGIN =====
 function verificarLogin(){const s=sessionStorage.getItem('gm_user');if(s){usuarioAtual=JSON.parse(s);document.getElementById('loginOverlay').style.display='none';document.getElementById('appContainer').classList.add('visible');return true;}return false;}
@@ -797,7 +966,16 @@ document.getElementById('loginInput').addEventListener('keypress',e=>{if(e.key==
 document.getElementById('btnLogout').addEventListener('click',logout);
 function mostrarAlterarSenha(){document.getElementById('loginForm').style.display='none';document.getElementById('alterarSenhaForm').style.display='block';}
 function mostrarLogin(){document.getElementById('alterarSenhaForm').style.display='none';document.getElementById('loginForm').style.display='block';document.getElementById('loginError').style.display='none';}
-function realizarAlteracaoSenha(){const login=document.getElementById('altLogin').value.trim().toLowerCase(),senhaAtual=document.getElementById('altSenhaAtual').value.trim(),novaSenha=document.getElementById('altNovaSenha').value.trim(),erro=document.getElementById('alterarError');if(!login||!senhaAtual||!novaSenha){erro.textContent='Preencha todos os campos.';erro.style.display='block';return;}const user=USUARIOS[login];if(!user||user.senha!==senhaAtual){erro.textContent='Login ou senha atual incorretos.';erro.style.display='block';return;}refUsuarios.child(login).update({senha:novaSenha}).then(()=>{erro.style.display='none';alert('Senha alterada com sucesso!');mostrarLogin();}).catch(()=>{erro.textContent='Erro ao alterar.';erro.style.display='block';});}
+function realizarAlteracaoSenha(){
+    const login=document.getElementById('altLogin').value.trim().toLowerCase();
+    const senhaAtual=document.getElementById('altSenhaAtual').value.trim();
+    const novaSenha=document.getElementById('altNovaSenha').value.trim();
+    const erro=document.getElementById('alterarError');
+    if(!login||!senhaAtual||!novaSenha){erro.textContent='Preencha todos os campos.';erro.style.display='block';return;}
+    const user=USUARIOS[login];
+    if(!user||user.senha!==senhaAtual){erro.textContent='Login ou senha atual incorretos.';erro.style.display='block';return;}
+    refUsuarios.child(login).update({senha:novaSenha}).then(()=>{erro.style.display='none';alert('Senha alterada com sucesso!');mostrarLogin();}).catch(()=>{erro.textContent='Erro ao alterar. Tente novamente.';erro.style.display='block';});
+}
 document.getElementById('linkAlterarSenha').addEventListener('click',e=>{e.stopPropagation();mostrarAlterarSenha();});
 document.getElementById('linkVoltarLogin').addEventListener('click',e=>{e.stopPropagation();mostrarLogin();});
 document.getElementById('btnAlterarSenha').addEventListener('click',realizarAlteracaoSenha);
@@ -809,18 +987,21 @@ function ehAdmin(){return usuarioAtual&&usuarioAtual.nivel==='admin';}
 function ehAluno(){return usuarioAtual&&usuarioAtual.nivel==='aluno';}
 function ehProfessor(){return usuarioAtual&&(usuarioAtual.nivel==='admin'||usuarioAtual.nivel==='padrao');}
 function podeEditar(){return usuarioAtual&&(usuarioAtual.nivel==='admin'||usuarioAtual.nivel==='padrao');}
-function getAvatarColor(nome){let h=0;for(let i=0;i<nome.length;i++)h=(h*31+nome.charCodeAt(i))%AVATAR_COLORS.length;return AVATAR_COLORS[h];}
 
 function initApp(){
-    if(window._init)return;window._init=true;
+    if(window._init)return; window._init=true;
     document.getElementById('userName').textContent=usuarioAtual.nome;
     document.getElementById('userNivel').textContent=ehAdmin()?'Admin':(ehAluno()?'Aluno':'Professor');
     document.getElementById('userAvatar').textContent=usuarioAtual.nome[0].toUpperCase();
     if(ehAdmin())document.getElementById('userBadge').classList.add('admin');
-    if(ehAluno()){['presenca','historico','graduacoes','feedback','usuarios'].forEach(p=>{document.querySelector(`.sidebar-nav a[data-page="${p}"]`)?.style.setProperty('display','none');});['btnAddAlunoTop','btnAddAluno','btnAddGraduacao','btnAddCampeonato','btnEditarAulas'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});}
+    if(ehAluno()){
+        ['presenca','historico','graduacoes','feedback','usuarios'].forEach(p=>{document.querySelector(`.sidebar-nav a[data-page="${p}"]`)?.style.setProperty('display','none');});
+        ['btnAddAlunoTop','btnAddAluno','btnAddGraduacao','btnAddCampeonato','btnEditarAulas'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+        document.querySelectorAll('.bottom-nav a[data-page="presenca"],.bottom-nav a[data-page="historico"]').forEach(a=>a.style.display='none');
+    }
     if(!ehAdmin())document.querySelector('.sidebar-nav a[data-page="usuarios"]')?.style.setProperty('display','none');
 
-    const refAlunos=database.ref('alunos'),refGraduacoes=database.ref('graduacoes'),refCampeonatos=database.ref('campeonatos'),refNextId=database.ref('nextId'),refAvisosAlunos=database.ref('avisos_alunos'),refAvisosProfessores=database.ref('avisos_professores'),refAulas=database.ref('aulas'),refPresencas=database.ref('presencas'),refFeedbacks=database.ref('feedbacks'),refVinculos=database.ref('vinculos'),refChat=database.ref('chat');
+    const refAlunos=database.ref('alunos'),refGraduacoes=database.ref('graduacoes'),refCampeonatos=database.ref('campeonatos'),refNextId=database.ref('nextId'),refAvisosAlunos=database.ref('avisos_alunos'),refAvisosProfessores=database.ref('avisos_professores'),refAulas=database.ref('aulas'),refPresencas=database.ref('presencas'),refFeedbacks=database.ref('feedbacks'),refVinculos=database.ref('vinculos');
     let db={alunos:[],graduacoes:[],campeonatos:[],nextId:1,avisosAlunos:[],avisosProfessores:[],aulas:{},presencas:{},feedbacks:{},vinculos:{}};
 
     refAlunos.on('value',snap=>{db.alunos=snap.val()?Object.values(snap.val()):[];renderAlunos();atualizarDashboard();renderRanking();});
@@ -845,258 +1026,45 @@ function initApp(){
     function showToast(msg,icon='✅'){const c=document.getElementById('toastContainer');const t=document.createElement('div');t.className='toast';t.innerHTML=`${icon} ${msg}`;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
     function openModal(title,icon,bodyHTML,onSave){const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');content.innerHTML=`<h2><i class="${icon}"></i> ${title}</h2>${bodyHTML}<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;overlay.classList.add('active');document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');document.getElementById('modalSave').onclick=()=>{if(onSave(content))overlay.classList.remove('active');};overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active');};}
 
-    // ===== CHAT ENGINE =====
-    let chatRooms={},activeRoomId=null,chatListeners={},replyTo=null,typingTimeout=null,unreadCounts={};
-    const ROOM_GERAL={id:'geral',name:'🥋 Geral',type:'group',desc:'Todos os membros'};
-    const ROOM_PROFESSORES={id:'professores',name:'👨‍🏫 Professores',type:'group',desc:'Apenas professores'};
-    const ROOM_ADMIN={id:'admin_canal',name:'⚙️ Admin',type:'group',desc:'Canal administrativo'};
+    function getIdAlunoDoUsuario(){if(usuarioAtual.idAluno)return usuarioAtual.idAluno;if(db.vinculos&&db.vinculos[usuarioAtual.login])return db.vinculos[usuarioAtual.login];const nomeLower=usuarioAtual.nome.toLowerCase();const a=db.alunos.find(a=>a.nome&&a.nome.toLowerCase()===nomeLower);return a?a.id:null;}
+    function renderMeuFeedback(){const container=document.getElementById('meuFeedbackContainer');if(!container||!ehAluno())return;const idAluno=getIdAlunoDoUsuario();if(!idAluno){container.innerHTML='';return;}const meusFeedbacks=db.feedbacks[idAluno]||[];if(!meusFeedbacks.length){container.innerHTML='';return;}container.innerHTML='<h3 style="margin-bottom:12px;font-size:.95rem;"><i class="fas fa-comment-dots" style="color:var(--gold);"></i> Meus Feedbacks</h3>'+meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} · Prof. ${f.professor}</div></div>`).join('');}
+    function renderFeedbackLista(){const container=document.getElementById('feedbackLista');if(!container||!ehProfessor())return;let html='';Object.entries(db.feedbacks).forEach(([idAluno,feedbacks])=>{const aluno=getAluno(parseInt(idAluno));const nomeAl=aluno?aluno.nome:'Aluno #'+idAluno;feedbacks.forEach(f=>{html+=`<div class="feedback-card"><h3>👤 ${nomeAl} ${badgeHTML(aluno?aluno.faixa:'',aluno?aluno.grau:0)}</h3><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} · Prof. ${f.professor}</div></div>`;});});container.innerHTML=html||'<p style="color:var(--text-light);">Nenhum feedback enviado ainda.</p>';const select=document.getElementById('feedbackAluno');if(select&&db.alunos.length>0)select.innerHTML='<option value="">Selecione...</option>'+db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('');}
+    document.getElementById('btnEnviarFeedback')?.addEventListener('click',function(){if(!ehProfessor()){showToast('Acesso negado!','🔒');return;}const idAluno=parseInt(document.getElementById('feedbackAluno').value);const texto=document.getElementById('feedbackTexto').value.trim();if(!idAluno||!texto){showToast('Selecione o aluno e escreva a mensagem!','⚠️');return;}const novo={texto,data:new Date().toISOString().split('T')[0],professor:usuarioAtual.nome};const ref=refFeedbacks.child(idAluno);ref.once('value',snap=>{const lista=snap.val()||[];lista.push(novo);ref.set(lista);showToast('Feedback enviado!');document.getElementById('feedbackTexto').value='';});});
 
-    function getChatRooms(){
-        const rooms=[];
-        rooms.push(ROOM_GERAL);
-        if(ehProfessor())rooms.push(ROOM_PROFESSORES);
-        if(ehAdmin())rooms.push(ROOM_ADMIN);
-        // DMs com outros usuários
-        Object.entries(USUARIOS).forEach(([login,user])=>{
-            if(login===usuarioAtual.login)return;
-            const dmId=getDmId(usuarioAtual.login,login);
-            rooms.push({id:dmId,name:user.nome,type:'dm',login,nivel:user.nivel,desc:user.nivel==='admin'?'Admin':(user.nivel==='aluno'?'Aluno':'Professor')});
-        });
-        return rooms;
-    }
-    function getDmId(a,b){return[a,b].sort().join('__');}
-    function getRoomRef(roomId){return refChat.child('rooms').child(roomId).child('messages');}
-    function getTypingRef(roomId){return refChat.child('rooms').child(roomId).child('typing');}
-    function getUnreadRef(roomId){return refChat.child('rooms').child(roomId).child('unread').child(usuarioAtual.login);}
+    function abrirModalVincular(login,user){const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');const idAtual=user.idAluno||'';content.innerHTML=`<h2><i class="fas fa-link"></i> Vincular "${login}"</h2><div class="form-group"><label>Aluno</label><select id="vincAluno"><option value="">Nenhum</option>${db.alunos.map(a=>`<option value="${a.id}" ${a.id==idAtual?'selected':''}>#${a.id} - ${a.nome}</option>`).join('')}</select></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;overlay.classList.add('active');document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');document.getElementById('modalSave').onclick=()=>{const idAluno=document.getElementById('vincAluno').value;const novoId=idAluno?parseInt(idAluno):null;refUsuarios.child(login).update({idAluno:novoId||null}).then(()=>{if(novoId)refVinculos.child(login).set(novoId);else refVinculos.child(login).remove();showToast('Vínculo atualizado!');overlay.classList.remove('active');});};overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active');};}
 
-    function formatChatTime(ts){if(!ts)return'';const d=new Date(ts);const now=new Date();const diff=now-d;if(diff<60000)return'agora';if(diff<3600000)return Math.floor(diff/60000)+'min';if(d.toDateString()===now.toDateString())return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}
-    function formatMsgTime(ts){if(!ts)return'';const d=new Date(ts);return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}
-
-    function renderChatRooms(filter=''){
-        const list=document.getElementById('chatRoomsList');if(!list)return;
-        const rooms=getChatRooms().filter(r=>r.name.toLowerCase().includes(filter.toLowerCase()));
-        let html='<div class="chat-section-label">Canais</div>';
-        const groups=rooms.filter(r=>r.type==='group');
-        const dms=rooms.filter(r=>r.type==='dm');
-        groups.forEach(r=>{
-            const preview=chatRooms[r.id]?.preview||'Sem mensagens';
-            const time=chatRooms[r.id]?.time||'';
-            const unread=unreadCounts[r.id]||0;
-            html+=`<div class="chat-room-item ${activeRoomId===r.id?'active':''}" data-room="${r.id}">
-                <div class="chat-room-avatar group"><i class="fas fa-users" style="font-size:.8rem;"></i></div>
-                <div class="chat-room-info"><div class="chat-room-name">${r.name}</div><div class="chat-room-preview">${preview}</div></div>
-                <div class="chat-room-meta"><div class="chat-room-time">${time}</div>${unread>0?`<div class="chat-unread">${unread}</div>`:''}</div>
-            </div>`;
-        });
-        if(dms.length){html+='<div class="chat-section-label">Mensagens Diretas</div>';}
-        dms.forEach(r=>{
-            const preview=chatRooms[r.id]?.preview||'Iniciar conversa';
-            const time=chatRooms[r.id]?.time||'';
-            const unread=unreadCounts[r.id]||0;
-            const avatarClass=r.nivel==='admin'?'admin-dm':'dm';
-            const initial=r.name[0].toUpperCase();
-            const color=getAvatarColor(r.name);
-            html+=`<div class="chat-room-item ${activeRoomId===r.id?'active':''}" data-room="${r.id}">
-                <div class="chat-room-avatar ${avatarClass}" style="background:${color};">${initial}<div class="online-dot"></div></div>
-                <div class="chat-room-info"><div class="chat-room-name">${r.name}</div><div class="chat-room-preview">${preview}</div></div>
-                <div class="chat-room-meta"><div class="chat-room-time">${time}</div>${unread>0?`<div class="chat-unread">${unread}</div>`:''}</div>
-            </div>`;
-        });
-        list.innerHTML=html;
-        list.querySelectorAll('.chat-room-item').forEach(el=>{el.addEventListener('click',()=>openRoom(el.dataset.room));});
-    }
-
-    function openRoom(roomId){
-        activeRoomId=roomId;
-        replyTo=null;
-        document.getElementById('chatReplyPreview').style.display='none';
-        document.getElementById('chatEmpty').style.display='none';
-        const activeArea=document.getElementById('chatActiveArea');
-        activeArea.style.display='flex';
-        // Mark as read
-        getUnreadRef(roomId).set(0);
-        unreadCounts[roomId]=0;
-        updateNotifBadge();
-        renderChatRooms(document.getElementById('chatSearchInput').value);
-        // Topbar
-        const rooms=getChatRooms();
-        const room=rooms.find(r=>r.id===roomId);
-        if(!room)return;
-        const topbar=document.getElementById('chatTopbar');
-        let avatarHTML='';
-        if(room.type==='group'){avatarHTML=`<div class="chat-topbar-avatar group"><i class="fas fa-users" style="font-size:.85rem;"></i></div>`;}
-        else{const color=getAvatarColor(room.name);avatarHTML=`<div class="chat-topbar-avatar dm" style="background:${color};">${room.name[0].toUpperCase()}</div>`;}
-        topbar.innerHTML=`<div class="chat-topbar-info">${avatarHTML}<div><div class="chat-topbar-name">${room.name}</div><div class="chat-topbar-status"><span class="dot"></span>${room.type==='group'?room.desc:'Online'}</div></div></div><div class="chat-topbar-actions"><button class="chat-action-btn" title="Membros"><i class="fas fa-users"></i></button><button class="chat-action-btn" title="Buscar"><i class="fas fa-search"></i></button></div>`;
-        // Listen messages
-        if(chatListeners[roomId])getRoomRef(roomId).off('value',chatListeners[roomId]);
-        chatListeners[roomId]=getRoomRef(roomId).on('value',snap=>{
-            const msgs=snap.val()?Object.entries(snap.val()).map(([k,v])=>({...v,_key:k})).sort((a,b)=>a.ts-b.ts):[];
-            renderMessages(msgs,room);
-            // Update preview
-            if(msgs.length){const last=msgs[msgs.length-1];chatRooms[roomId]={preview:(last.sender===usuarioAtual.login?'Você: ':'')+last.text.substring(0,40),time:formatChatTime(last.ts)};}
-            renderChatRooms(document.getElementById('chatSearchInput').value);
-        });
-        // Listen typing
-        getTypingRef(roomId).on('value',snap=>{
-            const typing=snap.val()||{};
-            const others=Object.entries(typing).filter(([k,v])=>k!==usuarioAtual.login&&v&&(Date.now()-v)<5000);
-            const area=document.getElementById('typingIndicatorArea');
-            if(area){if(others.length>0){const names=others.map(([k])=>USUARIOS[k]?.nome||k).join(', ');area.innerHTML=`<div class="typing-indicator"><div class="typing-dots"><span></span><span></span><span></span></div>${names} está digitando...</div>`;}else{area.innerHTML='';}}
-        });
-        // Listen unread from others
-        refChat.child('rooms').child(roomId).child('unread').on('value',snap=>{
-            const data=snap.val()||{};
-            Object.entries(data).forEach(([login,count])=>{if(login!==usuarioAtual.login){unreadCounts[roomId]=(unreadCounts[roomId]||0);}});
-        });
-        document.getElementById('chatInput').focus();
-    }
-
-    function renderMessages(msgs,room){
-        const container=document.getElementById('chatMessages');if(!container)return;
-        if(!msgs.length){container.innerHTML='<div class="chat-empty" style="flex:1;"><i class="fas fa-comment-slash"></i><p>Nenhuma mensagem ainda</p><small>Seja o primeiro a enviar!</small></div>';return;}
-        let html='';let lastDate='';let lastSender='';
-        msgs.forEach((msg,idx)=>{
-            const d=new Date(msg.ts);
-            const dateStr=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
-            if(dateStr!==lastDate){html+=`<div class="chat-date-divider"><span>${dateStr}</span></div>`;lastDate=dateStr;lastSender='';}
-            const isMine=msg.sender===usuarioAtual.login;
-            const senderName=USUARIOS[msg.sender]?.nome||msg.sender;
-            const showAvatar=!isMine&&(lastSender!==msg.sender||dateStr!==lastDate);
-            const avatarColor=getAvatarColor(senderName);
-            const avatarHTML=showAvatar?`<div class="msg-avatar" style="background:${avatarColor};">${senderName[0].toUpperCase()}</div>`:`<div class="msg-avatar hidden"></div>`;
-            let bubbleContent=msg.text.replace(/\n/g,'<br>');
-            if(msg.replyTo){bubbleContent=`<div style="background:rgba(0,0,0,0.08);border-left:3px solid rgba(255,255,255,0.5);border-radius:6px;padding:6px 10px;margin-bottom:6px;font-size:.75rem;opacity:.85;"><strong>${msg.replyTo.sender}</strong><br>${msg.replyTo.text.substring(0,60)}${msg.replyTo.text.length>60?'...':''}</div>`+bubbleContent;}
-            const timeHTML=`<span class="msg-time">${formatMsgTime(msg.ts)}${isMine?` <i class="fas fa-check-double msg-status"></i>`:''}</span>`;
-            html+=`<div class="msg-row ${isMine?'mine':''}">
-                ${!isMine?avatarHTML:''}
-                <div class="msg-content">
-                    ${showAvatar&&!isMine&&room.type==='group'?`<div class="msg-sender">${senderName}</div>`:''}
-                    <div class="msg-bubble ${isMine?'mine':'other'}" data-key="${msg._key}" data-text="${msg.text.replace(/"/g,'"')}" data-sender="${senderName}">${bubbleContent}</div>
-                    ${timeHTML}
-                </div>
-                ${isMine?avatarHTML:''}
-            </div>`;
-            lastSender=msg.sender;
-        });
-        container.innerHTML=html;
-        container.scrollTop=container.scrollHeight;
-        // Reply on click
-        container.querySelectorAll('.msg-bubble:not(.system)').forEach(b=>{
-            b.addEventListener('dblclick',()=>{
-                replyTo={text:b.dataset.text,sender:b.dataset.sender};
-                document.getElementById('replyAuthor').textContent=b.dataset.sender;
-                document.getElementById('replyText').textContent=b.dataset.text.substring(0,80);
-                document.getElementById('chatReplyPreview').style.display='flex';
-                document.getElementById('chatInput').focus();
-            });
-        });
-    }
-
-    function sendMessage(){
-        const input=document.getElementById('chatInput');
-        const text=input.value.trim();
-        if(!text||!activeRoomId)return;
-        const msg={sender:usuarioAtual.login,text,ts:Date.now()};
-        if(replyTo)msg.replyTo=replyTo;
-        getRoomRef(activeRoomId).push(msg);
-        // Update unread for others
-        const rooms=getChatRooms();
-        const room=rooms.find(r=>r.id===activeRoomId);
-        if(room){
-            if(room.type==='group'){
-                Object.keys(USUARIOS).forEach(login=>{
-                    if(login!==usuarioAtual.login){
-                        refChat.child('rooms').child(activeRoomId).child('unread').child(login).transaction(v=>(v||0)+1);
-                    }
-                });
-            }else{
-                const otherLogin=room.login;
-                refChat.child('rooms').child(activeRoomId).child('unread').child(otherLogin).transaction(v=>(v||0)+1);
-            }
-        }
-        input.value='';input.style.height='auto';
-        replyTo=null;document.getElementById('chatReplyPreview').style.display='none';
-        clearTyping();
-    }
-
-    function setTyping(){
-        if(!activeRoomId)return;
-        getTypingRef(activeRoomId).child(usuarioAtual.login).set(Date.now());
-        clearTimeout(typingTimeout);
-        typingTimeout=setTimeout(clearTyping,4000);
-    }
-    function clearTyping(){if(activeRoomId)getTypingRef(activeRoomId).child(usuarioAtual.login).remove();}
-
-    function updateNotifBadge(){
-        const total=Object.values(unreadCounts).reduce((a,b)=>a+b,0);
-        const badge=document.getElementById('chatNotifBadge');
-        if(badge){badge.style.display=total>0?'inline':'none';badge.textContent=total>99?'99+':total;}
-    }
-
-    // Listen all rooms for unread
-    function listenAllUnread(){
-        getChatRooms().forEach(room=>{
-            refChat.child('rooms').child(room.id).child('unread').child(usuarioAtual.login).on('value',snap=>{
-                const count=snap.val()||0;
-                unreadCounts[room.id]=count;
-                updateNotifBadge();
-                renderChatRooms(document.getElementById('chatSearchInput').value||'');
-            });
-            // Listen last message for preview
-            getRoomRef(room.id).limitToLast(1).on('value',snap=>{
-                if(snap.val()){const msgs=Object.values(snap.val());const last=msgs[0];const sName=USUARIOS[last.sender]?.nome||last.sender;chatRooms[room.id]={preview:(last.sender===usuarioAtual.login?'Você: ':sName+': ')+last.text.substring(0,35),time:formatChatTime(last.ts)};}
-                renderChatRooms(document.getElementById('chatSearchInput').value||'');
-            });
-        });
-    }
-
-    // Chat events
-    document.getElementById('chatSearchInput')?.addEventListener('input',e=>renderChatRooms(e.target.value));
-    document.getElementById('btnSendMsg')?.addEventListener('click',sendMessage);
-    document.getElementById('chatInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}else{setTyping();}});
-    document.getElementById('chatInput')?.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
-    document.getElementById('btnCancelReply')?.addEventListener('click',()=>{replyTo=null;document.getElementById('chatReplyPreview').style.display='none';});
-
-    // Emoji picker
-    const emojiPicker=document.getElementById('emojiPicker');
-    if(emojiPicker){emojiPicker.innerHTML=EMOJIS.map(e=>`<span class="emoji-btn">${e}</span>`).join('');emojiPicker.querySelectorAll('.emoji-btn').forEach(btn=>{btn.addEventListener('click',()=>{const input=document.getElementById('chatInput');input.value+=btn.textContent;input.focus();emojiPicker.classList.remove('open');});});}
-    document.getElementById('btnEmoji')?.addEventListener('click',e=>{e.stopPropagation();emojiPicker?.classList.toggle('open');});
-    document.addEventListener('click',()=>emojiPicker?.classList.remove('open'));
-
-    // New chat
-    document.getElementById('btnNewChat')?.addEventListener('click',()=>{
-        const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');
-        const users=Object.entries(USUARIOS).filter(([l])=>l!==usuarioAtual.login);
-        content.innerHTML=`<h2><i class="fas fa-edit"></i> Nova Conversa</h2><div style="display:flex;flex-direction:column;gap:8px;">${users.map(([login,u])=>`<div class="usuario-card" style="cursor:pointer;" data-login="${login}"><div class="usuario-info"><div class="usuario-icone ${u.nivel}" style="background:${getAvatarColor(u.nome)};color:#fff;">${u.nome[0]}</div><div><div class="usuario-nome">${u.nome}</div><div class="usuario-nivel">${u.nivel==='admin'?'Admin':(u.nivel==='aluno'?'Aluno':'Professor')}</div></div></div><i class="fas fa-chevron-right" style="color:var(--text-light);"></i></div>`).join('')}</div><div style="margin-top:12px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Fechar</button></div>`;
-        overlay.classList.add('active');
-        document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');
-        content.querySelectorAll('.usuario-card').forEach(card=>{card.addEventListener('click',()=>{overlay.classList.remove('active');navigateTo('chat');openRoom(getDmId(usuarioAtual.login,card.dataset.login));});});
-        overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active');};
-    });
-
-    // ===== NAVIGATION =====
     function navigateTo(page){
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.querySelectorAll('.sidebar-nav a,.bottom-nav a').forEach(a=>a.classList.remove('active'));
-        const el=document.getElementById('page-'+page);if(el)el.classList.add('active');
+        const el=document.getElementById('page-'+page);
+        if(el)el.classList.add('active');
         document.querySelector(`.sidebar-nav a[data-page="${page}"]`)?.classList.add('active');
         document.querySelector(`.bottom-nav a[data-page="${page}"]`)?.classList.add('active');
         if(page==='dashboard'){renderAvisos();renderMeuFeedback();atualizarDashboard();renderRanking();}
         if(page==='presenca')renderPresenca();
         if(page==='historico')renderHistorico();
         if(page==='aulas')renderAulas();
-        if(page==='chat'){renderChatRooms();listenAllUnread();}
         if(page==='feedback')renderFeedbackLista();
         if(page==='usuarios')renderUsuarios();
         if(page==='alunos')renderAlunos();
         if(page==='graduacoes')renderGrad();
         if(page==='campeonatos')renderCamp();
+        if(page==='chat'){
+            document.getElementById('chatBadge').style.display='none';
+            document.getElementById('chatBadge').textContent='0';
+            renderChatConversations();
+            if(window.innerWidth<=768){
+                document.getElementById('chatSidebar').classList.remove('hidden-mobile');
+                document.getElementById('chatActiveArea').classList.remove('visible');
+                document.getElementById('chatEmptyState').style.display='flex';
+            }
+        }
         document.getElementById('sidebar').classList.remove('open');
     }
     document.querySelectorAll('.sidebar-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
     document.querySelectorAll('.bottom-nav a').forEach(a=>a.addEventListener('click',()=>navigateTo(a.dataset.page)));
     document.getElementById('hamburgerBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('modalOverlay').classList.remove('active');document.getElementById('emojiPicker')?.classList.remove('open');}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modalOverlay').classList.remove('active');});
 
     // ===== PRESENÇA =====
     function getDataSel(){const i=document.getElementById('dataPresenca');return i?i.value:new Date().toISOString().split('T')[0];}
@@ -1123,19 +1091,12 @@ function initApp(){
 
     // ===== USUÁRIOS =====
     function renderUsuarios(){if(!ehAdmin()){document.getElementById('usuariosLista').innerHTML='<div class="empty-state"><i class="fas fa-lock"></i><p>Acesso restrito ao admin</p></div>';return;}const container=document.getElementById('usuariosLista');const lista=Object.entries(USUARIOS).filter(([login])=>login!=='admin');container.innerHTML=lista.map(([login,user])=>`<div class="usuario-card"><div class="usuario-info"><div class="usuario-icone ${user.nivel}"><i class="fas fa-user"></i></div><div><div class="usuario-nome">${user.nome}</div><div class="usuario-nivel">Login: ${login} · Senha: ${user.senha||'***'} · ${user.nivel==='admin'?'Admin':(user.nivel==='aluno'?'Aluno':'Professor')} ${user.idAluno?'· Vinculado ao aluno #'+user.idAluno:''}</div></div></div><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm btn-vincular-usuario" data-login="${login}"><i class="fas fa-link"></i> Vincular</button><button class="btn btn-danger btn-sm btn-remover-usuario" data-login="${login}"><i class="fas fa-trash"></i></button></div></div>`).join('');container.querySelectorAll('.btn-remover-usuario').forEach(btn=>{btn.addEventListener('click',function(){if(confirm(`Remover usuário "${this.dataset.login}"?`))refUsuarios.child(this.dataset.login).remove().then(()=>showToast('Usuário removido!'));});});container.querySelectorAll('.btn-vincular-usuario').forEach(btn=>{btn.addEventListener('click',function(){abrirModalVincular(this.dataset.login,USUARIOS[this.dataset.login]);});});}
-    function abrirModalVincular(login,user){const overlay=document.getElementById('modalOverlay');const content=document.getElementById('modalContent');const idAtual=user.idAluno||'';content.innerHTML=`<h2><i class="fas fa-link"></i> Vincular "${login}"</h2><div class="form-group"><label>Aluno</label><select id="vincAluno"><option value="">Nenhum</option>${db.alunos.map(a=>`<option value="${a.id}" ${a.id==idAtual?'selected':''}>#${a.id} - ${a.nome}</option>`).join('')}</select></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;"><button class="btn btn-ghost btn-sm" id="modalCancel">Cancelar</button><button class="btn btn-primary btn-sm" id="modalSave">Salvar</button></div>`;overlay.classList.add('active');document.getElementById('modalCancel').onclick=()=>overlay.classList.remove('active');document.getElementById('modalSave').onclick=()=>{const idAluno=document.getElementById('vincAluno').value;const novoId=idAluno?parseInt(idAluno):null;refUsuarios.child(login).update({idAluno:novoId||null}).then(()=>{if(novoId)refVinculos.child(login).set(novoId);else refVinculos.child(login).remove();showToast('Vínculo atualizado!');overlay.classList.remove('active');});};overlay.onclick=e=>{if(e.target===overlay)overlay.classList.remove('active');};}
     function abrirModalNovoUsuario(){if(!ehAdmin())return;const alunoOptions=db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('');openModal('Novo Usuário','fas fa-user-plus',`<div class="form-group"><label>Login</label><input type="text" id="fLogin" placeholder="Ex: joao"></div><div class="form-group"><label>Nome</label><input type="text" id="fNome" placeholder="Nome completo"></div><div class="form-group"><label>Senha</label><input type="text" id="fSenha" value="34382098"></div><div class="form-group"><label>Nível</label><select id="fNivel"><option value="padrao">Professor</option><option value="admin">Admin</option><option value="aluno">Aluno (restrito)</option></select></div><div class="form-group"><label>Vincular a Aluno (opcional)</label><select id="fIdAluno"><option value="">Não vincular</option>${alunoOptions}</select></div>`,content=>{const login=content.querySelector('#fLogin').value.trim().toLowerCase(),nome=content.querySelector('#fNome').value.trim(),senha=content.querySelector('#fSenha').value.trim(),nivel=content.querySelector('#fNivel').value,idAluno=content.querySelector('#fIdAluno').value;if(!login||!nome){showToast('Preencha login e nome!','⚠️');return false;}if(USUARIOS[login]){showToast('Login já existe!','⚠️');return false;}const novo={senha,nivel,nome};if(idAluno)novo.idAluno=parseInt(idAluno);refUsuarios.child(login).set(novo).then(()=>{if(idAluno)refVinculos.child(login).set(parseInt(idAluno));showToast(`Usuário ${nome} criado!`);});return true;});}
     document.getElementById('btnAddUsuario')?.addEventListener('click',abrirModalNovoUsuario);
 
     // ===== AVISOS =====
     function abrirModalAviso(tipo){const ref=tipo==='alunos'?refAvisosAlunos:refAvisosProfessores;const avisos=tipo==='alunos'?db.avisosAlunos:db.avisosProfessores;const ultimo=avisos.length>0?avisos[avisos.length-1]:{titulo:'',texto:''};openModal(tipo==='alunos'?'Aviso para Alunos':'Aviso para Professores',tipo==='alunos'?'fas fa-user-graduate':'fas fa-chalkboard-teacher',`<div class="form-group"><label>Título</label><input type="text" id="fTitulo" value="${ultimo.titulo}"></div><div class="form-group"><label>Mensagem</label><textarea id="fTexto" rows="4">${ultimo.texto}</textarea></div>`,content=>{const t=content.querySelector('#fTitulo').value.trim(),tx=content.querySelector('#fTexto').value.trim();if(!t){showToast('Digite um título!','⚠️');return false;}ref.remove();ref.push({titulo:t,texto:tx,data:new Date().toISOString().split('T')[0],hora:new Date().toTimeString().split(' ')[0].substring(0,5),autor:usuarioAtual.nome});showToast('Aviso atualizado!');return true;});}
     function renderAvisos(){const container=document.getElementById('avisoContainer');if(!container)return;let html='';if(ehAdmin()){html+='<div class="avisos-admin-section">';html+=`<button class="btn btn-aviso" id="btnAvisoAlunos"><i class="fas fa-user-graduate"></i> Editar Aviso para Alunos</button>`;html+=`<button class="btn btn-aviso-prof" id="btnAvisoProfessores"><i class="fas fa-chalkboard-teacher"></i> Editar Aviso para Professores</button>`;html+='</div>';}if(ehAluno()||ehProfessor()){if(db.avisosAlunos.length>0){const a=db.avisosAlunos[db.avisosAlunos.length-1];html+=`<div class="aviso-card aluno"><i class="fas fa-user-graduate"></i><div class="aviso-content"><h3>📢 ${a.titulo}</h3><p>${a.texto.replace(/\n/g,'<br>')}</p><div class="aviso-data">${formatData(a.data)} às ${a.hora||''} · ${a.autor||'Admin'}</div></div></div>`;}}if(ehProfessor()){if(db.avisosProfessores.length>0){const a=db.avisosProfessores[db.avisosProfessores.length-1];html+=`<div class="aviso-card prof"><i class="fas fa-chalkboard-teacher"></i><div class="aviso-content"><h3>📢 ${a.titulo}</h3><p>${a.texto.replace(/\n/g,'<br>')}</p><div class="aviso-data">${formatData(a.data)} às ${a.hora||''} · ${a.autor||'Admin'}</div></div></div>`;}}container.innerHTML=html;if(ehAdmin()){document.getElementById('btnAvisoAlunos')?.addEventListener('click',()=>abrirModalAviso('alunos'));document.getElementById('btnAvisoProfessores')?.addEventListener('click',()=>abrirModalAviso('professores'));}}
-
-    // ===== FEEDBACK =====
-    function getIdAlunoDoUsuario(){if(usuarioAtual.idAluno)return usuarioAtual.idAluno;if(db.vinculos&&db.vinculos[usuarioAtual.login])return db.vinculos[usuarioAtual.login];const nomeLower=usuarioAtual.nome.toLowerCase();const a=db.alunos.find(a=>a.nome&&a.nome.toLowerCase()===nomeLower);return a?a.id:null;}
-    function renderMeuFeedback(){const container=document.getElementById('meuFeedbackContainer');if(!container||!ehAluno())return;const idAluno=getIdAlunoDoUsuario();if(!idAluno){container.innerHTML='';return;}const meusFeedbacks=db.feedbacks[idAluno]||[];if(!meusFeedbacks.length){container.innerHTML='';return;}container.innerHTML='<h3 style="margin-bottom:12px;font-size:.95rem;"><i class="fas fa-comment-dots" style="color:var(--gold);"></i> Meus Feedbacks</h3>'+meusFeedbacks.slice().reverse().map(f=>`<div class="feedback-card"><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} · Prof. ${f.professor}</div></div>`).join('');}
-    function renderFeedbackLista(){const container=document.getElementById('feedbackLista');if(!container||!ehProfessor())return;let html='';Object.entries(db.feedbacks).forEach(([idAluno,feedbacks])=>{const aluno=getAluno(parseInt(idAluno));const nomeAl=aluno?aluno.nome:'Aluno #'+idAluno;feedbacks.forEach(f=>{html+=`<div class="feedback-card"><h3>👤 ${nomeAl} ${badgeHTML(aluno?aluno.faixa:'',aluno?aluno.grau:0)}</h3><p>${f.texto}</p><div class="feedback-meta">${formatData(f.data)} · Prof. ${f.professor}</div></div>`;});});container.innerHTML=html||'<p style="color:var(--text-light);">Nenhum feedback enviado ainda.</p>';const select=document.getElementById('feedbackAluno');if(select&&db.alunos.length>0)select.innerHTML='<option value="">Selecione...</option>'+db.alunos.map(a=>`<option value="${a.id}">#${a.id} - ${a.nome}</option>`).join('');}
-    document.getElementById('btnEnviarFeedback')?.addEventListener('click',function(){if(!ehProfessor()){showToast('Acesso negado!','🔒');return;}const idAluno=parseInt(document.getElementById('feedbackAluno').value);const texto=document.getElementById('feedbackTexto').value.trim();if(!idAluno||!texto){showToast('Selecione o aluno e escreva a mensagem!','⚠️');return;}const novo={texto,data:new Date().toISOString().split('T')[0],professor:usuarioAtual.nome};const ref=refFeedbacks.child(idAluno);ref.once('value',snap=>{const lista=snap.val()||[];lista.push(novo);ref.set(lista);showToast('Feedback enviado!');document.getElementById('feedbackTexto').value='';});});
 
     // ===== ALUNOS =====
     function renderAlunos(){const tbody=document.getElementById('tbodyAlunos');const termo=(document.getElementById('searchAlunos')?.value||'').toLowerCase();const faixaFiltro=document.getElementById('filterFaixa')?.value||'todas';let lista=db.alunos;if(termo)lista=lista.filter(a=>a.nome.toLowerCase().includes(termo));if(faixaFiltro!=='todas')lista=lista.filter(a=>a.faixa===faixaFiltro);if(!lista.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-light);">Nenhum aluno encontrado</td></tr>';}else{tbody.innerHTML=lista.map(a=>`<tr><td style="color:var(--text-light);font-size:.8rem;">#${a.id}</td><td><strong>${a.nome}</strong></td><td>${badgeHTML(a.faixa,a.grau)}</td><td style="color:var(--text-light);font-size:.82rem;">${grauTexto(a.faixa,a.grau)||'-'}</td><td style="color:var(--text-light);font-size:.82rem;">${formatData(a.dataIngresso)}</td><td>${medalhasCont(a.id)} 🏅</td><td style="display:flex;gap:4px;">${podeEditar()?`<button class="btn btn-ghost btn-sm editar" data-id="${a.id}"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm excluir" data-id="${a.id}"><i class="fas fa-trash"></i></button>`:''}</td></tr>`).join('');if(podeEditar()){tbody.querySelectorAll('.editar').forEach(b=>b.addEventListener('click',()=>abrirEditarAluno(parseInt(b.dataset.id))));tbody.querySelectorAll('.excluir').forEach(b=>b.addEventListener('click',()=>excluirAluno(parseInt(b.dataset.id))));}}};
@@ -1154,7 +1115,7 @@ function initApp(){
     // ===== DASHBOARD =====
     let cF,cM;
     function atualizarDashboard(){
-        document.getElementById('statsGrid').innerHTML=`<div class="stat-card"><div class="stat-icon green"><i class="fas fa-users"></i></div><div class="stat-info"><h3>${db.alunos.length}</h3><p>Total de Alunos</p></div></div><div class="stat-card"><div class="stat-icon gold"><i class="fas fa-crown"></i></div><div class="stat-info"><h3>${db.alunos.filter(a=>a.faixa==='Preta').length}</h3><p>Faixas Pretas</p></div></div><div class="stat-card"><div class="stat-icon green"><i class="fas fa-medal"></i></div><div class="stat-info"><h3>${db.campeonatos.filter(c=>c.medalha!=='Participação').length}</h3><p>Medalhas</p></div></div><div class="stat-card"><div class="stat-icon gold"><i class="fas fa-trophy"></i></div><div class="stat-info"><h3>${db.campeonatos.length}</h3><p>Campeonatos</p></div></div>`;
+        document.getElementById('statsGrid').innerHTML=`<div class="stat-card"><div class="stat-icon green"><i class="fas fa-users"></i></div><div class="stat-info"><h3>${db.alunos.length}</h3><p>Total de Alunos</p></div></div><div class="stat-card"><div class="stat-icon gold"><i class="fas fa-crown"></i></div><div class="stat-info"><h3>${db.alunos.filter(a=>a.faixa==='Preta').length}</h3><p>Faixas Pretas</p></div></div><div class="stat-card"><div class="stat-icon blue"><i class="fas fa-medal"></i></div><div class="stat-info"><h3>${db.campeonatos.filter(c=>c.medalha!=='Participação').length}</h3><p>Medalhas</p></div></div><div class="stat-card"><div class="stat-icon purple"><i class="fas fa-trophy"></i></div><div class="stat-info"><h3>${db.campeonatos.length}</h3><p>Campeonatos</p></div></div>`;
         if(cF)cF.destroy();
         const c1=document.getElementById('chartFaixas')?.getContext('2d');
         if(c1)cF=new Chart(c1,{type:'bar',data:{labels:FAIXAS,datasets:[{label:'Alunos',data:FAIXAS.map(f=>db.alunos.filter(a=>a.faixa===f).length),backgroundColor:FAIXAS.map(f=>corFaixa(f)),borderRadius:8,borderSkipped:false}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{stepSize:1}}}}});
@@ -1162,10 +1123,12 @@ function initApp(){
         const c2=document.getElementById('chartMedalhas')?.getContext('2d');
         if(c2)cM=new Chart(c2,{type:'doughnut',data:{labels:MEDALHAS.map(m=>MEDALHA_ICONS[m]+' '+m),datasets:[{data:MEDALHAS.map(m=>db.campeonatos.filter(c=>c.medalha===m).length),backgroundColor:['#f0a500','#94a3b8','#d97706','#6b7280'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{padding:16,font:{size:12}}}},cutout:'65%'}});
     }
+
+    // ===== RANKING =====
     function renderRanking(){
         const container=document.getElementById('rankList');if(!container)return;
         const ranking=db.alunos.map(aluno=>({id:aluno.id,nome:aluno.nome,faixa:aluno.faixa,grau:aluno.grau,medalhas:medalhasCont(aluno.id)})).filter(a=>a.medalhas>0).sort((a,b)=>b.medalhas-a.medalhas).slice(0,10);
-        if(!ranking.length){container.innerHTML='<div class="empty-rank"><i class="fas fa-medal" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3;"></i>Nenhuma medalha registrada ainda.</div>';return;}
+        if(!ranking.length){container.innerHTML='<div class="empty-rank"><i class="fas fa-medal" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:.3;"></i>Nenhuma medalha registrada ainda.<br><small>Adicione conquistas nos campeonatos.</small></div>';return;}
         container.innerHTML=ranking.map((item,idx)=>{
             const pos=idx+1;let posClass='',posIcon='',itemClass='';
             if(pos===1){posClass='p1';posIcon='🥇';itemClass='top-1';}
@@ -1184,8 +1147,213 @@ function initApp(){
     document.getElementById('searchAlunos')?.addEventListener('input',renderAlunos);
     document.getElementById('filterFaixa')?.addEventListener('change',renderAlunos);
 
-    // Init unread listener
-    listenAllUnread();
+    // ===== CHAT COMPLETO =====
+    const refChat = database.ref('chat_v3');
+    let chatAtivo = null;
+    let chatReplyTo = null;
+    let chatListeners = {};
+
+    const CANAIS = [
+        {id:'geral', nome:'🏆 Geral', grupo:true, cor:'#1a4a2e', icone:'fas fa-users', acesso:'todos'},
+        {id:'professores', nome:'👨‍🏫 Professores', grupo:true, cor:'#1e3a8a', icone:'fas fa-chalkboard-teacher', acesso:'prof'},
+        {id:'admin_canal', nome:'⚙️ Admin', grupo:true, cor:'#7c2d12', icone:'fas fa-shield-alt', acesso:'admin'}
+    ];
+
+    function avatarCor(nome){
+        const cores=['#1a4a2e','#2d7a4f','#1e3a8a','#7c2d12','#6a1b9a','#c9a96e','#ef6c00','#0d2818'];
+        let h=0; for(let i=0;i<nome.length;i++) h=nome.charCodeAt(i)+((h<<5)-h);
+        return cores[Math.abs(h)%cores.length];
+    }
+
+    function getDMId(loginA, loginB){
+        return [loginA, loginB].sort().join('__dm__');
+    }
+
+    function renderChatConversations(){
+        const busca = (document.getElementById('chatSearchInput')?.value||'').toLowerCase();
+
+        // Canais
+        let htmlCanais = '';
+        CANAIS.forEach(c=>{
+            if(c.acesso==='admin' && !ehAdmin()) return;
+            if(c.acesso==='prof' && !ehProfessor()) return;
+            if(busca && !c.nome.toLowerCase().includes(busca)) return;
+            const ativo = chatAtivo?.id===c.id ? 'active' : '';
+            htmlCanais += `<div class="chat-conv-item ${ativo}" onclick="abrirChat('${c.id}','${c.nome}',true,'${c.cor}','${c.icone}')">
+                <div class="chat-conv-avatar group" style="background:${c.cor};font-size:.85rem;"><i class="${c.icone}"></i></div>
+                <div class="chat-conv-info">
+                    <div class="chat-conv-name">${c.nome}</div>
+                    <div class="chat-conv-preview" id="prev_${c.id}">Canal de grupo</div>
+                </div>
+            </div>`;
+        });
+        document.getElementById('chatChannelsList').innerHTML = htmlCanais || '<div style="padding:10px 16px;font-size:.78rem;color:var(--text-light);">Nenhum canal disponível</div>';
+
+        // DMs
+        let htmlDMs = '';
+        Object.entries(USUARIOS).forEach(([login, user])=>{
+            if(login === usuarioAtual.login) return;
+            if(busca && !user.nome.toLowerCase().includes(busca) && !login.includes(busca)) return;
+            const dmId = getDMId(usuarioAtual.login, login);
+            const ativo = chatAtivo?.id===dmId ? 'active' : '';
+            htmlDMs += `<div class="chat-conv-item ${ativo}" onclick="abrirChat('${dmId}','${user.nome}',false,'${avatarCor(user.nome)}','')">
+                <div class="chat-conv-avatar" style="background:${avatarCor(user.nome)};">
+                    ${user.nome[0].toUpperCase()}
+                    <div class="chat-online-dot"></div>
+                </div>
+                <div class="chat-conv-info">
+                    <div class="chat-conv-name">${user.nome}</div>
+                    <div class="chat-conv-preview" id="prev_${dmId}">Clique para conversar</div>
+                </div>
+            </div>`;
+        });
+        document.getElementById('chatDMsList').innerHTML = htmlDMs || '<div style="padding:10px 16px;font-size:.78rem;color:var(--text-light);">Nenhum usuário encontrado</div>';
+
+        // Carregar previews
+        [...CANAIS, ...Object.entries(USUARIOS).filter(([l])=>l!==usuarioAtual.login).map(([l,u])=>({id:getDMId(usuarioAtual.login,l)}))].forEach(item=>{
+            refChat.child(item.id).limitToLast(1).once('value', snap=>{
+                const msgs = snap.val();
+                if(msgs){
+                    const ultima = Object.values(msgs)[0];
+                    const el = document.getElementById('prev_'+item.id);
+                    if(el) el.textContent = (ultima.senderLogin===usuarioAtual.login?'Você: ':ultima.senderName+': ') + ultima.texto.substring(0,30);
+                }
+            });
+        });
+    }
+
+    window.abrirChat = function(id, nome, isGrupo, cor, icone){
+        // Remover listener anterior
+        if(chatAtivo && chatListeners[chatAtivo.id]){
+            refChat.child(chatAtivo.id).off('value', chatListeners[chatAtivo.id]);
+        }
+
+        chatAtivo = {id, nome, isGrupo, cor, icone};
+        chatReplyTo = null;
+
+        // UI
+        document.getElementById('chatEmptyState').style.display = 'none';
+        document.getElementById('chatActiveArea').classList.add('visible');
+
+        // Topbar
+        const av = document.getElementById('chatTopbarAvatar');
+        av.style.background = cor;
+        av.className = 'chat-topbar-avatar' + (isGrupo?' group':'');
+        av.innerHTML = isGrupo ? `<i class="${icone}" style="font-size:.9rem;"></i>` : nome[0].toUpperCase();
+        document.getElementById('chatTopbarName').textContent = nome;
+        document.getElementById('chatTopbarStatus').textContent = isGrupo ? 'Canal de grupo · Todos podem ver' : 'Mensagem direta · Privada';
+
+        // Mobile
+        if(window.innerWidth<=768){
+            document.getElementById('chatSidebar').classList.add('hidden-mobile');
+        }
+
+        // Atualizar lista
+        renderChatConversations();
+
+        // Carregar mensagens em tempo real
+        const msgs = document.getElementById('chatMessages');
+        msgs.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-light);font-size:.8rem;">Carregando mensagens...</div>';
+
+        const listener = refChat.child(id).limitToLast(100).on('value', snap=>{
+            const data = snap.val() || {};
+            const msgsList = Object.values(data).sort((a,b)=>a.time-b.time);
+            msgs.innerHTML = '';
+            let ultimaData = '';
+            msgsList.forEach(m=>{
+                const d = new Date(m.time);
+                const dataStr = d.toLocaleDateString('pt-BR');
+                if(dataStr !== ultimaData){
+                    ultimaData = dataStr;
+                    const hoje = new Date().toLocaleDateString('pt-BR');
+                    const ontem = new Date(Date.now()-86400000).toLocaleDateString('pt-BR');
+                    const label = dataStr===hoje?'Hoje':dataStr===ontem?'Ontem':dataStr;
+                    msgs.innerHTML += `<div class="chat-date-divider"><span>${label}</span></div>`;
+                }
+                const mine = m.senderLogin === usuarioAtual.login;
+                const hora = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+                const replyHTML = m.reply ? `<div class="chat-reply-preview-bubble"><strong>${m.reply.nome}</strong>: ${m.reply.texto}</div>` : '';
+                msgs.innerHTML += `
+                    <div class="chat-msg ${mine?'mine':'other'}">
+                        <div class="chat-msg-avatar" style="background:${avatarCor(m.senderName)}">${m.senderName[0]}</div>
+                        <div class="chat-msg-body">
+                            ${!mine?`<div class="chat-msg-sender">${m.senderName}</div>`:''}
+                            <div class="chat-msg-bubble" title="Duplo clique para responder" ondblclick="responderMsg('${m.senderName.replace(/'/g,"\\'")}','${m.texto.substring(0,40).replace(/'/g,"\\'").replace(/\n/g,' ')}')">
+                                ${replyHTML}
+                                ${m.texto.replace(/\n/g,'<br>')}
+                            </div>
+                            <div class="chat-msg-time">${hora}</div>
+                        </div>
+                    </div>`;
+            });
+            if(!msgsList.length){
+                msgs.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light);"><i class="fas fa-comments" style="font-size:2rem;display:block;margin-bottom:10px;opacity:.2;"></i>Nenhuma mensagem ainda.<br><small>Seja o primeiro a enviar!</small></div>';
+            }
+            msgs.scrollTop = msgs.scrollHeight;
+        });
+        chatListeners[id] = listener;
+    };
+
+    window.responderMsg = function(nome, texto){
+        chatReplyTo = {nome, texto};
+        document.getElementById('chatReplyBar').classList.add('show');
+        document.getElementById('chatReplyText').textContent = `↩ Respondendo a ${nome}: "${texto}"`;
+        document.getElementById('chatInput').focus();
+    };
+
+    window.cancelarResposta = function(){
+        chatReplyTo = null;
+        document.getElementById('chatReplyBar').classList.remove('show');
+    };
+
+    function enviarMensagem(){
+        const input = document.getElementById('chatInput');
+        const txt = input.value.trim();
+        if(!txt || !chatAtivo) return;
+        const msg = {
+            texto: txt,
+            senderLogin: usuarioAtual.login,
+            senderName: usuarioAtual.nome,
+            time: firebase.database.ServerValue.TIMESTAMP,
+            reply: chatReplyTo || null
+        };
+        refChat.child(chatAtivo.id).push(msg).then(()=>{
+            input.value = '';
+            input.style.height = '42px';
+            cancelarResposta();
+        });
+    }
+
+    document.getElementById('chatSendBtn').onclick = enviarMensagem;
+    document.getElementById('chatInput').onkeydown = function(e){
+        if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); enviarMensagem(); }
+    };
+    document.getElementById('chatInput').oninput = function(){
+        this.style.height = '42px';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    };
+    document.getElementById('chatSearchInput').oninput = renderChatConversations;
+    document.getElementById('chatBackBtn').onclick = function(){
+        document.getElementById('chatSidebar').classList.remove('hidden-mobile');
+        document.getElementById('chatActiveArea').classList.remove('visible');
+        document.getElementById('chatEmptyState').style.display = 'flex';
+    };
+
+    // Notificação de novas mensagens
+    refChat.on('child_added', snap=>{
+        if(snap.key === chatAtivo?.id) return;
+        refChat.child(snap.key).limitToLast(1).once('value', s=>{
+            const msgs = s.val();
+            if(!msgs) return;
+            const ultima = Object.values(msgs)[0];
+            if(!ultima || ultima.senderLogin === usuarioAtual.login) return;
+            const badge = document.getElementById('chatBadge');
+            const count = parseInt(badge.textContent||'0') + 1;
+            badge.textContent = count;
+            badge.style.display = 'block';
+        });
+    });
+
     navigateTo('dashboard');
 }
 </script>
